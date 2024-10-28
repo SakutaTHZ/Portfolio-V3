@@ -1,3 +1,92 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Base Colors */
+:root {
+  --bg-color: #0a0a0a;
+  --box-color: #ffffff;
+  --primary-color: #ffed00;
+  --secondary-color: #0f6292;
+  --alert-color: #cf0a0a;
+}
+
+/* Light Mode */
+:root.light-mode {
+  --bg-color: #ffffff;
+  --box-color: #000000;
+  --primary-color: #ffed00;
+  --secondary-color: #0f6292;
+  --alert-color: #cf0a0a;
+}
+
+/* Dark Mode */
+:root.dark-mode {
+  --bg-color: #0a0a0a;
+  --box-color: #ffffff;
+  --primary-color: #ffed00;
+  --secondary-color: #0f6292;
+  --alert-color: #cf0a0a;
+}
+
+/* Applying Colors */
+body {
+  background-color: var(--bg-color);
+  color: var(--box-color);
+}
+
+.box {
+  background-color: var(--primary-color);
+  border-color: var(--secondary-color);
+}
+
+.alert {
+  color: var(--alert-color);
+}
+
+.lightBulb {
+    position:relative;
+  width: 10px;
+  height: 10px;
+  border-radius:50%;
+  background: var(--primary-color);
+  transition: .5s linear;
+  .ray {
+    position: absolute;
+    width: 2px;
+    height: 5px;
+    background: var(--primary-color);
+    top:-0px;
+    border-radius:10px;
+    transform:scaleY(0);
+    transform-origin: bottom center;
+    opacity: 0; 
+    transition: opacity 0.5s, transform 5s;
+  }
+}
+.lightBulb::before{
+    content:'';
+    position:absolute;
+    width: 10px;
+    height: 10px;
+    background:var(--bg-color);
+    border-radius:50%;
+    left:100%;
+    opacity:0;
+    transition: .5s linear,0s background;
+}
+.lightBulb.dark{
+    width: 20px;
+    height: 20px;
+}
+.lightBulb.dark::before{
+    content:'';
+    position:absolute;
+    width: 20px;
+    height: 20px;
+    border-radius:50%;
+    left:50%;
+    opacity:1;
+}
+
+

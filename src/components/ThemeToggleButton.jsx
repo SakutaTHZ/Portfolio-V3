@@ -26,7 +26,7 @@ const ThemeToggleButton = () => {
           ray.classList.add("ray");
 
           const angle = i * (360 / 8);
-          ray.style.transform = `scaleY(1) rotate(${angle}deg) translateY(-150%)`;
+          ray.style.transform = `rotate(${angle}deg) translateY(-150%)`;
 
           lightBulb.append(ray);
 
@@ -43,7 +43,7 @@ const ThemeToggleButton = () => {
           setTimeout(() => {
             if (ray) ray.remove();
           }, 200);
-        }, i * 100);
+        }, i * 10);
       });
     }
   }

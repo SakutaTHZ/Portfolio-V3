@@ -36,13 +36,8 @@
 body {
   background-color: var(--bg-color);
   color: var(--box-color);
-  background-image: linear-gradient(
-      to right,
-      hsl(from var(--text-color) h s l / .1) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, hsl(from var(--text-color) h s l / .1) 1px, transparent 1px);
-  background-size: 4vh 4vh;
+  background-image: radial-gradient(hsl(from var(--text-color) h s l / .05) 2.5px, transparent 2.5px);
+  background-size: 30px 30px;
 }
 
 .box {
@@ -115,7 +110,7 @@ body {
     position: absolute;
     top: 80%;
     left: 0;
-    color: var(--text-color);
+    /* color: var(--text-color); */
     opacity:0;
     transition: 0.3s;
     transition-delay: inherit;
@@ -125,7 +120,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    color: var(--text-color);
+    /* color: var(--text-color); */
     transition: 0.3s;
     transition-delay: inherit;
     opacity:1;
@@ -145,11 +140,41 @@ body {
   opacity:0;
 }
 
+@property --fill{
+  syntax:'<percentage>';
+  inherits:true;
+  initial-value:0%;
+}
 .glassBox{
+  position:relative;
   border:1px solid hsl(from var(--text-color) h s l / .2);
-  background:hsl(from var(--text-color) h s l / .02);
+  background:var(--bg-color);
   border-radius: 0.375rem;
   padding: 1.5rem;
-  backdrop-filter:blur(10px);
   box-shadow:0 0 10px hsl(from var(--text-color) h s l / .02),0 0 20px hsl(from var(--text-color) h s l / .02);
+}
+.glassBox::before{
+  position:absolute;
+  z-index:-10;
+  content:'';
+  inset:-3px;
+  border-radius:inherit;
+  transition: --fill 0.6s ease-in-out;
+  animation: rgb 10s linear infinite;
+}
+.glassBox:nth-child(even)::before{
+  background:conic-gradient(var(--primary-color) var(--fill), transparent var(--fill));
+}
+.glassBox:nth-child(odd)::before{
+  background:conic-gradient(from -180deg,var(--primary-color) var(--fill), transparent var(--fill));
+}
+.glassBox:hover{
+  --fill:100%;
+}
+@keyframes rgb {
+  from{
+    filter:hue-rotate(0deg);
+  }to{
+    filter:hue-rotate(360deg);
+  }
 }

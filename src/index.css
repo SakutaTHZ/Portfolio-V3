@@ -39,6 +39,10 @@ body {
   background-image: radial-gradient(hsl(from var(--text-color) h s l / .05) 2.5px, transparent 2.5px);
   background-size: 30px 30px;
 }
+#root{
+    width: 100dvw;
+    min-height: 100dvh;
+}
 
 .box {
   background-color: var(--primary-color);

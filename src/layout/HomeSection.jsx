@@ -1,4 +1,5 @@
 import RollText from "../components/RollText";
+import map from "../images/map.png"
 
 const HomeSection = () => {
   return (
@@ -12,17 +13,27 @@ const HomeSection = () => {
               gradient={false}
               text={"Thar Htet Zan"}
             />
-            <p className="text-sm">
-              Hey there! I'm a software developer 💻 with a big passion for
-              UI/UX and front-end development. I absolutely love bringing
-              creative concepts and fresh ideas to life on the screen. 😊 Let's
-              make something amazing together!
-            </p>
+            <p className="text-sm"></p>
           </div>
         </div>
-        <div className="glassBox col-span-2 col-start-1 row-start-4"></div>
-        <div className="glassBox col-span-2 col-start-1 row-start-5"></div>
-        <div className="glassBox col-span-2 row-span-5 col-start-3 row-start-1"></div>
+        <div className="glassBox relative col-span-2 col-start-1 row-start-4"></div>
+        <div className="glassBox bg-black col-span-2 col-start-1 row-start-5">
+          <p className="absolute z-20 text-sm text-right right-4 bottom-4 ">
+            Currently in
+            <RollText
+              customClass={`text-2xl font-bold`}
+              gradient={false}
+              text={"Yangon"}
+            />
+          </p>
+        </div>
+        <div className="glassBox col-span-2 row-span-5 col-start-3 row-start-1">
+          <p>
+            Hey! I'm a software developer 💻 passionate about UI/UX and
+            front-end. I love bringing creative ideas to life. 😊 Let's build
+            something amazing!
+          </p>
+        </div>
         <div className="glassBox row-span-2 col-start-5 row-start-1"></div>
         <div className="glassBox row-span-3 col-start-5 row-start-3"></div>
       </div>

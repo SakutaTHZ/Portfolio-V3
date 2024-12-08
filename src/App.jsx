@@ -1,20 +1,18 @@
 import "./App.css";
-import Nav from "./components/Nav";
 import HomeSection from "./layout/HomeSection";
-import { BrowserView, MobileView } from "react-device-detect";
+import Compactibility from "./pages/Compactibility"
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
     <>
-    
-    <Nav />
-      <BrowserView>
-        <HomeSection />
-      </BrowserView>
-
-      
-      <MobileView>
-      </MobileView>
+    <Router>
+      <Routes>
+        {/* Define routes */}
+        <Route path="/" element={<HomeSection />} />
+        <Route path="/ComCheck" element={<Compactibility />} />
+      </Routes>
+    </Router>
     </>
   );
 }

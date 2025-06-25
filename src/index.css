@@ -250,8 +250,9 @@ body {
   position: absolute;
   font-weight: 900;
   font-size: 4rem;
-  left: 1.6em;
-  top: 50%;
+  left: 10%;
+  top: 10%;
+  transform: translate(-50%,0);
 }
 
 .action-button-icon {
@@ -262,17 +263,11 @@ body {
   font-size: 26px;
 }
 
-.face-title {
-  position: absolute;
-  top: 50%;
-  transform: translate(20%, -50%);
-}
-
 .face-title.active {
   opacity: 1;
-  transform: translate(20%, -50%);
   pointer-events: auto;
   transition: 0.5s ease;
+  transform: translate(0%,0);
 }
 
 .face-title.inactive {
@@ -284,23 +279,22 @@ body {
 .face-description {
   user-select: none;
   position: absolute;
-  max-width: 10ch;
-  top: 50%;
+  max-width: 20ch;
+  top: 21%;
   font-size: 1.5rem;
-  right: 1%;
-  transform: translate(0, -50%);
+  left: 10%;
+  transform: translate(-90%,0);
 }
 
 .face-description.active {
   opacity: 1;
-  transform: translate(-90%, -50%);
   pointer-events: auto;
   transition: 0.5s ease;
+  transform: translate(0%,0);
 }
 
 .face-description.inactive {
   pointer-events: none;
-  transform: translate(-60%, -50%);
   opacity: 0;
   transition: 0.1s ease;
 }
@@ -327,8 +321,12 @@ body {
 }
 
 @media (max-width: 1500px) {
-  .face-title, .face-description {
-    display: none;
+  .face-title {
+    top: 15%;
+  font-size: 3rem;
+  }.face-description {
+    top: 25%;
+  font-size: 1.25rem;
   }
 }
 

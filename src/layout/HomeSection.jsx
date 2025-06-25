@@ -1,10 +1,7 @@
 import Silk from "../specialComponents/Silk";
-import { CgClose } from "react-icons/cg";
-import { BiMenu } from "react-icons/bi";
 import PropTypes from "prop-types";
 
-const HomeSection = ({ isNavOpen,openNav }) => {
-
+const HomeSection = () => {
   return (
     <section className="relative">
       <div className="SilkCanvas">
@@ -16,18 +13,6 @@ const HomeSection = ({ isNavOpen,openNav }) => {
           rotation={30}
         />{" "}
       </div>
-
-      <button className="fixed z-[100] top-4 right-4 h-fit" onClick={openNav}>
-        {isNavOpen ? (
-          <>
-            <CgClose />
-          </>
-        ) : (
-          <>
-            <BiMenu />
-          </>
-        )}
-      </button>
     </section>
   );
 };

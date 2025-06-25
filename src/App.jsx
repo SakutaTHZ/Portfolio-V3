@@ -8,30 +8,33 @@ import InfiniteMenu from "../src/specialComponents/InfiniteMenu";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
+import { CgClose } from "react-icons/cg";
+import { BiMenu } from "react-icons/bi";
+
 const navItems = [
   {
-    image: "https://comicbook.com/wp-content/uploads/sites/4/2025/03/Wuthering-Waves-2.2-Uupdate-Banner.jpg",
+    image: "../src/images/rabbit.jpg",
     link: "https://google.com/",
     title: "Home",
     description: "A Brief Introduction",
   },
   {
-    image: "https://picsum.photos/400/400?grayscale",
+    image: "../src/images/doggo.jpg",
     link: "https://google.com/",
-    title: "Item 2",
-    description: "This is pretty cool, right?",
+    title: "About Me",
+    description: "Who is Sakuta?",
   },
   {
-    image: "https://picsum.photos/500/500?grayscale",
+    image: "../src/images/cat.jpg",
     link: "https://google.com/",
-    title: "Item 3",
-    description: "This is pretty cool, right?",
+    title: "My Works",
+    description: "Here Are Some of My Projects",
   },
   {
-    image: "https://picsum.photos/600/600?grayscale",
+    image: "../src/images/mouse.jpg",
     link: "https://google.com/",
-    title: "Item 4",
-    description: "This is pretty cool, right?",
+    title: "Contact Me",
+    description: "Take a call if you are interested.",
   },
 ];
 
@@ -44,6 +47,18 @@ function App() {
   return (
     <>
       <SplashCursor />
+
+      <button className="fixed z-[100] top-4 right-4 h-fit bg-[#ffffff50] p-2 rounded-full text-black shadow-md backdrop-blur-md" onClick={openNav}>
+        {isNavOpen ? (
+          <>
+            <CgClose />
+          </>
+        ) : (
+          <>
+            <BiMenu />
+          </>
+        )}
+      </button>
 
       <AnimatePresence>
         {isNavOpen && (

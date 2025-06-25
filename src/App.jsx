@@ -48,7 +48,12 @@ function App() {
     <>
       <SplashCursor />
 
-      <button className="fixed z-[100] top-4 right-4 h-fit bg-[#ffffff50] p-2 rounded-full text-black shadow-md backdrop-blur-md" onClick={openNav}>
+      <button
+        className={`fixed z-[100] top-4 right-4 h-fit p-2 rounded-full shadow-md backdrop-blur-md ${
+          isNavOpen ? "bg-red-500 text-white" : "bg-[#ffffff50] text-black"
+        } transition-all`}
+        onClick={openNav}
+      >
         {isNavOpen ? (
           <>
             <CgClose />
@@ -64,10 +69,13 @@ function App() {
         {isNavOpen && (
           <motion.div
             key="menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{
+              scale: { duration: 0.4, ease: [0.6, -0.28, 0.735, 0.045] },
+              opacity: { duration: 0.5, ease: [0.6, -0.28, 0.735, 0.045], delay: 0.1 },
+            }}
             style={{ height: "100dvh", width: "100%", position: "fixed" }}
             className="Menu z-[99]"
           >

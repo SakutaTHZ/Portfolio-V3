@@ -17,7 +17,7 @@ const HomeSection = () => {
 
       <div className="h-screen w-screen fixed inset-0 flex flex-col md:flex-row items-center justify-center z-10 gap-4 md:gap-12">
         <TiltedCard
-          imageSrc="https://i.ibb.co/xt5CvQTG/download-23.jpg"
+          imageSrc="https://i.ibb.co/nsyMrFYq/My-Profile.png"
           altText="Insert Profile Picture"
           captionText="SakutaTHZ"
           containerHeight="300px"
@@ -33,9 +33,10 @@ const HomeSection = () => {
             <p className="tilted-card-demo-text">Thar Htet Zan</p>
           }
         />
-        <h1 className="text-4xl font-bold text-center mt-10">
-          HI! My Name is THAR HTET ZAN
-        </h1>
+        <div className="flex flex-col justify-start items-start gap-2">
+          <p>HI! My Name is</p>
+          <span className="text-4xl font-bold">THAR HTET ZAN</span> 
+        </div>
       </div>
     </section>
   );

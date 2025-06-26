@@ -13,25 +13,25 @@ import { BiMenu } from "react-icons/bi";
 
 const navItems = [
   {
-    image: "../src/images/rabbit.jpg",
+    image: "https://i.ibb.co/xt5CvQTG/download-23.jpg",
     link: "https://google.com/",
     title: "Home",
     description: "A Brief Introduction",
   },
   {
-    image: "../src/images/doggo.jpg",
+    image: "https://i.ibb.co/xt5CvQTG/download-23.jpg",
     link: "https://google.com/",
     title: "About Me",
     description: "Who is Sakuta?",
   },
   {
-    image: "../src/images/cat.jpg",
+    image: "https://i.ibb.co/xt5CvQTG/download-23.jpg",
     link: "https://google.com/",
     title: "My Works",
     description: "Here Are Some of My Projects",
   },
   {
-    image: "../src/images/mouse.jpg",
+    image: "https://i.ibb.co/xt5CvQTG/download-23.jpg",
     link: "https://google.com/",
     title: "Contact Me",
     description: "Take a call if you are interested.",

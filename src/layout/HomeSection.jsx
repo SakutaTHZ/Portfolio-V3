@@ -1,8 +1,12 @@
 import Silk from "../specialComponents/Silk";
 import PropTypes from "prop-types";
 import TiltedCard from "../specialComponents/TiltedCard";
+import useIsMobile from "../hooks/useIsMobile";
 
 const HomeSection = () => {
+  const isMobile = useIsMobile();
+  const profileCardSize = isMobile ? "300px" : "200px";
+
   return (
     <section className="relative">
       <div className="SilkCanvas">
@@ -20,10 +24,10 @@ const HomeSection = () => {
           imageSrc="https://i.ibb.co/nsyMrFYq/My-Profile.png"
           altText="Insert Profile Picture"
           captionText="SakutaTHZ"
-          containerHeight="300px"
-          containerWidth="300px"
-          imageHeight="300px"
-          imageWidth="300px"
+          containerHeight={profileCardSize}
+          containerWidth={profileCardSize}
+          imageHeight={profileCardSize}
+          imageWidth={profileCardSize}
           rotateAmplitude={15}
           scaleOnHover={1.1}
           showMobileWarning={false}

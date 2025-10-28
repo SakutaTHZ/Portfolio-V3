@@ -2,25 +2,18 @@ import Silk from "../specialComponents/Silk";
 import PropTypes from "prop-types";
 import TiltedCard from "../specialComponents/TiltedCard";
 import useIsMobile from "../hooks/useIsMobile";
-import CurvedLoop from "../specialComponents/CurvedLoop";
 import image from "../images/profile.jpg";
-import useRandomQuote from "../hooks/useRandomQuotes";
 import ShinyText from "../specialComponents/ShinyText";
 import SplitText from "../specialComponents/SplitText";
-import { useEffect } from "react";
 import BlurText from "../specialComponents/BlurText";
 import Magnet from "../specialComponents/Magnet";
 import { BsArrowUpRight } from "react-icons/bs";
 import StarBorder from "../specialComponents/StarBorder";
+import CardSwap, { Card } from "../specialComponents/CardSwap";
 
 const HomeSection = () => {
   const isMobile = useIsMobile();
   const profileCardSize = isMobile ? "320px" : "250px";
-  const { quote, refreshQuote } = useRandomQuote();
-
-  useEffect(() => {
-    refreshQuote();
-  }, [refreshQuote]);
 
   return (
     <section className="relative w-screen h-screen overflow-hidden">
@@ -34,14 +27,27 @@ const HomeSection = () => {
         />{" "}
       </div>
 
-      <CurvedLoop
-        marqueeText={quote}
-        speed={3}
-        curveAmount={500}
-        direction="left"
-        interactive={true}
-        className="custom-text-style"
-      />
+      <div className="h-[600px] md:h-[600px] absolute right-16 md:right-0 -bottom-24 md:-bottom-16  md:scale-100">
+        <CardSwap
+          cardDistance={isMobile ? 200 : 200}
+          verticalDistance={isMobile ? 180 : 150}
+          delay={5000}
+          pauseOnHover={false}
+        >
+          <Card>
+            <h3 className="text-2xl font-bold">Recruiza</h3>
+            <p>Your content here</p>
+          </Card>
+          <Card>
+            <h3 className="text-2xl font-bold">NT Lyric n Chord</h3>
+            <p>Your content here</p>
+          </Card>
+          <Card>
+            <h3 className="text-2xl font-bold">ShikaTypo</h3>
+            <p>Your content here</p>
+          </Card>
+        </CardSwap>
+      </div>
 
       <div className="h-screen w-screen fixed inset-0 flex flex-col md:flex-row items-center justify-center z-10 gap-4 md:gap-12">
         <TiltedCard

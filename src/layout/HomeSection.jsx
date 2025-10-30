@@ -1,4 +1,4 @@
-import Silk from "../specialComponents/Silk";
+//import Silk from "../specialComponents/Silk";
 import PropTypes from "prop-types";
 import TiltedCard from "../specialComponents/TiltedCard";
 import useIsMobile from "../hooks/useIsMobile";
@@ -10,6 +10,13 @@ import Magnet from "../specialComponents/Magnet";
 import { BsArrowUpRight } from "react-icons/bs";
 import StarBorder from "../specialComponents/StarBorder";
 import CardSwap, { Card } from "../specialComponents/CardSwap";
+import LightRays from "../specialComponents/LightRays";
+
+import tcg from '../images/Projects/GameScreen.png';
+import ShikaTypo from '../images/Projects/ShikaTypo.png';
+import zlot from '../images/Projects/Zlot.png';
+import nt from '../images/Projects/NT.png';
+import recruiza from '../images/Projects/Recruiza.png';
 
 const HomeSection = () => {
   const isMobile = useIsMobile();
@@ -17,7 +24,7 @@ const HomeSection = () => {
 
   return (
     <section className="relative w-screen h-screen overflow-hidden">
-      <div className="SilkCanvas">
+      {/*<div className="SilkCanvas">
         <Silk
           speed={5}
           scale={0.85}
@@ -25,26 +32,54 @@ const HomeSection = () => {
           noiseIntensity={0.5}
           rotation={30}
         />{" "}
+      </div>*/}
+
+      <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#ffffff"
+          raysSpeed={1.5}
+          lightSpread={2}
+          rayLength={1}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0.1}
+          distortion={.05}
+          className="custom-rays"
+        />
       </div>
 
-      <div className="h-[600px] md:h-[600px] absolute right-16 md:right-0 -bottom-24 md:-bottom-16  md:scale-100">
+      <div className="h-[600px] md:h-[600px] absolute right-12 md:right-0 -bottom-32 md:-bottom-16  md:scale-100 z-50">
         <CardSwap
-          cardDistance={isMobile ? 200 : 200}
+          cardDistance={isMobile ? 150 : 150}
           verticalDistance={isMobile ? 180 : 150}
           delay={5000}
-          pauseOnHover={false}
+          pauseOnHover={true}
         >
           <Card>
             <h3 className="text-2xl font-bold">Recruiza</h3>
-            <p>Your content here</p>
+            <p>Recruitement Management System</p>
+            <img src={recruiza} className="mt-4"/>
           </Card>
           <Card>
             <h3 className="text-2xl font-bold">NT Lyric n Chord</h3>
-            <p>Your content here</p>
+            <p>Lyics App for Myanmar Songs</p>
+            <img src={nt} className="mt-4"/>
           </Card>
           <Card>
             <h3 className="text-2xl font-bold">ShikaTypo</h3>
-            <p>Your content here</p>
+            <p>A Typing Simulator Gamified</p>
+            <img src={ShikaTypo} className="mt-4"/>
+          </Card>
+          <Card>
+            <h3 className="text-2xl font-bold">Project-T</h3>
+            <p>A Personal TCG Game (In Development)</p>
+            <img src={tcg} className="mt-4"/>
+          </Card>
+          <Card>
+            <h3 className="text-2xl font-bold">ZLOT</h3>
+            <p>Slot Game why not</p>
+            <img src={zlot} className="mt-4"/>
           </Card>
         </CardSwap>
       </div>

@@ -2,7 +2,6 @@ import "./App.css";
 import HomeSection from "./layout/HomeSection";
 import Compactibility from "./pages/Compactibility";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import SplashCursor from "../src/specialComponents/SplashCursor";
 import aboutMeImg from "./images/Me.png";
 import contactImg from "./images/Contact.png";
 import projectsImg from "./images/Projects.png";
@@ -14,17 +13,20 @@ import { useState } from "react";
 
 import { CgClose } from "react-icons/cg";
 import { BiMenu } from "react-icons/bi";
+import AboutMe from "./pages/AboutMe";
+
+const siteUrl = import.meta.env.VITE_BASE_URL;
 
 const navItems = [
   {
     image: homeImg,
-    link: "https://google.com/",
+    link: `${siteUrl}`,
     title: "Home",
     description: "A Brief Introduction",
   },
   {
     image: aboutMeImg,
-    link: "https://google.com/",
+    link: `${siteUrl}/About`,
     title: "About Me",
     description: "Who is Sakuta?",
   },
@@ -43,6 +45,7 @@ const navItems = [
 ];
 
 function App() {
+
   const [isNavOpen, setIsNavOpen] = useState(false);
   const openNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -50,7 +53,6 @@ function App() {
 
   return (
     <>
-      <SplashCursor />
 
       <button
         className={`fixed z-[100] top-4 right-4 h-fit p-2 rounded-full shadow-md backdrop-blur-md ${
@@ -96,6 +98,7 @@ function App() {
             element={<HomeSection isNavOpen={isNavOpen} openNav={openNav} />}
           />
           <Route path="/ComCheck" element={<Compactibility />} />
+          <Route path="/About" element={<AboutMe />} />
         </Routes>
       </Router>
     </>

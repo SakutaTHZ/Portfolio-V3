@@ -1154,7 +1154,7 @@ export default function InfiniteMenu({ items = [] }) {
   const handleButtonClick = () => {
     if (!activeItem?.link) return;
     if (activeItem.link.startsWith("http")) {
-      window.open(activeItem.link, "_blank");
+      window.open(activeItem.link, "_self");
     } else {
       console.log("Internal route:", activeItem.link);
     }

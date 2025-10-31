@@ -17,6 +17,7 @@ import ShikaTypo from '../images/Projects/ShikaTypo.png';
 import zlot from '../images/Projects/Zlot.png';
 import nt from '../images/Projects/NT.png';
 import recruiza from '../images/Projects/Recruiza.png';
+import SplashCursor from './../specialComponents/SplashCursor';
 
 const HomeSection = () => {
   const isMobile = useIsMobile();
@@ -24,6 +25,8 @@ const HomeSection = () => {
 
   return (
     <section className="relative w-screen h-screen overflow-hidden">
+    
+      <SplashCursor />
       {/*<div className="SilkCanvas">
         <Silk
           speed={5}
@@ -134,9 +137,9 @@ const HomeSection = () => {
               color="cyan"
               speed="5s"
             >
-              <button className="border border-gray-700 p-2 px-4 rounded-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
+              <div className="border border-gray-700 p-2 px-4 rounded-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
                 Come I&lsquo;ll tell you more <BsArrowUpRight />
-              </button>
+              </div>
             </StarBorder>
           </Magnet>
         </div>

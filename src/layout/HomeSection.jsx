@@ -48,7 +48,7 @@ const HomeSection = () => {
           mouseInfluence={0.1}
           noiseAmount={0.1}
           distortion={.05}
-          className="custom-rays"
+          className="custom-rays animate-fadeIn"
         />
       </div>
 

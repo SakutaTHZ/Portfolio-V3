@@ -25,7 +25,7 @@ const AboutMe = () => {
           clickEffect={true}
           spotlightRadius={300}
           particleCount={12}
-          glowColor="255, 255, 255"
+          glowColor="255, 255, 255, .5"
         />
       </div>
     </>

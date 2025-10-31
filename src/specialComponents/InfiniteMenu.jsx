@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { mat4, quat, vec2, vec3 } from "gl-matrix";
 
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const discVertShaderSource = `#version 300 es
 
@@ -1113,7 +1114,9 @@ const defaultItems = [
   },
 ];
 
-export default function InfiniteMenu({ items = [] }) {
+export default function InfiniteMenu({ items = [], closeMenu }) {
+  const navigate = useNavigate();
+
   const canvasRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
@@ -1153,10 +1156,13 @@ export default function InfiniteMenu({ items = [] }) {
 
   const handleButtonClick = () => {
     if (!activeItem?.link) return;
+
     if (activeItem.link.startsWith("http")) {
       window.open(activeItem.link, "_self");
+      closeMenu?.(); // Close menu right after navigating externally
     } else {
-      console.log("Internal route:", activeItem.link);
+      navigate(activeItem.link);
+      closeMenu?.(); // Close after internal navigation too
     }
   };
 
@@ -1196,4 +1202,5 @@ InfiniteMenu.propTypes = {
       description: PropTypes.string,
     })
   ),
+  closeMenu:PropTypes.bool,
 };

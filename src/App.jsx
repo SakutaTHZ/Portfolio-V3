@@ -26,7 +26,7 @@ const navItems = [
   },
   {
     image: aboutMeImg,
-    link: `${siteUrl}/About`,
+    link: `/About`,
     title: "About Me",
     description: "Who is Sakuta?",
   },

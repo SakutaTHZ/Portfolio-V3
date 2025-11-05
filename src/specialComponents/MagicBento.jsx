@@ -6,6 +6,7 @@ import BlurText from "./BlurText";
 import profileImg from "../images/AboutMe.png";
 import CircularText from "./CircularText";
 import logo from "../../public/logo.png";
+import GradualBlurMemo from "./GradualBlur";
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
@@ -19,14 +20,17 @@ const ProfileBox = () => {
   return (
     <div className="custom-content relative flex flex-col items-end justify-end h-full text-center p-6 py-8">
       <img src={profileImg} className="h-full rounded-md z-10" />
-      <div className="absolute left-[15%] flex justify-center items-center">
+      <div className="absolute h-[70%] aspect-square left-[15%] flex justify-center items-center">
         <CircularText
           text="Thar-Htet-Zan-Sakuta-THZ-"
           onHover="goBonkers"
           spinDuration={20}
           className="custom-class text-lg opacity-75 hover:opacity-100"
         />
-        <img src={logo} className="absolute -top-12 -left-12  rounded-md z-5 opacity-5" />
+        <img
+          src={logo}
+          className="absolute -top-12 -left-12  rounded-md z-5 opacity-5"
+        />
       </div>
     </div>
   );
@@ -41,7 +45,7 @@ const cardData = [
   {
     color: "#060010",
     content: (
-      <div className="custom-content flex flex-col items-start justify-end h-full text-center p-6 py-8">
+      <div className="about-content flex flex-col items-start justify-start h-full text-center p-4 overflow-y-scroll">
         <h3 className="text-2xl font-semibold border-b pb-2 mb-2">About Me</h3>
         <BlurText
           text="I'm a front-end developer and UI/UX designer with a deep interest in building intuitive, engaging user experiences. I specialize in transforming complex ideas into clean, functional designs through a mix of design thinking, rapid prototyping, and front-end implementation."
@@ -49,6 +53,16 @@ const cardData = [
           animateBy="words"
           direction="top"
           className="w-full text-base"
+        />
+        <GradualBlurMemo
+          target="parent"
+          position="bottom"
+          height="2rem"
+          strength={5}
+          divCount={5}
+          curve="bezier"
+          exponential={true}
+          opacity={1}
         />
       </div>
     ),
@@ -66,24 +80,23 @@ const cardData = [
     color: "#060010",
     content: (
       <div className="custom-content p-4 flex flex-col items-center justify-center h-full">
-        <h3 className="text-xl font-bold text-gray-100 mt-2">
-          Work History
-        </h3>
+        <h3 className="text-xl font-bold text-gray-100 mt-2">Work History</h3>
       </div>
     ),
   },
   {
     color: "#060010",
     content: (
-      <div className="custom-content p-4 flex flex-col justify-end h-full">
-      </div>
+      <div className="custom-content p-4 flex flex-col justify-end h-full"></div>
     ),
   },
   {
     color: "#060010",
     content: (
       <div className="custom-content p-4 flex flex-col items-center justify-center h-full bg-gray-900/10">
-        <h3 className="text-xl font-bold text-gray-100 mt-2">Tik Tak Toe Here</h3>
+        <h3 className="text-xl font-bold text-gray-100 mt-2">
+          Tik Tak Toe Here
+        </h3>
       </div>
     ),
   },

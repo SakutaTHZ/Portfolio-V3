@@ -23,22 +23,14 @@ import { useTranslation} from "react-i18next";
 
 const HomeSection = () => {
   const { t } = useTranslation();
+  const animationOn= JSON.parse(localStorage.getItem("animationState"));
 
   const isMobile = useIsMobile();
   const profileCardSize = isMobile ? "320px" : "250px";
 
   return (
     <section className="relative w-screen h-screen overflow-hidden">
-      <SplashCursor />
-      {/*<div className="SilkCanvas">
-        <Silk
-          speed={5}
-          scale={0.85}
-          color="#313131"
-          noiseIntensity={0.5}
-          rotation={30}
-        />{" "}
-      </div>*/}
+      {animationOn && <SplashCursor/>}
 
       <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
         <LightRays
@@ -90,7 +82,7 @@ const HomeSection = () => {
         </CardSwap>
       </div>
 
-      <div className="h-screen w-screen fixed inset-0 flex flex-col md:flex-row items-center justify-center z-10 gap-4 md:gap-12 z-50">
+      <div className="h-screen w-screen fixed inset-0 flex flex-col md:flex-row items-center justify-center gap-4 p-4 md:gap-12 z-50">
         <TiltedCard
           imageSrc={image}
           altText="Insert Profile Picture"
@@ -133,14 +125,14 @@ const HomeSection = () => {
             direction="top"
             className="max-w-80 md:max-w-96"
           />
-          <Magnet padding={50} disabled={false} magnetStrength={5}>
+          <Magnet padding={50} magnetStrength={5} disabled={animationOn ? false : true}>
             <StarBorder
               as="button"
               className="custom-class mt-2"
               color="cyan"
               speed="5s"
             >
-              <div className="border border-gray-700 p-2 px-4 rounded-full w-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
+              <div className=" p-2 px-4 rounded-full w-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
                 {t("HomeSection.comeIllTellYouMore")} <BsArrowUpRight />
               </div>
             </StarBorder>

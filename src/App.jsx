@@ -20,6 +20,8 @@ import homeImg from "./images/Home.png";
 import aboutMeImg from "./images/Me.png";
 import projectsImg from "./images/Projects.png";
 import contactImg from "./images/Contact.png";
+import SettingsSection from "./layout/SettingsSection";
+import statesChecker from "./js/statesChecker";
 
 
 const navItems = [
@@ -38,6 +40,7 @@ const LoadingFallback = () => (
 
 
 function App() {
+  statesChecker();
   const [isNavOpen, setIsNavOpen] = useState(false);
   const openNav = () => setIsNavOpen(!isNavOpen);
 
@@ -97,12 +100,10 @@ function App() {
               translateX: { duration: 0.4, ease: [0.6, -0.28, 0.735, 0.045] },
               opacity: { duration: 0.5, ease: [0.6, -0.28, 0.735, 0.045], delay: 0.1 },
             }}
-            style={{ height: "100dvh", width: "100%", position: "fixed" }}
-            className="Menu z-[99]"
+            style={{ height: "100dvh", position: "fixed" }}
+            className="Menu z-[99] w-full"
           >
-            <div className="h-full w-full backdrop-blur-md bg-[#00000050] flex items-center justify-center">
-              <h1 className="text-2xl font-bold text-white">Settings Coming Soon...</h1>
-            </div>
+            <SettingsSection/>
           </motion.div>
         )}
       </AnimatePresence>

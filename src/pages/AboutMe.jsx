@@ -1,4 +1,3 @@
-import MagicBento from "../specialComponents/MagicBento";
 import Silk from "./../specialComponents/Silk";
 
 const AboutMe = () => {
@@ -15,18 +14,6 @@ const AboutMe = () => {
       </div>
 
       <div className="w-screen h-screen flex justify-center items-start md:items-center">
-        <MagicBento
-          textAutoHide={true}
-          enableStars={true}
-          enableSpotlight={true}
-          enableBorderGlow={true}
-          enableTilt={true}
-          enableMagnetism={true}
-          clickEffect={true}
-          spotlightRadius={300}
-          particleCount={12}
-          glowColor="255, 255, 255, .5"
-        />
       </div>
     </>
   );

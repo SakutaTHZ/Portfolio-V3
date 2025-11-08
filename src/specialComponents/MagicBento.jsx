@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 import "../css/MagicBento.css";
 import PropTypes from "prop-types";
 import BlurText from "./BlurText";
-import profileImg from "../images/AboutMe.png";
+import profileImg from "../images/Projects.png";
 import CircularText from "./CircularText";
 import logo from "../../public/logo.png";
 import GradualBlurMemo from "./GradualBlur";

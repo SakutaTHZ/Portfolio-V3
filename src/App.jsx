@@ -1,19 +1,26 @@
+import { useState, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import InfiniteMenu from "./specialComponents/InfiniteMenu";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
 import { CgClose } from "react-icons/cg";
 import { BiMenu } from "react-icons/bi";
+import { RiSettings2Line } from "react-icons/ri";
 
+// 1. LAZY LOAD ROUTE COMPONENTS
+const Compactibility = lazy(() => import("./pages/Compactibility"));
+const AboutMe = lazy(() => import("./pages/AboutMe"));
+// HomeSection is kept as a direct import if it is small and essential for the main page
 import HomeSection from "./layout/HomeSection";
-import Compactibility from "./pages/Compactibility";
-import AboutMe from "./pages/AboutMe";
 
+// 2. LAZY LOAD THE COMPLEX MENU COMPONENT
+const InfiniteMenu = lazy(() => import("./specialComponents/InfiniteMenu"));
+
+
+// 3. IMAGE IMPORTS (Assuming these are handled by a bundler for optimization)
 import homeImg from "./images/Home.png";
 import aboutMeImg from "./images/Me.png";
 import projectsImg from "./images/Projects.png";
 import contactImg from "./images/Contact.png";
-import { RiSettings2Line } from "react-icons/ri";
+
 
 const navItems = [
   { image: homeImg, link: "/", title: "Home", description: "A Brief Introduction" },
@@ -21,6 +28,14 @@ const navItems = [
   { image: projectsImg, link: "https://google.com/", title: "My Works", description: "Here Are Some of My Projects" },
   { image: contactImg, link: "https://google.com/", title: "Contact Me", description: "Take a call if you are interested." },
 ];
+
+// Fallback component for when a component is loading
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center h-full text-lg font-semibold">
+    Loading...
+  </div>
+);
+
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -31,7 +46,7 @@ function App() {
 
   return (
     <Router>
-      {/* ✅ Router now wraps everything */}
+      {/* --- Navigation and Settings Buttons --- */}
       <button
         className={`fixed z-[100] top-4 right-4 h-fit p-2 rounded-full shadow-md backdrop-blur-md ${
           isNavOpen ? "bg-red-500 text-white" : "bg-[#ffffff50] text-black"
@@ -43,13 +58,14 @@ function App() {
 
       <button
         className={`fixed z-[100] top-4 left-4 h-fit p-2 rounded-full shadow-md backdrop-blur-md ${
-          isNavOpen ? "bg-red-500 text-white" : "bg-[#ffffff50] text-black"
+          isSettingsOpen ? "bg-red-500 text-white" : "bg-[#ffffff50] text-black"
         } ${isNavOpen && "-translate-y-12 opacity-0"} transition-all`}
         onClick={openSettings}
       >
         {isSettingsOpen ? <CgClose /> : <RiSettings2Line />}
       </button>
 
+      {/* --- Conditionally Rendered Menus (Code Splitting applied) --- */}
       <AnimatePresence>
         {isNavOpen && (
           <motion.div
@@ -64,9 +80,13 @@ function App() {
             style={{ height: "100dvh", width: "100%", position: "fixed" }}
             className="Menu z-[99]"
           >
-            <InfiniteMenu items={navItems} closeMenu={() => setIsNavOpen(false)}/>
+            {/* 4. Use Suspense for the Lazy Loaded InfiniteMenu */}
+            <Suspense fallback={null}>
+              <InfiniteMenu items={navItems} closeMenu={() => setIsNavOpen(false)}/>
+            </Suspense>
           </motion.div>
         )}
+
         {isSettingsOpen && (
           <motion.div
             key="settings"
@@ -81,18 +101,21 @@ function App() {
             className="Menu z-[99]"
           >
             <div className="h-full w-full backdrop-blur-md bg-[#00000050] flex items-center justify-center">
-              {/* Languages Setting */}
-              <h1 className="text-2xl font-bold">Settings Coming Soon...</h1>
+              <h1 className="text-2xl font-bold text-white">Settings Coming Soon...</h1>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <Routes>
-        <Route path="/" element={<HomeSection isNavOpen={isNavOpen} openNav={openNav} />} />
-        <Route path="/ComCheck" element={<Compactibility />} />
-        <Route path="/About" element={<AboutMe />} />
-      </Routes>
+      {/* --- Main Routing (Code Splitting applied) --- */}
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<HomeSection isNavOpen={isNavOpen} openNav={openNav} />} />
+          {/* 5. Routes that load components only when visited */}
+          <Route path="/ComCheck" element={<Compactibility />} />
+          <Route path="/About" element={<AboutMe />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

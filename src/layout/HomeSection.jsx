@@ -12,20 +12,23 @@ import StarBorder from "../specialComponents/StarBorder";
 import CardSwap, { Card } from "../specialComponents/CardSwap";
 import LightRays from "../specialComponents/LightRays";
 
-import tcg from '../images/Projects/GameScreen.png';
-import ShikaTypo from '../images/Projects/ShikaTypo.png';
-import zlot from '../images/Projects/Zlot.png';
-import nt from '../images/Projects/NT.png';
-import recruiza from '../images/Projects/Recruiza.png';
-import SplashCursor from './../specialComponents/SplashCursor';
+import tcg from "../images/Projects/GameScreen.png";
+import ShikaTypo from "../images/Projects/ShikaTypo.png";
+import zlot from "../images/Projects/Zlot.png";
+import nt from "../images/Projects/NT.png";
+import recruiza from "../images/Projects/Recruiza.png";
+import SplashCursor from "./../specialComponents/SplashCursor";
+
+import { useTranslation} from "react-i18next";
 
 const HomeSection = () => {
+  const { t } = useTranslation();
+
   const isMobile = useIsMobile();
   const profileCardSize = isMobile ? "320px" : "250px";
 
   return (
     <section className="relative w-screen h-screen overflow-hidden">
-    
       <SplashCursor />
       {/*<div className="SilkCanvas">
         <Silk
@@ -47,7 +50,7 @@ const HomeSection = () => {
           followMouse={true}
           mouseInfluence={0.1}
           noiseAmount={0.1}
-          distortion={.05}
+          distortion={0.05}
           className="custom-rays animate-fadeIn"
         />
       </div>
@@ -62,32 +65,32 @@ const HomeSection = () => {
           <Card>
             <h3 className="text-2xl font-bold">Recruiza</h3>
             <p>Recruitement Management System</p>
-            <img src={recruiza} className="mt-4"/>
+            <img src={recruiza} className="mt-4" />
           </Card>
           <Card>
             <h3 className="text-2xl font-bold">NT Lyric n Chord</h3>
             <p>Lyics App for Myanmar Songs</p>
-            <img src={nt} className="mt-4"/>
+            <img src={nt} className="mt-4" />
           </Card>
           <Card>
             <h3 className="text-2xl font-bold">ShikaTypo</h3>
             <p>A Typing Simulator Gamified</p>
-            <img src={ShikaTypo} className="mt-4"/>
+            <img src={ShikaTypo} className="mt-4" />
           </Card>
           <Card>
             <h3 className="text-2xl font-bold">Project-T</h3>
             <p>A Personal TCG Game (In Development)</p>
-            <img src={tcg} className="mt-4"/>
+            <img src={tcg} className="mt-4" />
           </Card>
           <Card>
             <h3 className="text-2xl font-bold">ZLOT</h3>
             <p>Slot Game why not</p>
-            <img src={zlot} className="mt-4"/>
+            <img src={zlot} className="mt-4" />
           </Card>
         </CardSwap>
       </div>
 
-      <div className="h-screen w-screen fixed inset-0 flex flex-col md:flex-row items-center justify-center z-10 gap-4 md:gap-12">
+      <div className="h-screen w-screen fixed inset-0 flex flex-col md:flex-row items-center justify-center z-10 gap-4 md:gap-12 z-50">
         <TiltedCard
           imageSrc={image}
           altText="Insert Profile Picture"
@@ -105,13 +108,13 @@ const HomeSection = () => {
         />
         <div className="flex flex-col justify-start items-start gap-2">
           <ShinyText
-            text="HI! My Name is"
+            text={t("HomeSection.hiMyNameIs")}
             disabled={false}
             speed={3}
             className="custom-class"
           />
           <SplitText
-            text="THAR HTET ZAN"
+            text={t("HomeSection.name")}
             className="text-4xl md:text-5xl font-bold"
             delay={100}
             duration={0.6}
@@ -124,7 +127,7 @@ const HomeSection = () => {
             textAlign="center"
           />
           <BlurText
-            text="I am a Software Developer mainly focusing on UI/UX and frontend developement because I love creating interesting Concepts and Ideas. I have also done projects with backend coding too"
+            text={t("HomeSection.description")}
             delay={150}
             animateBy="words"
             direction="top"
@@ -137,8 +140,8 @@ const HomeSection = () => {
               color="cyan"
               speed="5s"
             >
-              <div className="border border-gray-700 p-2 px-4 rounded-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
-                Come I&lsquo;ll tell you more <BsArrowUpRight />
+              <div className="border border-gray-700 p-2 px-4 rounded-full w-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
+                {t("HomeSection.comeIllTellYouMore")} <BsArrowUpRight />
               </div>
             </StarBorder>
           </Magnet>

@@ -1,0 +1,18 @@
+{
+  "app": {
+    "title": "My App",
+    "hello": "Hello, {{name}}!",
+    "items": "{{count}} item",
+    "items_plural": "{{count}} items"
+  },
+  "calendar": {
+    "today": "Today",
+    "monthNames": ["January","February","March","April","May","June","July","August","September","October","November","December"]
+  },
+  "HomeSection": {
+    "hiMyNameIs": "Hi! My Name is",
+    "name": "Thar Htet Zan",
+    "description" : "I'm a passionate web developer with experience in creating dynamic and user-friendly websites and applications. I love coding and continuously learning new technologies to enhance my skills.",
+    "comeIllTellYouMore": "Come, I'll tell you more about me."
+  }
+}

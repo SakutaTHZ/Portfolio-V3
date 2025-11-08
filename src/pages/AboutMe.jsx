@@ -1,4 +1,5 @@
 import Silk from "./../specialComponents/Silk";
+import { Button } from 'primereact/button';
 
 const AboutMe = () => {
   return (
@@ -14,6 +15,7 @@ const AboutMe = () => {
       </div>
 
       <div className="w-screen h-screen flex justify-center items-start md:items-center">
+        <Button label="About Me Page" className="p-button-lg p-button-outlined" />
       </div>
     </>
   );

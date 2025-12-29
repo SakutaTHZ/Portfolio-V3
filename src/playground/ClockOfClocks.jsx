@@ -128,58 +128,17 @@ const ClockOfClocks = () => {
   }, 1000);
 
   return (
-    <div className="w-full h-full items-center justify-center gap-4 grid grid-cols-2 md:grid-cols-6">
-      <div className="digit">
-        {/* loop 24 clocks here */}
-        {Array.from({ length: 24 }).map((_, index) => (
-          <div key={index} className="clock">
-            <div className="hand"></div>
-            <div className="hand"></div>
-          </div>
-        ))}
-      </div>
-      <div className="digit">
-        {/* loop 24 clocks here */}
-        {Array.from({ length: 24 }).map((_, index) => (
-          <div key={index} className="clock">
-            <div className="hand"></div>
-            <div className="hand"></div>
-          </div>
-        ))}
-      </div>
-      <div className="digit">
-        {/* loop 24 clocks here */}
-        {Array.from({ length: 24 }).map((_, index) => (
-          <div key={index} className="clock">
-            <div className="hand"></div>
-            <div className="hand"></div>
-          </div>
-        ))}
-      </div>
-      <div className="digit">
-        {/* loop 24 clocks here */}
-        {Array.from({ length: 24 }).map((_, index) => (
-          <div key={index} className="clock">
-            <div className="hand"></div>
-            <div className="hand"></div>
-          </div>
-        ))}
-      </div>
-      <div className="digit">
-        {/* loop 24 clocks here */}
-        {Array.from({ length: 24 }).map((_, index) => (
-          <div key={index} className="clock">
-            <div className="hand"></div>
-            <div className="hand"></div>
-          </div>
-        ))}
-      </div>
-      <div className="digit">
-        {/* loop 24 clocks here */}
-        {Array.from({ length: 24 }).map((_, index) => (
-          <div key={index} className="clock">
-            <div className="hand"></div>
-            <div className="hand"></div>
+    <div className="w-full h-screen min-h-screen flex items-center justify-center bg-black/90 backdrop-blur-md" >
+      <div className="clockofclocks items-center justify-center gap-4 grid grid-cols-2 md:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div className="digit" key={index}>
+            {/* loop 24 clocks here */}
+            {Array.from({ length: 24 }).map((_, i) => (
+              <div key={i} className="clock">
+                <div className="hand"></div>
+                <div className="hand"></div>
+              </div>
+            ))}
           </div>
         ))}
       </div>

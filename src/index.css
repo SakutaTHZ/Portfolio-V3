@@ -9,6 +9,8 @@
 * {
   padding: 0;
   margin: 0;
+  scroll-behavior: smooth;
+  scroll-snap-type: proximity;
 }
 
 body {
@@ -239,6 +241,11 @@ body {
   box-shadow: 0 0 0px hsl(from var(--primary-color) h s l / 0.02);
   animation: rgb 10s linear infinite;
 }
+
+.rgb{
+  animation: rgb 10s linear infinite;
+}
+
 .glassBox:nth-child(even)::before {
   background: conic-gradient(
     var(--primary-color) var(--fill),

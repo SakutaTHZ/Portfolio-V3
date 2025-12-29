@@ -1,0 +1,60 @@
+.clock {
+  position: relative;
+  height: 3em;
+  width: 3em;
+  border: 0.1em solid rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  background: black;
+  z-index: 10;
+  animation: rgb 12s steps(12) infinite;
+}
+
+@keyframes rgb {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.clock::after {
+  content: "";
+  position: absolute;
+  height: 0.4rem;
+  width: 0.4rem;
+  background: yellow;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0.125rem yellow;
+}
+
+.hand {
+  height: 0.2rem;
+  width: 50%;
+  background: yellow;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0% 50%;
+  rotate: 0deg;
+  border-radius: 2em;
+  transition: all 0.25s cubic-bezier(0.375, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 0.125rem yellow;
+}
+
+.digit {
+  display: grid;
+  grid-template: repeat(6, 1fr) / repeat(4, 1fr);
+  gap: 0.125rem;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .clock {
+    height: 2em;
+    width: 2em;
+  }
+}

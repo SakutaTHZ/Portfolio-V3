@@ -10,6 +10,7 @@ const Compactibility = lazy(() => import("./pages/Compactibility"));
 const AboutMe = lazy(() => import("./pages/AboutMe"));
 // HomeSection is kept as a direct import if it is small and essential for the main page
 import HomeSection from "./layout/HomeSection";
+import Playground from "./pages/Playground";
 
 // 2. LAZY LOAD THE COMPLEX MENU COMPONENT
 const InfiniteMenu = lazy(() => import("./specialComponents/InfiniteMenu"));
@@ -20,6 +21,7 @@ import homeImg from "./images/Home.png";
 import aboutMeImg from "./images/Me.png";
 import projectsImg from "./images/Projects.png";
 import contactImg from "./images/Contact.png";
+import playgroundImg from "./images/Playground.png";
 import SettingsSection from "./layout/SettingsSection";
 import statesChecker from "./js/statesChecker";
 
@@ -29,6 +31,7 @@ const navItems = [
   { image: aboutMeImg, link: "/About", title: "About Me", description: "Who is Sakuta?" },
   { image: projectsImg, link: "https://google.com/", title: "My Works", description: "Here Are Some of My Projects" },
   { image: contactImg, link: "https://google.com/", title: "Contact Me", description: "Take a call if you are interested." },
+  { image: playgroundImg, link: "/Playground", title: "Playground", description: "A place to experiment and test." },
 ];
 
 // Fallback component for when a component is loading
@@ -115,6 +118,7 @@ function App() {
           {/* 5. Routes that load components only when visited */}
           <Route path="/ComCheck" element={<Compactibility />} />
           <Route path="/About" element={<AboutMe />} />
+          <Route path="/Playground" element={<Playground />} />
         </Routes>
       </Suspense>
     </Router>

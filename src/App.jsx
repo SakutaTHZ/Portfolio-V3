@@ -10,17 +10,17 @@ const Compactibility = lazy(() => import("./pages/Compactibility"));
 const AboutMe = lazy(() => import("./pages/AboutMe"));
 // HomeSection is kept as a direct import if it is small and essential for the main page
 import HomeSection from "./layout/HomeSection";
-import Playground from "./pages/Playground";
+import Playground from "../src/pages/Playground.jsx";
 
 // 2. LAZY LOAD THE COMPLEX MENU COMPONENT
 const InfiniteMenu = lazy(() => import("./specialComponents/InfiniteMenu"));
 
 
 // 3. IMAGE IMPORTS (Assuming these are handled by a bundler for optimization)
-import homeImg from "./images/Home.png";
-import aboutMeImg from "./images/Me.png";
-import projectsImg from "./images/Projects.png";
-import contactImg from "./images/Contact.png";
+import homeImg from "../src/images/Home.png";
+import aboutMeImg from "../src/images/Me.png";
+import projectsImg from "../src/images/Projects.png";
+import contactImg from "../src/images/Contact.png";
 import playgroundImg from "../src/images/Icons/playground.png";
 import SettingsSection from "./layout/SettingsSection";
 import statesChecker from "./js/statesChecker";

@@ -10,7 +10,7 @@ const Compactibility = lazy(() => import("./pages/Compactibility"));
 const AboutMe = lazy(() => import("./pages/AboutMe"));
 // HomeSection is kept as a direct import if it is small and essential for the main page
 import HomeSection from "./layout/HomeSection";
-import Playground from "../src/pages/Playground.jsx";
+import Playground from "../src/pages/Playground";
 
 // 2. LAZY LOAD THE COMPLEX MENU COMPONENT
 const InfiniteMenu = lazy(() => import("./specialComponents/InfiniteMenu"));

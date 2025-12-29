@@ -1,4 +1,4 @@
-import ClockOfClocks from "../playground/clockOfClocks";
+import ClockOfClocks from "../../src/playground/ClockOfClocks";
 
 const Playground = () => {
   return (

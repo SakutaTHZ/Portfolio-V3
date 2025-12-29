@@ -21,7 +21,7 @@ import homeImg from "./images/Home.png";
 import aboutMeImg from "./images/Me.png";
 import projectsImg from "./images/Projects.png";
 import contactImg from "./images/Contact.png";
-import playgroundImg from "./images/Playground.png";
+import playgroundImg from "../src/images/Icons/playground.png";
 import SettingsSection from "./layout/SettingsSection";
 import statesChecker from "./js/statesChecker";
 

@@ -11,7 +11,7 @@ const Playground = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden text-white">
       {/* Background Layer */}
-      <div className="fixed inset-0 -z-10 rgb">
+      <div className="fixed inset-0 -z-10">
         <Balatro isRotate={false} mouseInteraction={true} pixelFilter={700} />
       </div>
 
@@ -19,7 +19,18 @@ const Playground = () => {
       {!activeApp && (
         <div className="flex flex-col items-center justify-center h-full px-4 gap-8 bg-black/20 backdrop-blur-sm">
           
-          <div className="grid grid-cols-2 md:grid-cols-12 gap-6 p-4 rounded-2xl w-full max-w-5xl bg-white/20 backdrop-blur-md shadow-lg">
+          <div className="grid grid-cols-2 md:grid-cols-12 gap-2 p-4 rounded-2xl w-full max-w-5xl bg-white/50 backdrop-blur-md shadow-lg">
+            {/* App Icon: Clock of Clocks */}
+            <button 
+              onClick={() => setActiveApp("clock")}
+              className="flex flex-col items-center gap-2 group transition-transform hover:scale-105"
+            >
+              <div className="w-16 h-16 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:bg-blue-400">
+                <span className="text-2xl">🕒</span>
+              </div>
+              <span className="text-sm font-medium">Clock of Clocks</span>
+            </button>
+
             {/* App Icon: Clock of Clocks */}
             <button 
               onClick={() => setActiveApp("clock")}

@@ -88,7 +88,7 @@ function App() {
           >
             {/* 4. Use Suspense for the Lazy Loaded InfiniteMenu */}
             <Suspense fallback={null}>
-              <InfiniteMenu items={navItems} closeMenu={!isNavOpen}/>
+              <InfiniteMenu items={navItems} closeMenu={() => setIsNavOpen(false)}/>
             </Suspense>
           </motion.div>
         )}

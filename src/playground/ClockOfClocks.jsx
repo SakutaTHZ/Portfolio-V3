@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "./css/ClockOfClocks.css";
 
 const angles = {
@@ -112,27 +113,45 @@ const assignDigitAnglesToClocks = (digit,clockElement) => {
 };
 
 const ClockOfClocks = () => {
-  // GET CURRENT TIME EVERY SECOND and assign the digits to the clocks
-  setInterval(() => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    const seconds = now.getSeconds().toString().padStart(2, "0");
-    const timeString = hours + minutes + seconds;
+  useEffect(() => {
+    // This function runs the clock logic
+    const updateClock = () => {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      const seconds = now.getSeconds().toString().padStart(2, "0");
+      const timeString = hours + minutes + seconds;
 
-    const digitElements = document.querySelectorAll(".digit");
-    timeString.split("").forEach((digit, index) => {
-      const clocks = digitElements[index].querySelectorAll(".clock");
-      assignDigitAnglesToClocks(digit, clocks);
-    });
-  }, 1000);
+      const digitElements = document.querySelectorAll(".digit");
+      
+      // Safety check: if the elements aren't there, don't run
+      if (digitElements.length === 0) return;
+
+      timeString.split("").forEach((digit, index) => {
+        const clocks = digitElements[index]?.querySelectorAll(".clock");
+        if (clocks) {
+          assignDigitAnglesToClocks(digit, clocks);
+        }
+      });
+    };
+
+    // 2. Start the interval
+    const timerId = setInterval(updateClock, 1000);
+    
+    // Run it immediately once so we don't wait 1 second for the first tick
+    updateClock();
+
+    // 3. THE CLEANUP: This runs when the component is unmounted
+    return () => {
+      clearInterval(timerId);
+    };
+  }, []); // Empty array means this runs once on mount and cleans up on unmount
 
   return (
-    <div className="w-full h-screen min-h-screen flex items-center justify-center bg-black/90 backdrop-blur-md" >
+    <div className="w-full h-screen min-h-screen flex items-center justify-center bg-black/90 backdrop-blur-md">
       <div className="clockofclocks items-center justify-center gap-4 grid grid-cols-2 md:grid-cols-6">
         {Array.from({ length: 6 }).map((_, index) => (
           <div className="digit" key={index}>
-            {/* loop 24 clocks here */}
             {Array.from({ length: 24 }).map((_, i) => (
               <div key={i} className="clock">
                 <div className="hand"></div>

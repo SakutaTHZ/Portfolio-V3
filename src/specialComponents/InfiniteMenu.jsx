@@ -1202,5 +1202,5 @@ InfiniteMenu.propTypes = {
       description: PropTypes.string,
     })
   ),
-  closeMenu:PropTypes.bool,
+  closeMenu:PropTypes.func,
 };

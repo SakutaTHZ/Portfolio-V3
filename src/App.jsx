@@ -15,7 +15,6 @@ import Playground from "../src/pages/Playground";
 // 2. LAZY LOAD THE COMPLEX MENU COMPONENT
 const InfiniteMenu = lazy(() => import("./specialComponents/InfiniteMenu"));
 
-
 // 3. IMAGE IMPORTS (Assuming these are handled by a bundler for optimization)
 import homeImg from "../src/images/Home.png";
 import aboutMeImg from "../src/images/Me.png";
@@ -25,13 +24,37 @@ import playgroundImg from "../src/images/Icons/playground.png";
 import SettingsSection from "./layout/SettingsSection";
 import statesChecker from "./js/statesChecker";
 
-
 const navItems = [
-  { image: homeImg, link: "/", title: "Home", description: "A Brief Introduction" },
-  { image: aboutMeImg, link: "/About", title: "About Me", description: "Who is Sakuta?" },
-  { image: projectsImg, link: "https://google.com/", title: "My Works", description: "Here Are Some of My Projects" },
-  { image: contactImg, link: "https://google.com/", title: "Contact Me", description: "Take a call if you are interested." },
-  { image: playgroundImg, link: "/Playground", title: "Playground", description: "A place to experiment and test." },
+  {
+    image: homeImg,
+    link: "/",
+    title: "Home",
+    description: "A Brief Introduction",
+  },
+  {
+    image: aboutMeImg,
+    link: "/About",
+    title: "About Me",
+    description: "Who is Sakuta?",
+  },
+  {
+    image: projectsImg,
+    link: "https://google.com/",
+    title: "My Works",
+    description: "Here Are Some of My Projects",
+  },
+  {
+    image: contactImg,
+    link: "https://google.com/",
+    title: "Contact Me",
+    description: "Take a call if you are interested.",
+  },
+  {
+    image: playgroundImg,
+    link: "/Playground",
+    title: "Playground",
+    description: "A place to experiment and test.",
+  },
 ];
 
 // Fallback component for when a component is loading
@@ -40,7 +63,6 @@ const LoadingFallback = () => (
     Loading...
   </div>
 );
-
 
 function App() {
   statesChecker();
@@ -81,14 +103,20 @@ function App() {
             exit={{ opacity: 0 }}
             transition={{
               scale: { duration: 0.4, ease: [0.6, -0.28, 0.735, 0.045] },
-              opacity: { duration: 0.5, ease: [0.6, -0.28, 0.735, 0.045], delay: 0.1 },
+              opacity: {
+                duration: 0.5,
+                ease: [0.6, -0.28, 0.735, 0.045],
+                delay: 0.1,
+              },
             }}
             style={{ height: "100dvh", width: "100%", position: "fixed" }}
             className="Menu z-[99]"
           >
-            {/* 4. Use Suspense for the Lazy Loaded InfiniteMenu */}
             <Suspense fallback={null}>
-              <InfiniteMenu items={navItems} closeMenu={() => setIsNavOpen(false)}/>
+              <InfiniteMenu
+                items={navItems}
+                closeMenu={() => setIsNavOpen(false)}
+              />
             </Suspense>
           </motion.div>
         )}
@@ -96,17 +124,21 @@ function App() {
         {isSettingsOpen && (
           <motion.div
             key="settings"
-            initial={{ opacity: 0, translateX: "-100%"}}
-            animate={{ opacity: 1, translateX: "0%"}}
+            initial={{ opacity: 0, translateX: "-100%" }}
+            animate={{ opacity: 1, translateX: "0%" }}
             exit={{ opacity: 0 }}
             transition={{
               translateX: { duration: 0.4, ease: [0.6, -0.28, 0.735, 0.045] },
-              opacity: { duration: 0.5, ease: [0.6, -0.28, 0.735, 0.045], delay: 0.1 },
+              opacity: {
+                duration: 0.5,
+                ease: [0.6, -0.28, 0.735, 0.045],
+                delay: 0.1,
+              },
             }}
             style={{ height: "100dvh", position: "fixed" }}
             className="Menu z-[99] w-full"
           >
-            <SettingsSection/>
+            <SettingsSection />
           </motion.div>
         )}
       </AnimatePresence>
@@ -114,7 +146,10 @@ function App() {
       {/* --- Main Routing (Code Splitting applied) --- */}
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          <Route path="/" element={<HomeSection isNavOpen={isNavOpen} openNav={openNav} />} />
+          <Route
+            path="/"
+            element={<HomeSection isNavOpen={isNavOpen} openNav={openNav} />}
+          />
           {/* 5. Routes that load components only when visited */}
           <Route path="/ComCheck" element={<Compactibility />} />
           <Route path="/About" element={<AboutMe />} />

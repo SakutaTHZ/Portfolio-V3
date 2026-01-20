@@ -19,18 +19,43 @@ import nt from "../images/Projects/NT.png";
 import recruiza from "../images/Projects/Recruiza.png";
 import SplashCursor from "./../specialComponents/SplashCursor";
 
-import { useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
 const HomeSection = () => {
   const { t } = useTranslation();
-  const animationOn= JSON.parse(localStorage.getItem("animationState"));
+  const animationOn = JSON.parse(localStorage.getItem("animationState"));
 
   const isMobile = useIsMobile();
   const profileCardSize = isMobile ? "320px" : "250px";
 
+  useEffect(() => {
+    const scriptId = "elfsight-platform-script"; // Give it an ID to find it easily
+    const existingScript = document.getElementById(scriptId);
+
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.src = "https://elfsightcdn.com/platform.js";
+      script.id = scriptId; // Assign the ID
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    // Cleanup: Remove script when component unmounts (Optional but recommended)
+    return () => {
+      // If you want the widget to persist across pages, DO NOT do this.
+      // If you want it ONLY on Home, keep this:
+      /* const scriptToRemove = document.getElementById(scriptId);
+      if (scriptToRemove) {
+        document.body.removeChild(scriptToRemove);
+      }
+      */
+    };
+  }, []);
+
   return (
     <section className="relative w-screen h-screen overflow-hidden">
-      {animationOn && <SplashCursor/>}
+      {animationOn && <SplashCursor />}
 
       <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
         <LightRays
@@ -125,7 +150,11 @@ const HomeSection = () => {
             direction="top"
             className="max-w-80 md:max-w-96"
           />
-          <Magnet padding={50} magnetStrength={5} disabled={animationOn ? false : true}>
+          <Magnet
+            padding={50}
+            magnetStrength={5}
+            disabled={animationOn ? false : true}
+          >
             <StarBorder
               as="button"
               className="custom-class mt-2"
@@ -139,6 +168,9 @@ const HomeSection = () => {
           </Magnet>
         </div>
       </div>
+      <div
+        className="elfsight-app-63933f58-a867-45ff-bb3f-ce028a57dcb4 fixed bottom-12 left-0 z-[10000]"
+      />
     </section>
   );
 };

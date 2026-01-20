@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import LogoLoop from "../specialComponents/LogoLoop";
 import Silk from "./../specialComponents/Silk";
 import {
@@ -23,6 +24,39 @@ const techLogos = [
 ];
 
 const AboutMe = () => {
+  useEffect(() => {
+    // 1. Define the Claspo script logic
+    const initClaspo = () => {
+      (function (t, e, c, n) {
+        var s = e.createElement(c);
+        s.async = 1;
+        s.src = 'https://scripts.claspo.io/scripts/' + n + '.js';
+        var r = e.scripts[0];
+        r.parentNode.insertBefore(s, r);
+        var f = function () {
+          f.c(arguments);
+        };
+        f.q = [];
+        f.c = function () {
+          f.q.push(arguments);
+        };
+        t['claspo'] = t['claspo'] || f;
+      })(window, document, 'script', '1EF4B341CA5741E4AB0053DC8E3C0222');
+
+      // 2. Initialize Claspo
+      window.claspo('init');
+    };
+
+    initClaspo();
+
+    // Cleanup: This attempts to stop the script or hide popups when leaving the page
+    return () => {
+       // Most popup tools like Claspo stay in memory once loaded.
+       // If Claspo provides a 'destroy' or 'hide' command, it would go here.
+       // Otherwise, the script will stay active until a hard refresh.
+    };
+  }, []);
+
   return (
     <>
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 sm:py-24 lg:py-32">

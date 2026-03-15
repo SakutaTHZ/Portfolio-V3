@@ -1,5 +1,6 @@
-import { useEffect } from "react";
 import LogoLoop from "../specialComponents/LogoLoop";
+import Magnet from "../specialComponents/Magnet";
+import StarBorder from "../specialComponents/StarBorder";
 import Silk from "./../specialComponents/Silk";
 import {
   SiReact,
@@ -24,43 +25,54 @@ const techLogos = [
 ];
 
 const AboutMe = () => {
-  useEffect(() => {
-    // 1. Define the Claspo script logic
-    const initClaspo = () => {
-      (function (t, e, c, n) {
-        var s = e.createElement(c);
-        s.async = 1;
-        s.src = 'https://scripts.claspo.io/scripts/' + n + '.js';
-        var r = e.scripts[0];
-        r.parentNode.insertBefore(s, r);
-        var f = function () {
-          f.c(arguments);
-        };
-        f.q = [];
-        f.c = function () {
-          f.q.push(arguments);
-        };
-        t['claspo'] = t['claspo'] || f;
-      })(window, document, 'script', '1EF4B341CA5741E4AB0053DC8E3C0222');
-
-      // 2. Initialize Claspo
-      window.claspo('init');
-    };
-
-    initClaspo();
-
-    // Cleanup: This attempts to stop the script or hide popups when leaving the page
-    return () => {
-       // Most popup tools like Claspo stay in memory once loaded.
-       // If Claspo provides a 'destroy' or 'hide' command, it would go here.
-       // Otherwise, the script will stay active until a hard refresh.
-    };
-  }, []);
-
   return (
     <>
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 sm:py-24 lg:py-32">
-        <div className="space-y-4">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen gap-4 text-white">
+        <div className="w-full h-[40dvh] md:h-[60dvh] text-center  backdrop-blur-lg px-4 md:px-24 flex flex-col items-center justify-center">
+          <h1 className="portofoliospans relative w-fit text-[16dvw] md:text-[14dvw] font-extrabold text-left md:text-center">
+            <b className="text-base font-bold absolute left-0 -top-2">
+              About Me
+            </b>
+
+            <span>P</span>
+            <span>O</span>
+            <span>R</span>
+            <span>T</span>
+            <span>F</span>
+            <span>O</span>
+            <span>L</span>
+            <span>I</span>
+            <span>O</span>
+
+            <Magnet padding={50} magnetStrength={5} className="text-base font-bold absolute right-0 -top-10 md:-top-6">
+              <StarBorder
+                as="button"
+                className="custom-class mt-2"
+                color="cyan"
+                speed="5s"
+              >
+                <div className=" p-2 px-4 rounded-full w-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
+                  SakutaTHZ
+                </div>
+              </StarBorder>
+            </Magnet>
+          </h1>
+        </div>
+        <div className="h-screen"></div>
+        <LogoLoop
+          logos={techLogos}
+          speed={120}
+          direction="left"
+          logoHeight={48}
+          gap={40}
+          hoverSpeed={0}
+          scaleOnHover
+          fadeOut
+          fadeOutColor="#ffffff20"
+          ariaLabel="Technology partners"
+        />
+
+        {/* <div className="space-y-4">
           <h1>HI, Im Thar Htet Zan</h1>
           <p>UI/UX Designer, Frontend Developer</p>
 
@@ -129,7 +141,7 @@ const AboutMe = () => {
               video games.
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
 
       <div className="SilkCanvas fixed inset-0 -z-10">

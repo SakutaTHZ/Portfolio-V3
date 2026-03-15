@@ -1107,6 +1107,27 @@ body {
   transition: all 0.5s cubic-bezier(0, 0, 0, 1);
 }
 
+.portofoliospans {
+  span {
+    cursor: pointer;
+    color: #ffffff50;
+    transition: all 0.5s cubic-bezier(0, 0, 0, 1);
+  }
+  span:hover {
+    transform: scale(2.5) translateY(10px);
+    color: #ffffff;
+  }
+
+  span:hover + span {
+    transform: scale(1.2) translateY(20px);
+    color: #ffffff75;
+  }
+  span:has(+ span:hover) {
+    transform: scale(1.2) translateY(10px);
+    color: #ffffff75;
+  }
+}
+
 @media (max-width: 640px) {
   .curved-loop-jacket {
     width: 200%;

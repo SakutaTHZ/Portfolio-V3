@@ -168,9 +168,6 @@ const HomeSection = () => {
           </Magnet>
         </div>
       </div>
-      <div
-        className="elfsight-app-63933f58-a867-45ff-bb3f-ce028a57dcb4 fixed bottom-12 left-0 z-[10000]"
-      />
     </section>
   );
 };

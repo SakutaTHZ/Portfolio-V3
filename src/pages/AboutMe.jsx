@@ -1,6 +1,4 @@
 import LogoLoop from "../specialComponents/LogoLoop";
-import Magnet from "../specialComponents/Magnet";
-import StarBorder from "../specialComponents/StarBorder";
 import Silk from "./../specialComponents/Silk";
 import {
   SiReact,
@@ -8,6 +6,8 @@ import {
   SiTypescript,
   SiTailwindcss,
 } from "react-icons/si";
+import portfolioImage from "../images/Portfolio banner image.png";
+import figmaBar from "../images/Figma Bar.png";
 
 const techLogos = [
   { node: <SiReact />, title: "React", href: "https://react.dev" },
@@ -28,7 +28,7 @@ const AboutMe = () => {
   return (
     <>
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen gap-4 text-white">
-        <div className="w-full h-[40dvh] md:h-[60dvh] text-center  backdrop-blur-lg px-4 md:px-24 flex flex-col items-center justify-center">
+        <div className="w-full h-[40dvh] md:h-[60dvh] text-center  backdrop-blur-lg px-4 md:px-24 flex flex-col items-center justify-center overflow-hidden">
           <h1 className="portofoliospans relative w-fit text-[16dvw] md:text-[14dvw] font-extrabold text-left md:text-center">
             <b className="text-base font-bold absolute left-0 -top-2">
               About Me
@@ -44,19 +44,20 @@ const AboutMe = () => {
             <span>I</span>
             <span>O</span>
 
-            <Magnet padding={50} magnetStrength={5} className="text-base font-bold absolute right-0 -top-10 md:-top-6">
-              <StarBorder
-                as="button"
-                className="custom-class mt-2"
-                color="cyan"
-                speed="5s"
-              >
-                <div className=" p-2 px-4 rounded-full w-full h-fit flex items-center gap-2 backdrop-blur-md bg-[#00000040]">
-                  SakutaTHZ
-                </div>
-              </StarBorder>
-            </Magnet>
+            <b className="text-base font-bold absolute right-0 -top-2 animate-fadeIn">
+              SakutaTHZ
+            </b>
           </h1>
+          <img
+            src={portfolioImage}
+            alt=""
+            className="absolute -bottom-4 h-[100%] pointer-events-none drop-shadow-lg animate-fadeIn"
+          />
+          <img
+            src={figmaBar}
+            alt=""
+            className="absolute bottom-4 w-[75%] md:w-[20%] pointer-events-none drop-shadow-lg animate-fadeIn"
+          />
         </div>
         <div className="h-screen"></div>
         <LogoLoop

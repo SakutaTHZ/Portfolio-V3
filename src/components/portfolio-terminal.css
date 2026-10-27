@@ -1,0 +1,88 @@
+.portfolio-terminal {
+  --accent: #ffd84d;
+  position: fixed;
+  right: 0;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: min(470px, calc(100vw - 24px));
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  color: #ededed;
+}
+
+.portfolio-terminal.is-open {
+  right: max(16px, env(safe-area-inset-right));
+}
+
+.terminal-launcher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 1px solid #454545;
+  border-right-width: 0;
+  border-radius: 12px 0 0 12px;
+  background: #171717;
+  box-shadow: 0 6px 24px #0004;
+  cursor: pointer;
+  transform: translateX(calc(100% - 40px));
+  transition: border-color 180ms, background 180ms, transform 280ms ease;
+}
+
+.terminal-launcher svg, .terminal-prompt > span, .terminal-command > span { color: var(--accent); }
+.terminal-launcher-hint { color: #aaa; font-size: 10px; padding-left: 10px; border-left: 1px solid #454545; }
+.terminal-launcher:hover, .terminal-launcher:focus-visible, .terminal-launcher.is-open { border-color: var(--accent); background: #202020; }
+.terminal-launcher:hover, .terminal-launcher:focus-visible, .terminal-launcher.is-open { transform: translateX(0); }
+.terminal-launcher.is-open { border-right-width: 1px; border-radius: 12px; }
+.terminal-launcher.is-nudging { animation: terminal-nudge 1.5s ease-in-out; }
+.terminal-panel {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  max-height: min(560px, calc(100dvh - 108px));
+  border: 1px solid #454545;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #151515f5;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 20px 70px #0008;
+  transform-origin: bottom right;
+}
+.terminal-header { display: flex; align-items: center; gap: 9px; padding: 10px 12px 10px 18px; border-bottom: 1px solid #333; flex-shrink: 0; }
+.terminal-status { width: 6px; height: 6px; border-radius: 50%; background: var(--surface); }
+.terminal-header h2 { font: inherit; font-size: 11px; margin: 0; }
+.terminal-header-note { margin-left: auto; font-size: 8px; letter-spacing: .08em; color: #aaa; }
+.terminal-icon-button { display: grid; place-items: center; width: 36px; height: 36px; flex-shrink: 0; border-radius: 7px; color: #ccc; cursor: pointer; }
+.terminal-icon-button:hover { background: #303030; color: white; }
+.terminal-icon-button:disabled { opacity: .35; cursor: default; }
+.terminal-output { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 20px; line-height: 1.8; scrollbar-width: thin; scrollbar-color: #555 transparent; overflow-wrap: anywhere; }
+.terminal-welcome { color: #aaa; margin: 0; }
+.terminal-entry { margin-top: 20px; }
+.terminal-command { margin: 0 0 5px; color: white; }
+.terminal-answer { margin: 0; color: #c6c6c6; white-space: pre-wrap; }
+.terminal-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 16px; flex-shrink: 0; }
+.terminal-suggestions button { border: 1px solid #3c3c3c; border-radius: 6px; padding: 6px 9px; color: #bdbdbd; font-size: 10px; cursor: pointer; }
+.terminal-suggestions button:hover { border-color: var(--accent); color: white; }
+.terminal-prompt { display: flex; align-items: center; gap: 10px; border-top: 1px solid #333; padding: 8px 12px 8px 20px; flex-shrink: 0; }
+.terminal-prompt input { flex: 1; min-width: 0; background: transparent; border: 0; color: white; font: inherit; font-size: 11px; padding: 10px 0; outline: none; }
+.terminal-prompt:focus-within { box-shadow: inset 2px 0 var(--accent); }
+.terminal-prompt input::placeholder { color: #999; }
+.terminal-footer { display: flex; justify-content: space-between; padding: 0 18px 12px; color: #999; font-size: 9px; flex-shrink: 0; }
+.portfolio-terminal button:focus-visible, .terminal-output:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@keyframes terminal-nudge {
+  0%, 100% { transform: translateX(calc(100% - 52px)); }
+  22% { transform: translateX(0); }
+  34% { transform: translateX(8px) rotate(-0.8deg); }
+  46% { transform: translateX(-4px) rotate(0.8deg); }
+  58% { transform: translateX(6px); }
+  78% { transform: translateX(calc(100% - 52px)); }
+}
+@media (max-width: 480px) { .terminal-header-note { display: none; } .terminal-header .terminal-icon-button { margin-left: auto; } }
+@media (prefers-reduced-motion: reduce) {
+  .terminal-launcher { transition: none; }
+  .terminal-launcher.is-nudging { animation: none; }
+}

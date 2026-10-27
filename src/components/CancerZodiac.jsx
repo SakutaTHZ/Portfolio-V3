@@ -1,0 +1,48 @@
+import { useId } from 'react';
+
+/** Hand-drawn vector recreation. Color accepts any CSS color. */
+export default function CancerZodiac({
+  size = 240,
+  color = 'currentColor',
+  animated = true,
+  title = 'Cancer zodiac',
+  className,
+  style,
+  ...props
+}) {
+  const titleId = useId();
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 720 720"
+      width={size}
+      height={size}
+      fill={color}
+      role="img"
+      aria-labelledby={titleId}
+      className={className}
+      data-cancer-animated={animated}
+      style={{ overflow: 'visible', ...style }}
+      {...props}
+    >
+      <title id={titleId}>{title}</title>
+      <style>{`
+    .cancer-float { animation: cancer-float 4s ease-in-out infinite; transform-origin: 360px 360px; }
+    .cancer-left { animation: cancer-left 3s ease-in-out infinite; transform-origin: 275px 447px; }
+    .cancer-right { animation: cancer-right 3s ease-in-out infinite; transform-origin: 445px 447px; }
+    @keyframes cancer-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-10px) rotate(1deg); } }
+    @keyframes cancer-left { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(9deg); } }
+    @keyframes cancer-right { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-9deg); } }
+    @media (prefers-reduced-motion: reduce) { .cancer-float, .cancer-left, .cancer-right { animation: none; } }
+  [data-cancer-animated="false"] .cancer-float, [data-cancer-animated="false"] .cancer-left, [data-cancer-animated="false"] .cancer-right { animation: none; }`}</style>
+  <g className="cancer-float">
+    <path d="M51 371C89 301 157 250 231 230L211 262C148 283 96 322 51 371Z"/>
+    <path d="M650 349C584 284 478 235 390 235C346 235 313 244 292 262C316 266 332 283 332 308C332 336 311 353 283 353C253 353 226 334 226 304C226 251 290 211 377 211C483 211 592 268 650 349ZM309 305C309 287 297 274 279 274C260 274 245 287 245 305C245 323 260 335 278 335C296 335 309 323 309 305Z" fillRule="evenodd"/>
+    <path d="M68 493C49 414 107 335 183 303L192 302C229 358 293 390 361 390C397 390 432 380 451 359C414 359 389 342 389 315C389 286 414 264 444 264C478 264 505 286 505 318C505 371 435 414 367 414C289 414 226 372 197 322C124 360 78 418 68 493ZM478 315C478 296 465 283 446 283C427 283 414 296 414 315C414 333 428 345 446 345C464 345 478 333 478 315Z" fillRule="evenodd"/>
+    <path d="M514 292C593 322 655 388 669 473C647 405 594 349 524 323C525 311 522 301 514 292Z"/>
+    <path className="cancer-left" d="M216 374C186 386 173 415 180 439C191 475 249 507 291 501L299 494C274 495 246 475 249 456C270 449 298 466 320 474C326 477 330 467 321 460C292 436 239 435 201 436C184 433 199 390 216 374Z"/>
+    <path className="cancer-right" d="M506 374C536 386 549 415 542 439C531 475 473 507 431 501L423 494C448 495 476 475 473 456C452 449 424 466 402 474C396 477 392 467 401 460C430 436 483 435 521 436C538 433 523 390 506 374Z"/>
+  </g>
+    </svg>
+  );
+}

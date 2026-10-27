@@ -115,11 +115,11 @@ export default function Hero({ ready = false }) {
             <h1 id="hero-title" className="text-7xl md:text-[12rem] font-obitron p-4 pt-0 text-left md:text-center text-shadow">
               <ShinyText
                 text="THAR HTET ZAN"
-                color="#b5b5b5"
-                shineColor="#ffffff"
+                color="#ffffff"
+                shineColor="#FFF4DE"
                 speed={5}
-                shineWidth={40}
-                softness={1}
+                shineWidth={60}
+                softness={2}
                 trigger="loop"
                 delay={0}
                 angle={120}
@@ -161,7 +161,7 @@ export default function Hero({ ready = false }) {
         
         <div ref={introRef} className="w-[75dvw] md:w-[25dvw] text-sm absolute font-normal top-20 left-4 p-4 space-y-2 will-change-transform">
           <p className="text-md opacity-50">Hello,</p>
-          <p className="text-left text-sm">
+          <p className="text-left text-xs md:text-sm">
             <ScrambledText
               className="scrambled-text-demo p-0! m-0!"
               effect="scramble"

@@ -1238,7 +1238,8 @@ const MagicBento = ({
           style: {
             ...(entry.background ? { '--mb-surface': entry.background } : null),
             ...(entry.color ? { '--mb-ink': entry.color } : null),
-            ...(entry.muted ? { '--mb-muted': entry.muted } : null)
+            ...(entry.muted ? { '--mb-muted': entry.muted } : null),
+            ...(entry.overflow ? { overflow: entry.overflow } : null)
           }
         };
         const body = (

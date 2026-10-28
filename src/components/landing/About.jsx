@@ -4,6 +4,7 @@ import Card from "@/assets/images/SakutaCard.png";
 import Eyebrow from "./Eyebrow";
 import HoloCard from "../HoloCard";
 import ScrambledText from "../ScrambledText";
+import FlameWrap from "../canvasui/FlameWrap";
 
 const BENTO_GAP = 16;
 const MIN_CELL = 150;
@@ -42,8 +43,9 @@ const aboutItems = [
     background: "#00000000",
     color: "#ffd84d",
     muted: "rgba(255, 216, 77, 0.7)",
+    overflow: "visible",
     content: (
-      <div className="min-h-0 w-full flex-1 max-md:overflow-y-auto md:flex md:items-center md:justify-between md:@container-size">
+      <div className="h-full min-h-0 w-full rounded-[14px]  p-2 overflow-y-auto md:flex md:items-center md:justify-between md:@container-size">
         <HoloCard
           image={Card}
           alt="My tcg"
@@ -66,7 +68,7 @@ const aboutItems = [
           idle
           shadow
         />
-        <div className="md:order-1 md:flex md:h-full md:w-1/2 md:flex-col md:justify-between">
+        <div className="md:order-1 md:flex md:h-full md:w-3/5 md:flex-col md:justify-between gap-2">
           <span>About Me</span>
           <ScrambledText
             className="scrambled-text-demo p-0! m-0! mt-2 text-sm leading-relaxed text-white"

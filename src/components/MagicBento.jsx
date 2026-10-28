@@ -77,7 +77,7 @@ const ROOT_CLASS =
 const CELL_CLASS = 'magic-bento__cell relative min-h-0 min-w-0 [--mb-delay:0ms]';
 const CARD_CLASS =
   'magic-bento__card relative box-border isolate flex h-full w-full select-none flex-col overflow-hidden rounded-[var(--mb-radius)] text-[color:var(--mb-ink)] no-underline outline-none [background:var(--mb-surface)] [box-shadow:var(--mb-shadow)] [transform:perspective(900px)_translate3d(var(--mb-tx,0px),var(--mb-ty,0px),0)_rotateX(var(--mb-rx,0deg))_rotateY(var(--mb-ry,0deg))_scale(var(--mb-press,1))] data-[clickable]:cursor-pointer focus-visible:[box-shadow:var(--mb-shadow),0_0_0_2px_var(--mb-focus)]';
-const IMAGE_CLASS = 'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover';
+const IMAGE_CLASS = 'pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-top';
 const SCRIM_CLASS = 'pointer-events-none absolute inset-0 z-0';
 const LIGHT_CLASS = 'pointer-events-none absolute inset-0 z-[1] rounded-[inherit]';
 const STARS_CLASS = 'pointer-events-none absolute inset-0 z-[1] block h-full w-full';
@@ -1234,7 +1234,12 @@ const MagicBento = ({
           className: CARD_CLASS,
           'data-clickable': clickable ? '' : undefined,
           'data-image': entry.image ? '' : undefined,
-          onClick: clickable ? handleClick : undefined
+          onClick: clickable ? handleClick : undefined,
+          style: {
+            ...(entry.background ? { '--mb-surface': entry.background } : null),
+            ...(entry.color ? { '--mb-ink': entry.color } : null),
+            ...(entry.muted ? { '--mb-muted': entry.muted } : null)
+          }
         };
         const body = (
           <>
@@ -1285,10 +1290,19 @@ const MagicBento = ({
               cellRefs.current[index] = element;
             }}
             className={CELL_CLASS}
-            style={{
-              gridColumn: `span ${Math.min(span, Math.max(1, Math.round(entry.colSpan ?? 1)))}`,
-              gridRow: `span ${Math.max(1, Math.round(entry.rowSpan ?? 1))}`
-            }}
+            style={(() => {
+              const colSpan = Math.min(span, Math.max(1, Math.round(entry.colSpan ?? 1)));
+              const rowSpan = Math.max(1, Math.round(entry.rowSpan ?? 1));
+              const place = span >= Math.max(1, Math.round(columns)) && (entry.col || entry.row);
+              return {
+                gridColumn: place
+                  ? `${Math.max(1, Math.round(entry.col ?? 1))} / span ${colSpan}`
+                  : `span ${colSpan}`,
+                gridRow: place
+                  ? `${Math.max(1, Math.round(entry.row ?? 1))} / span ${rowSpan}`
+                  : `span ${rowSpan}`
+              };
+            })()}
           >
             {entry.href ? (
               <a {...cardProps} href={entry.href} target={entry.target} rel={entry.rel}>

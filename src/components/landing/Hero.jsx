@@ -3,13 +3,13 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import "./hero.css";
-import MarbleMe from "../assets/images/MarbleMe.png";
-import ShinyText from "./ShinyText";
-import DitherVeil from "./DitherVeil";
-import ScrambledText from "./ScrambledText";
-import HeroDock from "./HeroDock";
-import LaserFlow from "./LaserFlow";
-import { prefersReducedMotion } from "../hooks/hooks";
+import MarbleMe from "@/assets/images/MarbleMe.png";
+import ShinyText from "@/components/ShinyText";
+import DitherVeil from "@/components/DitherVeil";
+import ScrambledText from "@/components/ScrambledText";
+import HeroDock from "@/components/HeroDock";
+import LaserFlow from "@/components/LaserFlow";
+import { prefersReducedMotion } from "@/hooks/hooks";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 

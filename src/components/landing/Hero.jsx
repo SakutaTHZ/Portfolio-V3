@@ -112,7 +112,7 @@ export default function Hero({ ready = false }) {
         <div className="absolute inset-x-0 bottom-0 z-10">
           <div ref={nameRollRef} className="flex flex-col-reverse md:flex-col md:items-end will-change-transform">
             <HeroDock ref={figmaBarRef} />
-            <h1 id="hero-title" className="text-7xl md:text-[12rem] font-obitron p-4 pt-0 text-left md:text-center text-shadow">
+            <h1 id="hero-title" className="text-7xl md:text-[10dvw] font-obitron p-4 pt-0 text-left md:text-center text-shadow">
               <ShinyText
                 text="THAR HTET ZAN"
                 color="#ffffff"

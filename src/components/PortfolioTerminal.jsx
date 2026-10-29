@@ -3,13 +3,14 @@ import { ArrowUpRight, Minus, Terminal } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { prefersReducedMotion } from "../hooks/hooks";
+import { requestGatoJumpscare } from "./GatoJumpscare";
 import "./portfolio-terminal.css";
 
 gsap.registerPlugin(useGSAP);
 
 const welcome = "Welcome to my little corner of the command line. Try a command below, or ask me about this portfolio.";
 const commands = {
-  help: "Available commands:\nabout — meet Thar Htet Zan\nskills — explore the toolkit\nprojects — portfolio updates\ncontact — contact information\nclear — start fresh\nexit — close the terminal\n\nYou can also ask: Who are you? What do you build?",
+  help: "Available commands:\nabout — meet Thar Htet Zan\nskills — explore the toolkit\nprojects — portfolio updates\ncontact — contact information\njumpscare — let Gato pop out\nclear — start fresh\nexit — close the terminal\n\nYou can also ask: Who are you? What do you build?",
   about: "I'm Thar Htet Zan, a web developer who enjoys building dynamic, user-friendly websites and applications, coding, and learning new technologies.",
   skills: "This portfolio is built with React, JavaScript, Tailwind CSS, Vite, and GSAP, with WebGL-powered visual effects.",
   projects: "You're exploring one right now: this interactive portfolio. More project details haven't been added yet.",
@@ -98,7 +99,14 @@ export default function PortfolioTerminal() {
     setValue("");
     if (/^(exit|close)$/i.test(command)) return close();
     if (/^(clear|cls)$/i.test(command)) setEntries([]);
-    else setEntries((previous) => [...previous.slice(-49), { command, answer: answerQuestion(command) }]);
+    else if (/^(jumpscare|gato)$/i.test(command)) {
+      const answer = prefersReducedMotion()
+        ? "Jumpscares stay off while reduced motion is enabled."
+        : requestGatoJumpscare()
+          ? "boo."
+          : "Gato already got you. Once is enough.";
+      setEntries((previous) => [...previous.slice(-49), { command, answer }]);
+    } else setEntries((previous) => [...previous.slice(-49), { command, answer: answerQuestion(command) }]);
     inputRef.current?.focus();
   }
 
@@ -134,7 +142,7 @@ export default function PortfolioTerminal() {
             ))}
           </div>
           <div className="terminal-suggestions" aria-label="Suggested commands">
-            {["help", "about", "skills", "projects", "contact"].map((command) => <button type="button" key={command} onClick={() => run(command)}>{command}</button>)}
+            {["help", "about", "skills", "projects", "contact", "jumpscare"].map((command) => <button type="button" key={command} onClick={() => run(command)}>{command}</button>)}
           </div>
           <form className="terminal-prompt" onSubmit={(event) => { event.preventDefault(); run(value); }}>
             <span aria-hidden="true">❯</span>

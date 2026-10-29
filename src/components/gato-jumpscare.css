@@ -1,0 +1,134 @@
+.gato-jumpscare {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+  background: rgba(210, 16, 16, 0.46);
+}
+
+.gato-encrypted-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.gato-dither {
+  position: relative;
+  z-index: 1;
+  width: min(72vw, 78vh);
+  height: min(88vh, 92vw);
+  flex: none;
+  transform-origin: center center;
+}
+
+.gato-dither > div {
+  width: 100%;
+  height: 100%;
+}
+
+.gato-virus {
+  width: min(460px, calc(100vw - 2rem));
+  max-width: 460px;
+  gap: 0;
+  overflow: hidden;
+  border: 2px solid #6d6d6d;
+  border-radius: 0;
+  background: #d4d0c8;
+  padding: 0;
+  color: #111;
+  font-family: Tahoma, "Segoe UI", sans-serif;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.55);
+}
+
+.gato-virus-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(#9d1c1c, #6a0d0d);
+  color: white;
+  padding: 5px 6px 5px 10px;
+}
+
+.gato-virus-titlebar h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.gato-virus-x {
+  width: 22px;
+  height: 20px;
+  border: 1px solid #fff;
+  background: #c0c0c0;
+  color: #111;
+  font: 700 14px/1 Tahoma, sans-serif;
+  cursor: pointer;
+}
+
+.gato-virus-body {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 14px 8px;
+}
+
+.gato-virus-body img {
+  width: 72px;
+  height: 92px;
+  object-fit: contain;
+  background: #111;
+  flex: none;
+  image-rendering: pixelated;
+}
+
+.gato-virus-warning {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.gato-virus-body p:last-child {
+  margin: 0;
+  color: #111;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.gato-virus-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 14px 14px;
+}
+
+.gato-virus-actions button {
+  min-width: 108px;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #d4d0c8;
+  color: #111;
+  font: 12px/1 Tahoma, sans-serif;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.gato-virus-actions button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gato-jumpscare img {
+    transform: none;
+  }
+}

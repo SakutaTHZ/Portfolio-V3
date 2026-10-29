@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import PageTemplate from "./pages/PageTemplate";
 import Preloader from "./components/Preloader";
 import PortfolioTerminal from "./components/PortfolioTerminal";
+import GatoJumpscare from "./components/GatoJumpscare";
 import SectionTimeline from "./components/SectionTimeline";
 import Hero from "./components/landing/Hero";
 import About from "./components/landing/About";
@@ -27,6 +28,7 @@ export default function App() {
       <Services />
       <Testimonials />
       {ready && <PortfolioTerminal />}
+      {ready && <GatoJumpscare />}
       {ready && <SectionTimeline />}
       <Projects />
       <Timeline />

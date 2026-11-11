@@ -1,6 +1,7 @@
 import { Component, useCallback, useRef } from "react";
 import { motion } from "motion/react";
 import { prefersReducedMotion } from "@/hooks/hooks";
+import { useItemGestures } from "./gestures";
 
 class WindowErrorBoundary extends Component {
   constructor(props) {
@@ -22,7 +23,7 @@ class WindowErrorBoundary extends Component {
       );
     }
 
-    return this.props.children;
+    return <div className="pg-window-content">{this.props.children}</div>;
   }
 }
 
@@ -65,16 +66,15 @@ export function AppGlyph({ name, size = 52 }) {
   );
 }
 
-export function DesktopIcon({ item, selected, onSelect, onOpen }) {
+export function DesktopIcon({ item, selected, onSelect, onOpen, onContext }) {
+  const gestures = useItemGestures({ item, onSelect, onOpen, onContext });
+
   return (
     <button
       type="button"
       className="pg-icon"
       data-selected={selected || undefined}
-      onClick={(event) => {
-        onSelect?.(item.id);
-        onOpen?.(item, event.currentTarget);
-      }}
+      {...gestures}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
@@ -90,7 +90,7 @@ export function DesktopIcon({ item, selected, onSelect, onOpen }) {
   );
 }
 
-export function FinderBody({ folder, selectedId, onSelect, onOpen }) {
+export function FinderBody({ folder, selectedId, onSelect, onOpen, onContext }) {
   if (!folder.children.length) {
     return <p className="pg-finder-empty">This folder is empty</p>;
   }
@@ -104,6 +104,7 @@ export function FinderBody({ folder, selectedId, onSelect, onOpen }) {
           selected={selectedId === item.id}
           onSelect={onSelect}
           onOpen={onOpen}
+          onContext={onContext}
         />
       ))}
     </div>
@@ -217,19 +218,18 @@ export default function MacWindow({
         onPointerCancel={endDrag}
         onDoubleClick={onMaximize}
       >
+        <h2 className="pg-window-title">{win.title}</h2>
         <div className="pg-traffic" onPointerDown={(event) => event.stopPropagation()}>
-          <button type="button" className="pg-traffic-close" aria-label="Close" onClick={onClose}>
-            <span>×</span>
-          </button>
           <button type="button" className="pg-traffic-min" aria-label="Minimize" onClick={onMinimize}>
             <span>−</span>
           </button>
-          <button type="button" className="pg-traffic-max" aria-label="Maximize" onClick={onMaximize}>
-            <span>⤢</span>
+          <button type="button" className="pg-traffic-max" aria-label={win.maximized ? "Restore" : "Maximize"} onClick={onMaximize}>
+            <span>{win.maximized ? "⤢" : "□"}</span>
+          </button>
+          <button type="button" className="pg-traffic-close" aria-label="Close" onClick={onClose}>
+            <span>×</span>
           </button>
         </div>
-        <h2 className="pg-window-title">{win.title}</h2>
-        <span />
       </header>
       <div className="pg-window-body">
         <WindowErrorBoundary>{children}</WindowErrorBoundary>

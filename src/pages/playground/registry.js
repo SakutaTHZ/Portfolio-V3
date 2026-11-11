@@ -55,6 +55,7 @@ function buildTree() {
           component: mod.default,
           width: meta.width,
           height: meta.height,
+          sourcePath: `src/pages/playground/${path.replace(/^\.\//, "")}`,
         });
         return;
       }
@@ -84,4 +85,13 @@ export function findPlaygroundItem(id, node = playgroundRoot) {
     if (match) return match;
   }
   return null;
+}
+
+export function flattenPlaygroundItems(node = playgroundRoot, acc = []) {
+  if (node.type === "folder") {
+    node.children.forEach((child) => flattenPlaygroundItems(child, acc));
+  } else {
+    acc.push(node);
+  }
+  return acc;
 }

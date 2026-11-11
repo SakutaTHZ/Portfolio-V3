@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "motion/react";
 import { Terminal } from "lucide-react";
-import { playgroundRoot } from "@/pages/playground/registry";
+import { flattenPlaygroundItems, playgroundRoot } from "@/pages/playground/registry";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import logo from "@/assets/images/logo.png";
 import GradientWaves from "@/components/GradientWaves";
@@ -9,6 +9,8 @@ import GatoJumpscare from "@/components/GatoJumpscare";
 import PortfolioTerminal from "@/components/PortfolioTerminal";
 import MacWindow, { AppGlyph, DesktopIcon, FinderBody, FolderGlyph } from "./MacWindow";
 import SakutaBoot from "./SakutaBoot";
+import StartMenu from "./StartMenu";
+import ContextMenu, { InfoCard, PowerOverlay } from "./ContextMenu";
 import "./playground-desktop.css";
 
 const TERMINAL_ID = "__sakuta-terminal";
@@ -19,6 +21,13 @@ const terminalItem = {
   name: "Terminal",
   width: 520,
   height: 440,
+  sourcePath: "src/components/PortfolioTerminal.jsx",
+};
+
+const finderItem = {
+  ...playgroundRoot,
+  name: "Finder",
+  sourcePath: "src/pages/playground",
 };
 
 function screenBox(screenEl) {
@@ -40,13 +49,13 @@ function originFromEl(el, box, screenEl) {
 
 function clampWindow(x, y, width, height, screenEl) {
   const { width: maxW, height: maxH } = screenBox(screenEl);
-  const maxX = Math.max(8, maxW - 80);
-  const maxY = Math.max(48, maxH - 80);
+  const nextWidth = Math.min(Math.max(320, width), Math.max(320, maxW - 16));
+  const nextHeight = Math.min(Math.max(220, height), Math.max(220, maxH - 16));
   return {
-    x: Math.min(Math.max(-width + 80, x), maxX),
-    y: Math.min(Math.max(8, y), maxY),
-    width: Math.min(Math.max(320, width), maxW - 16),
-    height: Math.min(Math.max(220, height), maxH - 72),
+    x: Math.min(Math.max(-nextWidth + 168, x), Math.max(0, maxW - nextWidth)),
+    y: Math.min(Math.max(8, y), Math.max(8, maxH - 48)),
+    width: nextWidth,
+    height: nextHeight,
   };
 }
 
@@ -69,14 +78,11 @@ function nextBox(count, item, screenEl) {
 
 function maximizedBox(screenEl) {
   const { width, height } = screenBox(screenEl);
-  const mobile = width < 768;
-  const top = 8;
-  const bottom = mobile ? 86 : 96;
   return {
-    x: 8,
-    y: top,
-    width: width - 16,
-    height: height - top - bottom,
+    x: 0,
+    y: 0,
+    width,
+    height,
   };
 }
 
@@ -87,7 +93,16 @@ export default function PlaygroundDesktop() {
   const [windows, setWindows] = useState([]);
   const [focusedId, setFocusedId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [startOpen, setStartOpen] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
+  const [infoItem, setInfoItem] = useState(null);
+  const [power, setPower] = useState(null);
   const zRef = useRef(20);
+
+  const startApps = useMemo(() => {
+    const folders = playgroundRoot.children.filter((item) => item.type === "folder");
+    return [finderItem, terminalItem, ...folders, ...flattenPlaygroundItems(playgroundRoot)];
+  }, []);
 
   const openItems = useMemo(() => {
     const seen = new Map();
@@ -106,7 +121,14 @@ export default function PlaygroundDesktop() {
     );
   }, []);
 
+  const openContext = useCallback((item, point) => {
+    setStartOpen(false);
+    setContextMenu({ item, x: point.x, y: point.y });
+  }, []);
+
   const openItem = useCallback((item, sourceEl) => {
+    setStartOpen(false);
+    setContextMenu(null);
     const id = `${item.type}:${item.id}`;
     setSelectedId(item.id);
     zRef.current += 1;
@@ -153,6 +175,7 @@ export default function PlaygroundDesktop() {
   }, []);
 
   const toggleMaximize = useCallback((id) => {
+    setStartOpen(false);
     setWindows((current) =>
       current.map((win) => {
         if (win.id !== id) return win;
@@ -186,15 +209,45 @@ export default function PlaygroundDesktop() {
     );
   }, []);
 
+  const shutdown = useCallback(() => {
+    setStartOpen(false);
+    setPower("shutdown");
+    window.setTimeout(() => {
+      window.location.assign("/");
+    }, 1100);
+  }, []);
+
+  const restart = useCallback(() => {
+    setStartOpen(false);
+    setPower("restart");
+    window.setTimeout(() => {
+      window.location.reload();
+    }, 1100);
+  }, []);
+
   useEffect(() => {
     const onKey = (event) => {
-      if (event.key === "Escape" && focusedId) closeWindow(focusedId);
+      if (event.key !== "Escape") return;
+      if (infoItem) {
+        setInfoItem(null);
+        return;
+      }
+      if (contextMenu) {
+        setContextMenu(null);
+        return;
+      }
+      if (startOpen) {
+        setStartOpen(false);
+        return;
+      }
+      if (focusedId) closeWindow(focusedId);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [closeWindow, focusedId]);
+  }, [closeWindow, contextMenu, focusedId, infoItem, startOpen]);
 
   const terminalOpen = openItems.some((win) => win.itemId === TERMINAL_ID);
+  const fullscreen = windows.some((win) => win.maximized && !win.minimized);
 
   return (
     <div className="pg-chassis">
@@ -229,7 +282,7 @@ export default function PlaygroundDesktop() {
             />
           </div>
 
-          <div className="pg-desktop">
+          <div className="pg-desktop" data-fullscreen={fullscreen || undefined}>
             <div
               className="pg-desktop-icons"
               onPointerDown={(event) => {
@@ -243,6 +296,7 @@ export default function PlaygroundDesktop() {
                   selected={selectedId === item.id}
                   onSelect={setSelectedId}
                   onOpen={openItem}
+                  onContext={openContext}
                 />
               ))}
             </div>
@@ -285,6 +339,7 @@ export default function PlaygroundDesktop() {
                         selectedId={selectedId}
                         onSelect={setSelectedId}
                         onOpen={openItem}
+                        onContext={openContext}
                       />
                     ) : App ? (
                       <App />
@@ -296,18 +351,50 @@ export default function PlaygroundDesktop() {
               })}
             </AnimatePresence>
 
+            <StartMenu
+              open={startOpen}
+              apps={startApps}
+              onClose={() => setStartOpen(false)}
+              onOpen={openItem}
+              onContext={openContext}
+              onShutdown={shutdown}
+              onRestart={restart}
+            />
+
+            <ContextMenu
+              menu={contextMenu}
+              screenRef={screenRef}
+              onOpen={openItem}
+              onClose={() => setContextMenu(null)}
+              onInfo={setInfoItem}
+            />
+            {infoItem && <InfoCard item={infoItem} onClose={() => setInfoItem(null)} />}
+
             <nav className="pg-dock" aria-label="SakutaOS dock">
-              <a className="pg-dock-item" href="/" aria-label="Close playground and go home">
+              <button
+                type="button"
+                className="pg-dock-item"
+                aria-label="Open start menu"
+                aria-expanded={startOpen}
+                onClick={() => {
+                  setContextMenu(null);
+                  setStartOpen((value) => !value);
+                }}
+              >
                 <span className="pg-dock-glyph pg-dock-home">
                   <img src={logo} alt="" width={28} height={28} draggable={false} />
                 </span>
-              </a>
+              </button>
               <span className="pg-dock-separator" aria-hidden="true" />
               <button
                 type="button"
                 className="pg-dock-item"
                 aria-label="Open Finder"
-                onClick={(event) => openItem(playgroundRoot, event.currentTarget)}
+                onClick={(event) => openItem(finderItem, event.currentTarget)}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  openContext(finderItem, { x: event.clientX, y: event.clientY });
+                }}
               >
                 <span className="pg-dock-glyph" style={{ background: "transparent", boxShadow: "none" }}>
                   <FolderGlyph size={44} />
@@ -319,6 +406,10 @@ export default function PlaygroundDesktop() {
                 className="pg-dock-item"
                 aria-label="Open Terminal"
                 onClick={(event) => openItem(terminalItem, event.currentTarget)}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  openContext(terminalItem, { x: event.clientX, y: event.clientY });
+                }}
               >
                 <span className="pg-dock-glyph pg-dock-terminal">
                   <Terminal size={18} strokeWidth={1.8} />
@@ -334,6 +425,10 @@ export default function PlaygroundDesktop() {
                     className="pg-dock-item"
                     aria-label={win.title}
                     onClick={() => bringToFront(win.id)}
+                    onContextMenu={(event) => {
+                      event.preventDefault();
+                      openContext(win.item, { x: event.clientX, y: event.clientY });
+                    }}
                   >
                     <span className="pg-dock-glyph">
                       {win.type === "folder" ? (
@@ -353,6 +448,7 @@ export default function PlaygroundDesktop() {
 
           <GatoJumpscare />
           {booting && <SakutaBoot onDone={() => setBooting(false)} />}
+          {power && <PowerOverlay mode={power} />}
         </div>
       </div>
       <div className="pg-chin">

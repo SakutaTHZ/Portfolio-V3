@@ -13,7 +13,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon-32.png", "apple-touch-icon.png", "cancer-zodiac.svg"],
+      includeAssets: ["pwa-192x192.png", "apple-touch-icon.png", "cancer-zodiac.svg"],
       manifest: {
         id: "/",
         name: "Thar Htet Zan — UI/UX Designer",
@@ -28,19 +28,19 @@ export default defineConfig({
         scope: "/",
         icons: [
           {
-            src: "pwa-192x192.png",
+            src: "/pwa-192x192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "pwa-512x512.png",
+            src: "/pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "pwa-maskable-512x512.png",
+            src: "/pwa-maskable-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",

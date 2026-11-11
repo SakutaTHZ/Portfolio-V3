@@ -12,6 +12,7 @@ import Projects from "./components/landing/Projects";
 import Timeline from "./components/landing/Timeline";
 import Contact from "./components/landing/Contact";
 import { prefersReducedMotion, useSoftSnap } from "./hooks/hooks";
+import InstallPrompt from "./components/InstallPrompt";
 
 export default function App() {
   useSoftSnap();
@@ -22,6 +23,7 @@ export default function App() {
 
   return (
     <PageTemplate ready={ready}>
+      <InstallPrompt />
       {!ready && <Preloader onDone={finish} />}
       <Hero ready={ready} />
       <About />

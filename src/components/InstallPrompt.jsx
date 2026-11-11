@@ -70,7 +70,7 @@ export default function InstallPrompt() {
   };
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-md items-center gap-3 rounded-xl bg-[#2c2c2c] px-3 py-2.5 text-sm text-white shadow-[0_10px_28px_#00000066]">
+    <div className="pointer-events-auto fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] left-3 z-[45] flex w-[min(28rem,calc(100vw-1.5rem))] items-center gap-3 rounded-xl bg-[#2c2c2c] px-3 py-2.5 text-sm text-white shadow-[0_10px_28px_#00000066]">
       <p className="min-w-0 flex-1 leading-snug">
         {mode === "ios"
           ? "To install, tap Share, then Add to Home Screen."

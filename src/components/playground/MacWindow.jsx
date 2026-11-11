@@ -1,4 +1,11 @@
 import { Component, useCallback, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faWindowMaximize,
+  faWindowMinimize,
+  faWindowRestore,
+} from "@fortawesome/free-regular-svg-icons";
 import { motion } from "motion/react";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import { useItemGestures } from "./gestures";
@@ -221,13 +228,15 @@ export default function MacWindow({
         <h2 className="pg-window-title">{win.title}</h2>
         <div className="pg-traffic" onPointerDown={(event) => event.stopPropagation()}>
           <button type="button" className="pg-traffic-min" aria-label="Minimize" onClick={onMinimize}>
-            <span>−</span>
+            <FontAwesomeIcon icon={faWindowMinimize} />
           </button>
+          <span className="pg-traffic-sep" aria-hidden="true" />
           <button type="button" className="pg-traffic-max" aria-label={win.maximized ? "Restore" : "Maximize"} onClick={onMaximize}>
-            <span>{win.maximized ? "⤢" : "□"}</span>
+            <FontAwesomeIcon icon={win.maximized ? faWindowRestore : faWindowMaximize} />
           </button>
+          <span className="pg-traffic-sep" aria-hidden="true" />
           <button type="button" className="pg-traffic-close" aria-label="Close" onClick={onClose}>
-            <span>×</span>
+            <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
       </header>

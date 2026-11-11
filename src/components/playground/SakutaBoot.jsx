@@ -73,7 +73,7 @@ export default function SakutaBoot({ onDone }) {
   return (
     <div
       ref={rootRef}
-      className="pg-boot"
+      className="pg-boot text-center"
       role="dialog"
       aria-label="SakutaOS is starting"
       aria-live="polite"

@@ -289,10 +289,10 @@
 .pg-titlebar {
   display: flex;
   flex: none;
-  align-items: center;
+  align-items: stretch;
   gap: 0.75rem;
   height: 42px;
-  padding: 0 8px 0 14px;
+  padding: 0 0 0 14px;
   cursor: grab;
 }
 
@@ -304,50 +304,77 @@
   display: flex;
   flex: none;
   align-items: center;
-  gap: 6px;
+  align-self: stretch;
   margin-left: auto;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .pg-traffic button {
-  position: relative;
+  display: grid;
   flex: none;
-  width: 44px;
-  height: 24px;
+  place-items: center;
+  width: 46px;
+  height: 100%;
   padding: 0;
   border: 0;
-  border-radius: 7px;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
   touch-action: manipulation;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-.pg-traffic-close {
-  background: #ff5f57;
+.pg-traffic button svg {
+  display: block;
+  height: 13px;
+  width: auto;
 }
 
-.pg-traffic-min {
-  background: #febc2e;
+.pg-traffic-min svg {
+  transform: translateY(-32%);
 }
 
-.pg-traffic-max {
-  background: #28c840;
+.pg-traffic-sep {
+  flex: none;
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.22);
 }
 
-.pg-traffic button span {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: rgba(0, 0, 0, 0.72);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
+.pg-traffic button:hover,
+.pg-traffic button:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pg-traffic button.pg-traffic-close:hover,
+.pg-traffic button.pg-traffic-close:focus-visible {
+  background: #c42b1c;
+  color: #fff;
+}
+
+.pg-traffic button:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.72);
+  outline-offset: -3px;
+}
+
+.pg-window:not([data-focused="true"]) .pg-traffic {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.pg-window:not([data-focused="true"]) .pg-traffic-sep {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.pg-window:not([data-focused="true"]) .pg-traffic button.pg-traffic-close:hover,
+.pg-window:not([data-focused="true"]) .pg-traffic button.pg-traffic-close:focus-visible {
+  color: #fff;
 }
 
 .pg-window-title {
   overflow: hidden;
   min-width: 0;
   flex: 1;
+  align-self: center;
   color: rgba(255, 255, 255, 0.78);
   font-size: 13px;
   font-weight: 590;
@@ -901,18 +928,16 @@
     padding: 0 8px 0 12px;
   }
 
-  .pg-traffic {
-    gap: 8px;
-  }
-
   .pg-traffic button {
-    width: 56px;
-    height: 38px;
-    border-radius: 10px;
+    width: 58px;
   }
 
-  .pg-traffic button span {
-    font-size: 16px;
+  .pg-traffic button svg {
+    height: 16px;
+  }
+
+  .pg-traffic-sep {
+    height: 22px;
   }
 
   .pg-window-title {
@@ -920,7 +945,7 @@
   }
 
   .pg-chassis {
-    padding: 8px 8px 0;
+    padding: 4px 4px 0;
   }
 
   .pg-bezel {

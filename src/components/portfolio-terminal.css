@@ -1,3 +1,30 @@
+.terminal-session {
+  --accent: #ffd84d;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  color: #ededed;
+}
+
+.terminal-session .terminal-panel {
+  margin: 0;
+  max-height: none;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: #151515;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.terminal-session .terminal-output {
+  flex: 1;
+}
+
 .portfolio-terminal {
   --accent: #ffd84d;
   position: fixed;

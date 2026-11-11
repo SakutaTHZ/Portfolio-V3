@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { FolderKanban, History, Layers, Mail, Quote, Send, UserRound } from "lucide-react";
+import { FlaskConical, FolderKanban, History, Layers, Mail, Quote, Send, UserRound } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { scrollToId } from "../hooks/hooks";
 
@@ -67,6 +67,7 @@ const HeroDock = forwardRef(function HeroDock(_, ref) {
           onClick={(event) => scrollToId(event, `#${item.id}`)}
         />
       ))}
+      <DockButton icon={FlaskConical} title="Playground" href="/playground" />
       <div className="hero-dock-cluster">
         {socials.map((item) => (
           <DockButton key={item.title} icon={item.icon} title={item.title} href={item.href} external={item.href.startsWith("http")} />

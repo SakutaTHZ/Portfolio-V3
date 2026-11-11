@@ -9,6 +9,7 @@ const menuItems = [
   { label: "Timeline", ariaLabel: "View the timeline", link: "#timeline" },
   { label: "Testimonials", ariaLabel: "Read testimonials", link: "#testimonials" },
   { label: "Contact", ariaLabel: "Go to contact", link: "#contact" },
+  { label: "Playground", ariaLabel: "Open the playground", link: "/playground" },
 ];
 
 const socialItems = [
@@ -17,9 +18,14 @@ const socialItems = [
   { label: "LinkedIn", link: "https://www.linkedin.com" },
 ];
 
-export default function PageTemplate({ children, ready = true }) {
+export default function PageTemplate({ children, ready = true, desktop = false }) {
   return (
-    <main className="relative isolate min-h-svh text-foreground flex flex-col max-w-screen">
+    <main
+      className={`relative isolate min-h-svh text-foreground flex flex-col max-w-screen ${
+        desktop ? "h-dvh overflow-hidden bg-black" : ""
+      }`}
+    >
+      {!desktop && (
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10"
@@ -51,24 +57,27 @@ export default function PageTemplate({ children, ready = true }) {
           paused={false}
         />
       </div>
-      <div className="pointer-events-none fixed inset-0 z-40 max-h-screen max-w-screen min-h-screen h-dvh overflow-hidden">
-        <StaggeredMenu
-          navReady={ready}
-          position="right"
-          items={menuItems}
-          socialItems={socialItems}
-          displaySocials
-          displayItemNumbering={true}
-          menuButtonColor="#ffffff"
-          openMenuButtonColor="#fff"
-          changeMenuColorOnOpen={true}
-          colors={["var(--surface)", "var(--accent)"]}
-          logoUrl="/path-to-your-logo.svg"
-          accentColor="var(--accent)"
-          onMenuOpen={() => console.log("Menu opened")}
-          onMenuClose={() => console.log("Menu closed")}
-        />
-      </div>
+      )}
+      {!desktop && (
+        <div className="pointer-events-none fixed inset-0 z-40 max-h-screen max-w-screen min-h-screen h-dvh overflow-hidden">
+          <StaggeredMenu
+            navReady={ready}
+            position="right"
+            items={menuItems}
+            socialItems={socialItems}
+            displaySocials
+            displayItemNumbering={true}
+            menuButtonColor="#ffffff"
+            openMenuButtonColor="#fff"
+            changeMenuColorOnOpen={true}
+            colors={["var(--surface)", "var(--accent)"]}
+            logoUrl="/path-to-your-logo.svg"
+            accentColor="var(--accent)"
+            onMenuOpen={() => console.log("Menu opened")}
+            onMenuClose={() => console.log("Menu closed")}
+          />
+        </div>
+      )}
       {children}
     </main>
   );

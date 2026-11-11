@@ -28,8 +28,14 @@ function answerQuestion(value) {
   return "I don't have an answer for that yet. I can help with this portfolio, its creator, and its toolkit. Type help for available commands.";
 }
 
-export default function PortfolioTerminal() {
-  const [open, setOpen] = useState(false);
+export default function PortfolioTerminal({
+  embedded = false,
+  onExit,
+  title = "thar / terminal",
+  note = "PORTFOLIO GUIDE",
+  welcomeMessage = welcome,
+}) {
+  const [open, setOpen] = useState(embedded);
   const [nudge, setNudge] = useState(false);
   const [value, setValue] = useState("");
   const [entries, setEntries] = useState([]);
@@ -46,7 +52,7 @@ export default function PortfolioTerminal() {
   }, [open]);
 
   useEffect(() => {
-    if (open || prefersReducedMotion()) return;
+    if (embedded || open || prefersReducedMotion()) return;
     let alive = true;
     let waitTimer;
     let peekTimer;
@@ -77,7 +83,7 @@ export default function PortfolioTerminal() {
 
   useGSAP(() => {
     const panel = panelRef.current;
-    if (!open || !panel || prefersReducedMotion()) return;
+    if (embedded || !open || !panel || prefersReducedMotion()) return;
     gsap.fromTo(
       panel,
       { autoAlpha: 0, y: 28, scale: 0.9, transformOrigin: "100% 100%" },
@@ -86,6 +92,10 @@ export default function PortfolioTerminal() {
   }, { dependencies: [open] });
 
   function close() {
+    if (embedded) {
+      onExit?.();
+      return;
+    }
     setOpen(false);
     launcherRef.current?.focus();
   }
@@ -122,36 +132,49 @@ export default function PortfolioTerminal() {
     setValue(historyIndex.current === history.current.length ? draft.current : history.current[historyIndex.current] || "");
   }
 
+  const panel = open && (
+    <section ref={panelRef} id="portfolio-terminal-panel" className="terminal-panel" aria-labelledby="terminal-title">
+      {!embedded && (
+        <header className="terminal-header">
+          <span className="terminal-status" aria-hidden="true" />
+          <h2 id="terminal-title">{title}</h2>
+          <span className="terminal-header-note">{note}</span>
+          <button type="button" className="terminal-icon-button" onClick={close} aria-label="Minimize terminal"><Minus size={18} /></button>
+        </header>
+      )}
+      {embedded && <h2 id="terminal-title" className="sr-only">{title}</h2>}
+      <div ref={outputRef} className="terminal-output" data-lenis-prevent tabIndex={0} role="log" aria-label="Terminal conversation" aria-live="polite" aria-relevant="additions">
+        <p className="terminal-welcome">{welcomeMessage}</p>
+        {entries.map((entry, index) => (
+          <div className="terminal-entry" key={index}>
+            <p className="terminal-command"><span aria-hidden="true">❯</span> {entry.command}</p>
+            <p className="terminal-answer">{entry.answer}</p>
+          </div>
+        ))}
+      </div>
+      <div className="terminal-suggestions" aria-label="Suggested commands">
+        {["help", "about", "skills", "projects", "contact", "jumpscare"].map((command) => <button type="button" key={command} onClick={() => run(command)}>{command}</button>)}
+      </div>
+      <form className="terminal-prompt" onSubmit={(event) => { event.preventDefault(); run(value); }}>
+        <span aria-hidden="true">❯</span>
+        <input ref={inputRef} aria-label="Type a command or question" value={value} onChange={(event) => setValue(event.target.value)} placeholder="Type a command or ask a question…" autoComplete="off" spellCheck={false} maxLength={500} enterKeyHint="send" />
+        <button type="submit" className="terminal-icon-button" aria-label="Run command" disabled={!value.trim()}><ArrowUpRight size={18} /></button>
+      </form>
+      <footer className="terminal-footer"><span>↑ ↓ history</span><span>esc to {embedded ? "close" : "minimize"}</span></footer>
+    </section>
+  );
+
+  if (embedded) {
+    return (
+      <div className="terminal-session" onKeyDown={onKeyDown}>
+        {panel}
+      </div>
+    );
+  }
+
   return (
     <div className={`portfolio-terminal${open ? " is-open" : ""}`} onKeyDown={onKeyDown}>
-      {open && (
-        <section ref={panelRef} id="portfolio-terminal-panel" className="terminal-panel" aria-labelledby="terminal-title">
-          <header className="terminal-header">
-            <span className="terminal-status" aria-hidden="true" />
-            <h2 id="terminal-title">thar / terminal</h2>
-            <span className="terminal-header-note">PORTFOLIO GUIDE</span>
-            <button type="button" className="terminal-icon-button" onClick={close} aria-label="Minimize terminal"><Minus size={18} /></button>
-          </header>
-          <div ref={outputRef} className="terminal-output" data-lenis-prevent tabIndex={0} role="log" aria-label="Terminal conversation" aria-live="polite" aria-relevant="additions">
-            <p className="terminal-welcome">{welcome}</p>
-            {entries.map((entry, index) => (
-              <div className="terminal-entry" key={index}>
-                <p className="terminal-command"><span aria-hidden="true">❯</span> {entry.command}</p>
-                <p className="terminal-answer">{entry.answer}</p>
-              </div>
-            ))}
-          </div>
-          <div className="terminal-suggestions" aria-label="Suggested commands">
-            {["help", "about", "skills", "projects", "contact", "jumpscare"].map((command) => <button type="button" key={command} onClick={() => run(command)}>{command}</button>)}
-          </div>
-          <form className="terminal-prompt" onSubmit={(event) => { event.preventDefault(); run(value); }}>
-            <span aria-hidden="true">❯</span>
-            <input ref={inputRef} aria-label="Type a command or question" value={value} onChange={(event) => setValue(event.target.value)} placeholder="Type a command or ask a question…" autoComplete="off" spellCheck={false} maxLength={500} enterKeyHint="send" />
-            <button type="submit" className="terminal-icon-button" aria-label="Run command" disabled={!value.trim()}><ArrowUpRight size={18} /></button>
-          </form>
-          <footer className="terminal-footer"><span>↑ ↓ history</span><span>esc to minimize</span></footer>
-        </section>
-      )}
+      {panel}
       <button ref={launcherRef} type="button" className={`terminal-launcher${open ? " is-open" : ""}${nudge && !open ? " is-nudging" : ""}`} aria-expanded={open} aria-controls="portfolio-terminal-panel" onClick={() => open ? close() : setOpen(true)}>
         <Terminal size={18} aria-hidden="true" /><span>cmd</span><span className="terminal-launcher-hint">{open ? "close" : "ask me anything"}</span>
       </button>

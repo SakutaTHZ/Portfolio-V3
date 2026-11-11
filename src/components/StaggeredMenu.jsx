@@ -412,7 +412,17 @@ export const StaggeredMenu = ({
           className="staggered-menu-header absolute top-0 left-0 w-full flex items-center justify-between p-[2em] bg-transparent pointer-events-none z-20 will-change-transform"
           aria-label="Main navigation header"
         >
-          <div className="sm-logo flex items-center select-none pointer-events-auto" aria-label="Logo">
+          <a
+            href="/"
+            className="sm-logo flex items-center select-none pointer-events-auto"
+            aria-label="Go home"
+            onClick={event => {
+              if (window.location.pathname === '/' || window.location.pathname === '') {
+                scrollToId(event, '#top');
+                closeMenu();
+              }
+            }}
+          >
             <img
               src={logo}
               alt="Logo"
@@ -421,7 +431,7 @@ export const StaggeredMenu = ({
               width={110}
               height={24}
             />
-          </div>
+          </a>
 
           <button
             ref={toggleBtnRef}
@@ -489,10 +499,21 @@ export const StaggeredMenu = ({
                       aria-label={it.ariaLabel}
                       data-index={idx + 1}
                       onClick={event => {
-                        if (typeof it.link === 'string' && it.link.startsWith('#')) {
-                          scrollToId(event, it.link);
+                        const link = typeof it.link === 'string' ? it.link : '';
+                        if (link.startsWith('#')) {
+                          if (window.location.pathname !== '/' && window.location.pathname !== '') {
+                            event.preventDefault();
+                            window.location.assign(link === '#top' ? '/' : `/${link}`);
+                            return;
+                          }
+                          scrollToId(event, link);
                           closeMenu();
+                          return;
                         }
+                        if (link.startsWith('/') && window.location.pathname.startsWith(link)) {
+                          event.preventDefault();
+                        }
+                        closeMenu();
                       }}
                     >
                       <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">

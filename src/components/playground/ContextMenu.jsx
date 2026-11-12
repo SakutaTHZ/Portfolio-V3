@@ -91,7 +91,7 @@ export function InfoCard({ item, onClose }) {
         <dl>
           <div>
             <dt>Kind</dt>
-            <dd>{item.type === "folder" ? "Folder" : "Application"}</dd>
+            <dd>{item.type === "folder" ? "Folder" : item.type === "file" ? "File" : "Application"}</dd>
           </div>
           {item.sourcePath && (
             <div>

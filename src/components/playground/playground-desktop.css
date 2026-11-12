@@ -429,16 +429,34 @@
   user-select: text;
 }
 
+.pg-file-view {
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+  padding: 16px 18px 28px;
+  overflow: auto;
+  background: #141414;
+  color: #e8e8e8;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre;
+}
+
 .pg-window-body:has(.terminal-session),
 .pg-window-body:has(.memo-book),
-.pg-window-body:has(.pg-settings) {
+.pg-window-body:has(.pg-settings),
+.pg-window-body:has(.tscode),
+.pg-window-body:has(.kaka) {
   display: flex;
   overflow: hidden;
 }
 
 .pg-window-body:has(.terminal-session) > .pg-window-content,
 .pg-window-body:has(.memo-book) > .pg-window-content,
-.pg-window-body:has(.pg-settings) > .pg-window-content {
+.pg-window-body:has(.pg-settings) > .pg-window-content,
+.pg-window-body:has(.tscode) > .pg-window-content,
+.pg-window-body:has(.kaka) > .pg-window-content {
   display: flex;
   min-height: 0;
   flex: 1;

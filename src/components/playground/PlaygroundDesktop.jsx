@@ -10,7 +10,7 @@ import Wallpaper from "./Wallpaper";
 import SettingsApp, { DesktopMenu } from "./SettingsApp";
 import { DesktopContext } from "./desktopContext";
 import GatoJumpscare from "@/components/GatoJumpscare";
-import PortfolioTerminal from "@/components/PortfolioTerminal";
+import PlaygroundTerminal from "./PlaygroundTerminal";
 import MacWindow, { AppGlyph, DesktopIcon, FinderBody, FolderGlyph } from "./MacWindow";
 import SakutaBoot from "./SakutaBoot";
 import StartMenu from "./StartMenu";
@@ -474,13 +474,13 @@ export default function PlaygroundDesktop() {
                     {win.itemId === SETTINGS_ID ? (
                       <SettingsApp />
                     ) : win.itemId === TERMINAL_ID ? (
-                      <PortfolioTerminal
-                        embedded
-                        title="sakutaos / terminal"
-                        note="SAKUTAOS"
-                        welcomeMessage="Welcome to SakutaOS. Type help, or ask about this portfolio."
+                      <PlaygroundTerminal
+                        extras={[finderItem, settingsItem, terminalItem]}
+                        onOpen={openItem}
                         onExit={() => closeWindow(win.id)}
                       />
+                    ) : win.type === "file" ? (
+                      <pre className="pg-file-view">{win.item.source}</pre>
                     ) : win.type === "folder" ? (
                       <FinderBody
                         folder={win.item}

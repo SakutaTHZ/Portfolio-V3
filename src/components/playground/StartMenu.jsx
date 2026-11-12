@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Power, RotateCcw, Search } from "lucide-react";
 import { flattenPlaygroundItems, playgroundRoot } from "@/pages/playground/registry";
 import logo from "@/assets/images/logo.png";
-import { AppGlyph, FolderGlyph } from "./MacWindow";
+import { AppGlyph, FileGlyph, FolderGlyph } from "./MacWindow";
 import { useItemGestures } from "./gestures";
 
 function StartAppButton({ item, onOpen, onContext, onClose }) {
@@ -19,7 +19,13 @@ function StartAppButton({ item, onOpen, onContext, onClose }) {
   return (
     <button type="button" className="pg-start-app" {...gestures}>
       <span className="pg-start-app-icon">
-        {item.type === "folder" ? <FolderGlyph size={42} /> : <AppGlyph name={item.name} size={42} />}
+        {item.type === "folder" ? (
+          <FolderGlyph size={42} />
+        ) : item.type === "file" ? (
+          <FileGlyph size={42} />
+        ) : (
+          <AppGlyph name={item.name} size={42} />
+        )}
       </span>
       <span>{item.name}</span>
     </button>

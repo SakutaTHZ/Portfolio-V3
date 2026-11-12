@@ -54,6 +54,19 @@ export function FolderGlyph({ size = 58 }) {
   );
 }
 
+export function FileGlyph({ size = 52 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+      <path
+        d="M14 8h22l14 14v32a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z"
+        fill="#d7d7dc"
+      />
+      <path d="M36 8v12a2 2 0 0 0 2 2h12" fill="#f4f4f6" />
+      <path d="M18 36h28M18 44h20" stroke="#8e8e93" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function AppGlyph({ name, size = 52 }) {
   let hash = 0;
   for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
@@ -90,7 +103,7 @@ export function DesktopIcon({ item, selected, onSelect, onOpen, onContext }) {
       }}
     >
       <span className="pg-icon-mark">
-        {item.type === "folder" ? <FolderGlyph /> : <AppGlyph name={item.name} />}
+        {item.type === "folder" ? <FolderGlyph /> : item.type === "file" ? <FileGlyph /> : <AppGlyph name={item.name} />}
       </span>
       <span className="pg-icon-label">{item.name}</span>
     </button>

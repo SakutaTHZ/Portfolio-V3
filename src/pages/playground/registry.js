@@ -5,8 +5,15 @@
  * desktop. Subfolders become Finder folders. Optional named export:
  *
  *   export const playgroundMeta = { title: "My Lab", width: 720, height: 520 }
+ *
+ * Stylesheets beside a component show up as files you can cat from the shell.
  */
 const modules = import.meta.glob("./**/*.{jsx,tsx}", { eager: true });
+const rawFiles = import.meta.glob("./**/*.{jsx,tsx,css}", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
 
 function toTitle(filename) {
   return filename
@@ -19,48 +26,53 @@ function toTitle(filename) {
 }
 
 function sortItems(a, b) {
-  if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
+  if (a.type !== b.type) {
+    if (a.type === "folder") return -1;
+    if (b.type === "folder") return 1;
+  }
   return a.name.localeCompare(b.name);
 }
 
-function ensureFolder(parent, name, id) {
+function ensureFolder(parent, name, id, fileName) {
   let folder = parent.children.find((child) => child.type === "folder" && child.id === id);
   if (!folder) {
-    folder = { type: "folder", id, name, children: [] };
+    folder = { type: "folder", id, name, fileName, children: [] };
     parent.children.push(folder);
   }
   return folder;
 }
 
 function buildTree() {
-  const root = { type: "folder", id: ".", name: "Playground", children: [] };
+  const root = { type: "folder", id: ".", name: "Playground", fileName: "", children: [] };
+  const paths = new Set([...Object.keys(modules), ...Object.keys(rawFiles)]);
 
-  for (const [path, mod] of Object.entries(modules)) {
-    if (!mod?.default) continue;
-
+  for (const path of paths) {
+    const mod = modules[path];
+    const source = typeof rawFiles[path] === "string" ? rawFiles[path] : "";
     const parts = path.replace(/^\.\//, "").split("/");
-    const meta = mod.playgroundMeta ?? {};
+    const meta = mod?.playgroundMeta ?? {};
     let node = root;
-    let acc = ".";
 
     parts.forEach((part, index) => {
       const isFile = index === parts.length - 1;
-      acc += `/${part}`;
-
-      if (isFile) {
-        node.children.push({
-          type: "app",
-          id: path,
-          name: meta.title || toTitle(part),
-          component: mod.default,
-          width: meta.width,
-          height: meta.height,
-          sourcePath: `src/pages/playground/${path.replace(/^\.\//, "")}`,
-        });
+      if (!isFile) {
+        const id = `./${parts.slice(0, index + 1).join("/")}`;
+        node = ensureFolder(node, toTitle(part), id, part);
         return;
       }
 
-      node = ensureFolder(node, toTitle(part), acc);
+      const isApp = Boolean(mod?.default);
+      node.children.push({
+        type: isApp ? "app" : "file",
+        id: path,
+        name: isApp ? meta.title || toTitle(part) : part,
+        fileName: part,
+        component: isApp ? mod.default : undefined,
+        width: isApp ? meta.width : 720,
+        height: isApp ? meta.height : 520,
+        sourcePath: `src/pages/playground/${path.replace(/^\.\//, "")}`,
+        source,
+      });
     });
   }
 
@@ -90,7 +102,7 @@ export function findPlaygroundItem(id, node = playgroundRoot) {
 export function flattenPlaygroundItems(node = playgroundRoot, acc = []) {
   if (node.type === "folder") {
     node.children.forEach((child) => flattenPlaygroundItems(child, acc));
-  } else {
+  } else if (node.type === "app") {
     acc.push(node);
   }
   return acc;

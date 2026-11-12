@@ -1,0 +1,323 @@
+.kaka {
+  --kaka-ease: linear(
+    0,
+    0.147 8.1%,
+    0.487 27.8%,
+    0.845 47.4%,
+    0.935 52.9%,
+    0.97 55.4%,
+    1 57.7%,
+    0.961 61.5%,
+    0.947 63.2%,
+    0.935 64.9%,
+    0.927 66.6%,
+    0.92 68.4%,
+    0.916 70.1%,
+    0.915 71.9%,
+    0.918 74.8%,
+    0.927 77.9%,
+    0.94 80.9%,
+    0.975 88.1%,
+    0.989 91.9%,
+    0.998 95.7%,
+    1
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 16px;
+  overflow: hidden;
+  background: #1a1a1a;
+  color: #f4f4f4;
+  font-family: "DM Sans Variable", "Segoe UI", sans-serif;
+  outline: none;
+  box-shadow:
+    inset 10px -10px 18px rgba(0, 0, 0, 0.28),
+    inset -8px 8px 16px rgba(255, 255, 255, 0.02);
+}
+
+.kaka-bar,
+.kaka-match {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.kaka-name {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 560;
+  letter-spacing: -0.03em;
+}
+
+.kaka-modes {
+  display: flex;
+  gap: 8px;
+}
+
+.kaka-mode,
+.kaka-new,
+.kaka-key {
+  border: 0;
+  color: #f5f5f5;
+  font-family: "Space Grotesk Variable", sans-serif;
+  cursor: pointer;
+}
+
+.kaka-mode,
+.kaka-new {
+  border-radius: 10px;
+  background: #ffffff08;
+  box-shadow:
+    0 0 10px rgba(0, 0, 0, 0.12),
+    inset 3px -3px 8px rgba(0, 0, 0, 0.28),
+    inset -2px 2px 8px rgba(255, 255, 255, 0.05);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+}
+
+.kaka-mode {
+  padding: 0.42rem 0.65rem;
+}
+
+.kaka-mode[aria-pressed="true"] {
+  background: var(--pg-accent, #ff5b3e);
+  color: #161616;
+  box-shadow:
+    inset 2px -2px 6px rgba(0, 0, 0, 0.22),
+    inset -1px 1px 5px rgba(255, 255, 255, 0.28);
+}
+
+.kaka-screen {
+  display: flex;
+  min-height: 5.4rem;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  padding: 0.75rem 0.9rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background:
+    linear-gradient(#141414, #141414) padding-box,
+    linear-gradient(100deg, var(--pg-accent, #ff5b3e), var(--pg-accent-2, #ffd84d)) border-box;
+  box-shadow:
+    inset 0 8px 16px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+  text-align: right;
+}
+
+.kaka-expr,
+.kaka-readout {
+  margin: 0;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kaka-expr {
+  min-height: 1.1rem;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.82rem;
+}
+
+.kaka-readout {
+  color: #f7f7f7;
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: clamp(1.7rem, 4vw, 2.15rem);
+  font-weight: 520;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.kaka-readout[data-error] {
+  color: var(--pg-accent, #ff5b3e);
+}
+
+.kaka-match {
+  min-height: 2rem;
+}
+
+.kaka-turn {
+  font-family: "Space Grotesk Variable", sans-serif;
+  font-size: 0.92rem;
+}
+
+.kaka-turn.is-x {
+  color: var(--pg-accent, #ff5b3e);
+}
+
+.kaka-turn.is-o {
+  color: var(--pg-accent-2, #ffd84d);
+}
+
+.kaka-new {
+  padding: 0.35rem 0.6rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.kaka-sci,
+.kaka-pad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kaka-sci {
+  flex: none;
+  grid-auto-rows: 2.35rem;
+}
+
+.kaka-pad {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  grid-template-rows: repeat(5, minmax(2.25rem, 1fr));
+  padding: 10px;
+  border-radius: 16px;
+  background: #ffffff10;
+}
+
+.kaka-key {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  border-radius: 14px;
+  background: rgba(22, 22, 22, 0.94);
+  box-shadow:
+    0 0 10px rgba(0, 0, 0, 0.12),
+    0 8px 16px rgba(0, 0, 0, 0.16),
+    inset 4px -4px 10px rgba(0, 0, 0, 0.28),
+    inset -2px 2px 10px rgba(255, 255, 255, 0.06);
+  font-size: 1.25rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.kaka-pad .kaka-key:is(:hover, :focus-visible) {
+  background: rgba(16, 16, 16, 0.1);
+  color: #161616;
+  text-shadow: none;
+}
+
+.kaka-key:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 3px -2px 8px rgba(0, 0, 0, 0.4),
+    inset -1px 1px 6px rgba(255, 255, 255, 0.04);
+}
+
+.kaka-key.is-op,
+.kaka-key.is-sci {
+  color: var(--pg-accent, #ff5b3e);
+}
+
+.kaka-key.is-eq {
+  color: #161616;
+  background: var(--pg-accent, #ff5b3e);
+  text-shadow: none;
+}
+
+.kaka-key.is-sci {
+  font-size: 0.84rem;
+}
+
+.kaka-key.is-sci[aria-pressed="true"] {
+  color: #161616;
+  background: var(--pg-accent, #ff5b3e);
+  text-shadow: none;
+}
+
+.kaka-pad[data-ttt] .kaka-key.is-cell {
+  background: rgba(14, 14, 14, 0.94);
+  font-size: 1.7rem;
+}
+
+.kaka-pad[data-ttt] .kaka-key.is-cell:is(:hover, :focus-visible) {
+  background: rgba(14, 14, 14, 0.1);
+}
+
+.kaka-mark {
+  display: inline-block;
+  animation: kaka-pop 0.18s ease-out;
+}
+
+.kaka-key.is-x {
+  color: var(--pg-accent, #ff5b3e);
+}
+
+.kaka-key.is-o {
+  color: var(--pg-accent-2, #ffd84d);
+}
+
+.kaka-key.is-win {
+  box-shadow:
+    0 0 0 1px var(--pg-accent, #ff5b3e),
+    inset 4px -4px 10px rgba(0, 0, 0, 0.28),
+    inset -2px 2px 10px rgba(255, 255, 255, 0.06);
+}
+
+@keyframes kaka-pop {
+  from {
+    opacity: 0.2;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.kaka-pad::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  border-radius: 14px;
+  corner-shape: squircle;
+  background-image: linear-gradient(
+    to right top,
+    var(--pg-accent, #ff5b3e),
+    color-mix(in srgb, var(--pg-accent, #ff5b3e) 48%, var(--pg-accent-2, #ffd84d)),
+    var(--pg-accent-2, #ffd84d)
+  );
+  opacity: 0.92;
+  pointer-events: none;
+  position-anchor: --kaka-pad;
+  left: anchor(left);
+  top: anchor(top);
+  right: anchor(right);
+  bottom: anchor(bottom);
+  transition: all 0.35s var(--kaka-ease);
+}
+
+.kaka-pad .kaka-key:is(:hover, :focus-visible) {
+  anchor-name: --kaka-pad;
+}
+
+@supports not (anchor-name: --kaka-pad) {
+  .kaka-pad::after {
+    display: none;
+  }
+
+  .kaka-pad .kaka-key:is(:hover, :focus-visible) {
+    background: color-mix(in srgb, var(--pg-accent, #ff5b3e) 42%, transparent);
+  }
+}
+
+@media (max-width: 460px) {
+  .kaka {
+    padding: 12px;
+  }
+
+  .kaka-mode {
+    padding-inline: 0.5rem;
+  }
+}

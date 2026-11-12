@@ -1,0 +1,256 @@
+.tscode {
+  --ts-bar: #202020;
+  --ts-ink: #f3f3f3;
+  --ts-editor: #282c34;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ts-bar);
+  color: var(--ts-ink);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.ts-menu {
+  height: 32px;
+  flex-shrink: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--ts-bar);
+  padding: 0 4px;
+}
+
+.ts-menu [data-slot="menubar-trigger"] {
+  height: 26px;
+  border-radius: 4px;
+  padding: 0 10px;
+  color: var(--ts-ink);
+  font-family: "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.ts-menu [data-slot="menubar-trigger"]:hover,
+.ts-menu [data-slot="menubar-trigger"][data-state="open"],
+.ts-menu [data-slot="menubar-trigger"]:focus {
+  background: #333333;
+}
+
+.ts-mode {
+  margin-left: auto;
+}
+
+.ts-body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.ts-stage {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.ts-stage[data-layout="code"],
+.ts-stage[data-layout="preview"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.ts-codepane,
+.ts-previewpane {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.ts-stage[data-layout="preview"] .ts-codepane,
+.ts-stage[data-layout="code"] .ts-previewpane {
+  display: none;
+}
+
+.ts-filetabs {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-end;
+  gap: 2px;
+  height: 36px;
+  padding: 6px 8px 0;
+  background: #191919;
+}
+
+.ts-filetab {
+  height: 30px;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  padding: 0 14px;
+  background: transparent;
+  color: #c6c6c6;
+  font: 13px "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+
+.ts-filetab:hover {
+  background: #2a2a2a;
+  color: white;
+}
+
+.ts-filetab[data-active="true"] {
+  background: var(--ts-editor);
+  color: white;
+}
+
+.ts-filetab i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #ffd84d;
+  vertical-align: 1px;
+}
+
+.ts-editor {
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  background: var(--ts-editor);
+}
+
+.ts-editor .cm-editor {
+  height: 100%;
+  background: var(--ts-editor);
+}
+
+.ts-editor .cm-scroller {
+  overflow: auto;
+  font-family: Consolas, "Cascadia Code", ui-monospace, monospace;
+  line-height: 1.55;
+}
+
+.ts-previewpane {
+  background: #f4f4f4;
+  color: #1a1a1a;
+  border-left: 1px solid #111;
+}
+
+.ts-preview-bar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  border-bottom: 1px solid #e2e2e2;
+  background: #f7f7f7;
+  color: #1d1d1d;
+  font-size: 12px;
+}
+
+.ts-preview-bar span {
+  margin-right: auto;
+}
+
+.ts-run {
+  height: 24px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  padding: 0 10px;
+  background: white;
+  color: #1d1d1d;
+  font: 12px "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+
+.ts-run:hover {
+  background: #f0f0f0;
+}
+
+.ts-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  background: white;
+}
+
+.ts-console {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  background: #1e1e1e;
+  color: #e8e8e8;
+}
+
+.ts-runtime {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 0;
+}
+
+.ts-console pre {
+  flex: 1;
+  margin: 0;
+  overflow: auto;
+  padding: 12px 14px 20px;
+  font-family: Consolas, ui-monospace, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.ts-console .is-err {
+  color: #ff8b80;
+}
+
+.ts-console .is-status {
+  color: #9a9a9a;
+}
+
+.ts-status {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 14px;
+  height: 24px;
+  padding: 0 10px;
+  background: #181818;
+  color: #bdbdbd;
+  font-size: 12px;
+}
+
+.ts-status span:last-child {
+  margin-left: auto;
+}
+
+.ts-mobile {
+  min-height: 0;
+  flex: 1;
+  gap: 0;
+}
+
+.ts-mobile [data-slot="tabs-list"] {
+  margin: 8px 8px 0;
+}
+
+.ts-mobile [data-slot="tabs-content"] {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.ts-mobile [data-slot="tabs-content"][hidden] {
+  display: none;
+}

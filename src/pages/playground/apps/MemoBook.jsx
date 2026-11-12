@@ -12,7 +12,7 @@ import {
   Trash2,
   Underline,
 } from "lucide-react";
-import "./memo-book.css";
+import "./css/memo-book.css";
 import { MEMO_STORAGE_KEY as STORAGE_KEY, MEMOS_CLEARED_EVENT } from "@/components/playground/appearance";
 
 export const playgroundMeta = {

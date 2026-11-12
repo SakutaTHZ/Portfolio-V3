@@ -122,7 +122,7 @@ function RunningGlyph({ win, size = 43 }) {
   return <AppGlyph name={win.title} size={size} />;
 }
 
-function RecentApps({ apps, onDismiss, onActivate, onCloseApp }) {
+function RecentApps({ apps, onDismiss, onActivate, onCloseApp, onCloseAll }) {
   return (
     <motion.div
       className="pg-recents-layer"
@@ -141,7 +141,13 @@ function RecentApps({ apps, onDismiss, onActivate, onCloseApp }) {
         exit={{ y: 24 }}
         transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
       >
-        <p className="pg-recents-label">Open apps</p>
+        <div className="pg-recents-head">
+          <p className="pg-recents-label">Open apps</p>
+          <button type="button" className="pg-recents-close-all" onClick={onCloseAll}>
+            <X size={14} strokeWidth={2.2} />
+            Close all
+          </button>
+        </div>
         <div className="pg-recents-track">
           {apps.map((win) => (
             <article key={win.id} className="pg-recent-card" data-minimized={win.minimized || undefined}>
@@ -277,6 +283,15 @@ export default function PlaygroundDesktop() {
   const closeWindow = useCallback((id) => {
     setWindows((current) => current.filter((win) => win.id !== id));
     setFocusedId((current) => (current === id ? null : current));
+  }, []);
+
+  const closeAllWindows = useCallback(() => {
+    setWindows([]);
+    setFocusedId(null);
+    setStartOpen(false);
+    setRecentsOpen(false);
+    setContextMenu(null);
+    setDesktopMenu(null);
   }, []);
 
   const minimizeWindow = useCallback((id) => {
@@ -526,6 +541,7 @@ export default function PlaygroundDesktop() {
                   onDismiss={() => setRecentsOpen(false)}
                   onActivate={pressDockItem}
                   onCloseApp={closeWindow}
+                  onCloseAll={closeAllWindows}
                 />
               )}
             </AnimatePresence>
@@ -650,6 +666,22 @@ export default function PlaygroundDesktop() {
                     <span className="pg-dock-dot" data-minimized={win.minimized || undefined} />
                   </button>
                 ))
+              )}
+              {!mobile && windows.length > 0 && (
+                <>
+                  <span className="pg-dock-separator" aria-hidden="true" />
+                  <button
+                    type="button"
+                    className="pg-dock-item"
+                    aria-label="Close all windows"
+                    title="Close all"
+                    onClick={closeAllWindows}
+                  >
+                    <span className="pg-dock-glyph pg-dock-close-all">
+                      <X size={16} strokeWidth={2.2} />
+                    </span>
+                  </button>
+                </>
               )}
             </nav>
             </div>

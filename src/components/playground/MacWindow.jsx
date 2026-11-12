@@ -8,6 +8,9 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import { motion } from "motion/react";
 import { prefersReducedMotion } from "@/hooks/hooks";
+import StarBorder from "@/components/StarBorder";
+import { getTheme } from "./appearance";
+import { useDesktop } from "./desktopContext";
 import { useItemGestures } from "./gestures";
 
 class WindowErrorBoundary extends Component {
@@ -146,6 +149,9 @@ export default function MacWindow({
   const dragging = useRef(null);
   const resizing = useRef(null);
   const instant = reducedMotion || prefersReducedMotion();
+  const desktop = useDesktop();
+  const light = getTheme(desktop.settings.theme).tone === "light";
+  const frameRadius = win.maximized ? 0 : 12;
 
   const onTitlePointerDown = useCallback(
     (event) => {
@@ -263,6 +269,34 @@ export default function MacWindow({
           onPointerMove={onResizePointerMove}
           onPointerUp={endResize}
           onPointerCancel={endResize}
+        />
+      )}
+      {focused && !win.minimized && (
+        <StarBorder
+          as="div"
+          aria-hidden="true"
+          hover="none"
+          clickPulse={false}
+          radius={frameRadius}
+          thickness={2}
+          glow={0.75}
+          duration={6}
+          color="var(--pg-accent, #ff5b3e)"
+          trailColor="var(--pg-accent-2, #ffd84d)"
+          theme={light ? "light" : "dark"}
+          backgroundColor="transparent"
+          borderColor="transparent"
+          className="pg-window-stars"
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 8,
+            margin: 0,
+            padding: 0,
+            pointerEvents: "none",
+            background: "transparent",
+            borderRadius: frameRadius,
+          }}
         />
       )}
     </motion.section>

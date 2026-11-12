@@ -82,6 +82,7 @@ export default function Kakalator() {
   const [degrees, setDegrees] = useState(true);
   const [ticTacToe, setTicTacToe] = useState(false);
   const [board, setBoard] = useState(emptyBoard);
+  const [litId, setLitId] = useState(null);
 
   const outcome = useMemo(() => winnerOf(board), [board]);
   const boardFull = board.every(Boolean);
@@ -283,6 +284,7 @@ export default function Kakalator() {
       )}
 
       <div className="kaka-pad" data-ttt={ticTacToe || undefined}>
+        <span className="kaka-anchor" aria-hidden="true" />
         {PAD.map((key) => {
           const playing = ticTacToe && key.cell !== undefined;
           const mark = playing ? board[key.cell] : null;
@@ -301,6 +303,11 @@ export default function Kakalator() {
                 .filter(Boolean)
                 .join(" ")}
               aria-label={playing ? `${mark || "Empty"} square` : key.name || key.label}
+              style={litId === key.id ? { anchorName: "--kaka-pad" } : undefined}
+              onPointerEnter={() => setLitId(key.id)}
+              onPointerLeave={() => setLitId((current) => (current === key.id ? null : current))}
+              onFocus={() => setLitId(key.id)}
+              onBlur={() => setLitId((current) => (current === key.id ? null : current))}
               onClick={() => onKey(key)}
             >
               {playing ? <span className="kaka-mark">{mark || ""}</span> : key.label}

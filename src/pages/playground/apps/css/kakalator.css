@@ -177,12 +177,21 @@
 
 .kaka-pad {
   position: relative;
+  isolation: isolate;
   flex: 1;
   min-height: 0;
   grid-template-rows: repeat(5, minmax(2.25rem, 1fr));
   padding: 10px;
   border-radius: 16px;
-  background: #ffffff10;
+  background: #141414;
+}
+
+.kaka-anchor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  anchor-name: --kaka-pad;
 }
 
 .kaka-key {
@@ -190,7 +199,7 @@
   z-index: 2;
   min-width: 0;
   border-radius: 14px;
-  background: rgba(22, 22, 22, 0.94);
+  background: rgba(10, 10, 10, 0.38);
   box-shadow:
     0 0 10px rgba(0, 0, 0, 0.12),
     0 8px 16px rgba(0, 0, 0, 0.16),
@@ -203,9 +212,9 @@
 }
 
 .kaka-pad .kaka-key:is(:hover, :focus-visible) {
-  background: rgba(16, 16, 16, 0.1);
-  color: #161616;
-  text-shadow: none;
+  background: rgba(8, 8, 8, 0.16);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 .kaka-key:active {
@@ -221,9 +230,8 @@
 }
 
 .kaka-key.is-eq {
-  color: #161616;
-  background: var(--pg-accent, #ff5b3e);
-  text-shadow: none;
+  color: #fff;
+  font-weight: 650;
 }
 
 .kaka-key.is-sci {
@@ -237,12 +245,7 @@
 }
 
 .kaka-pad[data-ttt] .kaka-key.is-cell {
-  background: rgba(14, 14, 14, 0.94);
   font-size: 1.7rem;
-}
-
-.kaka-pad[data-ttt] .kaka-key.is-cell:is(:hover, :focus-visible) {
-  background: rgba(14, 14, 14, 0.1);
 }
 
 .kaka-mark {
@@ -291,10 +294,10 @@
   opacity: 0.92;
   pointer-events: none;
   position-anchor: --kaka-pad;
-  left: anchor(left);
-  top: anchor(top);
-  right: anchor(right);
-  bottom: anchor(bottom);
+  left: calc(anchor(left) - 4px);
+  top: calc(anchor(top) - 4px);
+  right: calc(anchor(right) - 4px);
+  bottom: calc(anchor(bottom) - 4px);
   transition: all 0.35s var(--kaka-ease);
 }
 

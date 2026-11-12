@@ -463,7 +463,8 @@
 .pg-window-body:has(.memo-book),
 .pg-window-body:has(.pg-settings),
 .pg-window-body:has(.tscode),
-.pg-window-body:has(.kaka) {
+.pg-window-body:has(.kaka),
+.pg-window-body:has(.timer-app) {
   display: flex;
   overflow: hidden;
 }
@@ -472,7 +473,8 @@
 .pg-window-body:has(.memo-book) > .pg-window-content,
 .pg-window-body:has(.pg-settings) > .pg-window-content,
 .pg-window-body:has(.tscode) > .pg-window-content,
-.pg-window-body:has(.kaka) > .pg-window-content {
+.pg-window-body:has(.kaka) > .pg-window-content,
+.pg-window-body:has(.timer-app) > .pg-window-content {
   display: flex;
   min-height: 0;
   flex: 1;
@@ -936,6 +938,25 @@
   font-size: 11px;
 }
 
+.pg-status-note-time {
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pg-status-note-time:hover time,
+.pg-status-note-time:focus-visible time {
+  color: #fff;
+}
+
+.pg-status-note-time:focus-visible {
+  outline: none;
+}
+
 .pg-status-bar {
   display: flex;
   height: 64px;
@@ -953,7 +974,13 @@
 .pg-status-clock {
   display: grid;
   min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   text-align: left;
+  cursor: pointer;
 }
 
 .pg-status-time {
@@ -975,8 +1002,13 @@
   height: 34px;
   flex: none;
   place-items: center;
+  padding: 0;
+  border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
 .pg-status-count {

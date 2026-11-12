@@ -8,7 +8,7 @@ import { VHS } from "@/components/canvasui/VHS";
 import { getTheme, nextBackground, readAppearance, themeStyle, writeAppearance } from "./appearance";
 import Wallpaper from "./Wallpaper";
 import SettingsApp, { DesktopMenu } from "./SettingsApp";
-import { DesktopContext } from "./desktopContext";
+import { DesktopContext, WindowFrameContext } from "./desktopContext";
 import GatoJumpscare from "@/components/GatoJumpscare";
 import PlaygroundTerminal from "./PlaygroundTerminal";
 import MacWindow, { AppGlyph, DesktopIcon, FinderBody, FolderGlyph } from "./MacWindow";
@@ -505,7 +505,15 @@ export default function PlaygroundDesktop() {
                         onContext={openContext}
                       />
                     ) : App ? (
-                      <App />
+                      <WindowFrameContext.Provider
+                        value={{
+                          minimized: win.minimized,
+                          minimize: () => minimizeWindow(win.id),
+                          restore: () => bringToFront(win.id),
+                        }}
+                      >
+                        <App />
+                      </WindowFrameContext.Provider>
                     ) : (
                       <p className="pg-window-fallback">This file has no default export.</p>
                     )}
@@ -685,7 +693,12 @@ export default function PlaygroundDesktop() {
               )}
             </nav>
             </div>
-            <StatusCluster />
+            <StatusCluster
+              onOpenTimer={(sourceEl) => {
+                const timer = flattenPlaygroundItems().find((item) => item.name === "Timer");
+                if (timer) openItem(timer, sourceEl);
+              }}
+            />
             <DesktopMenu
               menu={desktopMenu}
               screenRef={screenRef}

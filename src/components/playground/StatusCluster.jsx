@@ -100,7 +100,7 @@ function cornerRadii(open, mobile, radius) {
   };
 }
 
-export default function StatusCluster() {
+export default function StatusCluster({ onOpenTimer }) {
   const rootRef = useRef(null);
   const closeTimer = useRef(0);
   const [now, setNow] = useState(() => new Date());
@@ -157,6 +157,12 @@ export default function StatusCluster() {
     setPinned(false);
   }
 
+  function openTimer(event) {
+    event.stopPropagation();
+    close();
+    onOpenTimer?.(event.currentTarget);
+  }
+
   return (
     <motion.aside
       ref={rootRef}
@@ -183,30 +189,37 @@ export default function StatusCluster() {
                 <strong>{note.title}</strong>
                 <span>{note.body}</span>
               </span>
-              <time>{note.ago}</time>
+              <button type="button" className="pg-status-note-time" onClick={openTimer}>
+                <time>{note.ago}</time>
+              </button>
             </li>
           ))}
         </ul>
       </div>
-      <button
-        type="button"
-        className="pg-status-bar"
-        aria-expanded={open}
-        aria-label={`${clock.hour}:${clock.minute} ${clock.period}, ${NOTES.length} notifications`}
-        onClick={() => setPinned((value) => !value)}
-      >
-        <span className="pg-status-clock">
+      <div className="pg-status-bar">
+        <button
+          type="button"
+          className="pg-status-clock"
+          aria-label={`Open Timer, ${clock.hour}:${clock.minute} ${clock.period}`}
+          onClick={openTimer}
+        >
           <span className="pg-status-time">
             {clock.hour}:{clock.minute}
             {clock.period ? <span className="pg-status-period"> {clock.period}</span> : null}
           </span>
           <span className="pg-status-date">{formatDay(now)}</span>
-        </span>
-        <span className="pg-status-bell">
+        </button>
+        <button
+          type="button"
+          className="pg-status-bell"
+          aria-expanded={open}
+          aria-label={`${NOTES.length} notifications`}
+          onClick={() => setPinned((value) => !value)}
+        >
           <Bell size={16} />
           <span className="pg-status-count">{NOTES.length}</span>
-        </span>
-      </button>
+        </button>
+      </div>
     </motion.aside>
   );
 }

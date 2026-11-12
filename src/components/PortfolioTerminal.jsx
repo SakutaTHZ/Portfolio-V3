@@ -13,8 +13,8 @@ const commands = {
   help: "Available commands:\nabout — meet Thar Htet Zan\nskills — explore the toolkit\nprojects — portfolio updates\ncontact — contact information\njumpscare — let Gato pop out\nclear — start fresh\nexit — close the terminal\n\nYou can also ask: Who are you? What do you build?",
   about: "I'm Thar Htet Zan, a web developer who enjoys building dynamic, user-friendly websites and applications, coding, and learning new technologies.",
   skills: "This portfolio is built with React, JavaScript, Tailwind CSS, Vite, and GSAP, with WebGL-powered visual effects.",
-  projects: "You're exploring one right now: this interactive portfolio. More project details haven't been added yet.",
-  contact: "Contact details haven't been added to this portfolio yet. Please check back for an email address or personal social links.",
+  projects: "SakutaOS is this portfolio. Also public: Shika Typo, THZ Components, Reflexo, Artify, and the earlier site at tharhtetzan.netlify.app.",
+  contact: "Email tharhtetzan@gmail.com or thzarts@gmail.com. GitHub is github.com/SakutaTHZ. LinkedIn is linkedin.com/in/thar-htet-zan-a15b39198. Based in Yangon.",
 };
 
 function answerQuestion(value) {

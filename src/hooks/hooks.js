@@ -6,105 +6,57 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger);
 
 let scrollTween = null;
-let settling = false;
+let detachRelease = () => {};
 
 function sectionTop(section) {
   return section.getBoundingClientRect().top + window.scrollY;
+}
+
+function releaseScroll() {
+  detachRelease();
+  scrollTween?.kill();
+  scrollTween = null;
 }
 
 export function easeScrollTo(top) {
   const distance = Math.abs(top - window.scrollY);
   if (distance < 2) return;
 
+  releaseScroll();
+
   if (prefersReducedMotion()) {
-    scrollTween?.kill();
-    settling = false;
     window.scrollTo(0, top);
     return;
   }
 
-  scrollTween?.kill();
-  settling = true;
+  const onKeyDown = (event) => {
+    if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) {
+      releaseScroll();
+    }
+  };
+  detachRelease = () => {
+    detachRelease = () => {};
+    window.removeEventListener("wheel", releaseScroll);
+    window.removeEventListener("touchstart", releaseScroll);
+    window.removeEventListener("keydown", onKeyDown);
+  };
+  window.addEventListener("wheel", releaseScroll, { passive: true });
+  window.addEventListener("touchstart", releaseScroll, { passive: true });
+  window.addEventListener("keydown", onKeyDown);
+
   scrollTween = gsap.to(window, {
     scrollTo: { y: top, autoKill: false },
     duration: gsap.utils.clamp(0.75, 1.2, 0.6 + distance / 1600),
     ease: "power3.out",
     overwrite: true,
     onComplete: () => {
-      settling = false;
       scrollTween = null;
+      detachRelease();
     },
     onInterrupt() {
-      if (scrollTween === this) {
-        settling = false;
-        scrollTween = null;
-      }
+      if (scrollTween === this) scrollTween = null;
     },
   });
-}
-
-function releaseScroll() {
-  if (!scrollTween) return;
-  scrollTween.kill();
-  scrollTween = null;
-  settling = false;
-}
-
-export function useSoftSnap() {
-  useEffect(() => {
-    const mobileQuery = window.matchMedia("(max-width: 767px)");
-    const settle = () => {
-      if (mobileQuery.matches || settling || prefersReducedMotion()) return;
-      const sections = [...document.querySelectorAll("main section[id]")];
-      if (!sections.length) return;
-
-      const y = window.scrollY;
-      const proximity = Math.min(160, window.innerHeight * 0.18);
-      let target = null;
-      let best = proximity;
-
-      for (const section of sections) {
-        const top = sectionTop(section);
-        const distance = Math.abs(top - y);
-        if (distance <= best) {
-          best = distance;
-          target = top;
-        }
-      }
-
-      if (target == null) return;
-      easeScrollTo(target);
-    };
-
-    let timer = 0;
-    const supportsScrollEnd = "onscrollend" in window;
-    const onScroll = () => {
-      if (settling || supportsScrollEnd) return;
-      window.clearTimeout(timer);
-      timer = window.setTimeout(settle, 360);
-    };
-    const onKeyDown = (event) => {
-      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) {
-        releaseScroll();
-      }
-    };
-
-    window.addEventListener("wheel", releaseScroll, { passive: true });
-    window.addEventListener("touchstart", releaseScroll, { passive: true });
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("scrollend", settle);
-
-    return () => {
-      window.clearTimeout(timer);
-      releaseScroll();
-      window.removeEventListener("wheel", releaseScroll);
-      window.removeEventListener("touchstart", releaseScroll);
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("scrollend", settle);
-    };
-  }, []);
 }
 
 export function prefersReducedMotion() {

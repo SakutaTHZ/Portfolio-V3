@@ -234,7 +234,23 @@
   }
 }
 
+.landing-marquee {
+  display: flex;
+  width: max-content;
+  animation: landing-marquee 36s linear infinite;
+}
+
+@keyframes landing-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .landing-marquee {
+    animation: none;
+  }
+
   .background {
     animation: none;
   }

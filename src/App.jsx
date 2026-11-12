@@ -11,11 +11,10 @@ import Testimonials from "./components/landing/Testimonials";
 import Projects from "./components/landing/Projects";
 import Timeline from "./components/landing/Timeline";
 import Contact from "./components/landing/Contact";
-import { prefersReducedMotion, useSoftSnap } from "./hooks/hooks";
+import { prefersReducedMotion } from "./hooks/hooks";
 import InstallPrompt from "./components/InstallPrompt";
 
 export default function App() {
-  useSoftSnap();
   const [ready, setReady] = useState(() =>
     typeof window !== "undefined" ? prefersReducedMotion() : false
   );

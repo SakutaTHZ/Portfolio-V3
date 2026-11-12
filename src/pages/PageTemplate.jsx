@@ -15,7 +15,7 @@ const menuItems = [
 const socialItems = [
   { label: "GitHub", link: "https://github.com/SakutaTHZ" },
   { label: "Mail", link: "mailto:tharhtetzan@gmail.com" },
-  { label: "LinkedIn", link: "https://www.linkedin.com" },
+  { label: "LinkedIn", link: "https://www.linkedin.com/in/thar-htet-zan-a15b39198" },
 ];
 
 export default function PageTemplate({ children, ready = true, desktop = false }) {

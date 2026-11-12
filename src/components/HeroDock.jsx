@@ -31,7 +31,7 @@ const sections = [
 const socials = [
   { title: "GitHub", href: "https://github.com/SakutaTHZ", icon: GithubIcon },
   { title: "Mail", href: "mailto:tharhtetzan@gmail.com", icon: Mail },
-  { title: "LinkedIn", href: "https://www.linkedin.com", icon: LinkedinIcon },
+  { title: "LinkedIn", href: "https://www.linkedin.com/in/thar-htet-zan-a15b39198", icon: LinkedinIcon },
 ];
 
 function DockButton({ icon: Icon, title, href, external, onClick }) {

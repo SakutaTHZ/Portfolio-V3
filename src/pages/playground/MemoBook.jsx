@@ -13,14 +13,13 @@ import {
   Underline,
 } from "lucide-react";
 import "./memo-book.css";
+import { MEMO_STORAGE_KEY as STORAGE_KEY, MEMOS_CLEARED_EVENT } from "@/components/playground/appearance";
 
 export const playgroundMeta = {
   title: "memoBook",
   width: 920,
   height: 640,
 };
-
-const STORAGE_KEY = "sakutaos-memobook";
 
 const INKS = [
   { name: "Ink", value: "#1d1914" },
@@ -134,6 +133,12 @@ export default function MemoBook() {
     const done = (html.match(/checked/g) || []).length;
     return { total, done };
   }, [active]);
+
+  useEffect(() => {
+    const onClear = () => setState(loadState());
+    window.addEventListener(MEMOS_CLEARED_EVENT, onClear);
+    return () => window.removeEventListener(MEMOS_CLEARED_EVENT, onClear);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));

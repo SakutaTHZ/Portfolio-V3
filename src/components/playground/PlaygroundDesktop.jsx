@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "motion/react";
-import { Terminal } from "lucide-react";
+import { Settings, Terminal } from "lucide-react";
 import { flattenPlaygroundItems, playgroundRoot } from "@/pages/playground/registry";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import logo from "@/assets/images/logo.png";
-import LetterGlitch from "@/components/LetterGlitch";
 import { VHS } from "@/components/canvasui/VHS";
+import { getTheme, nextBackground, readAppearance, themeStyle, writeAppearance } from "./appearance";
+import Wallpaper from "./Wallpaper";
+import SettingsApp, { DesktopMenu } from "./SettingsApp";
+import { DesktopContext } from "./desktopContext";
 import GatoJumpscare from "@/components/GatoJumpscare";
 import PortfolioTerminal from "@/components/PortfolioTerminal";
 import MacWindow, { AppGlyph, DesktopIcon, FinderBody, FolderGlyph } from "./MacWindow";
@@ -17,6 +20,7 @@ import StatusCluster from "./StatusCluster";
 import "./playground-desktop.css";
 
 const TERMINAL_ID = "__sakuta-terminal";
+const SETTINGS_ID = "__sakuta-settings";
 
 const terminalItem = {
   type: "app",
@@ -25,6 +29,15 @@ const terminalItem = {
   width: 520,
   height: 440,
   sourcePath: "src/components/PortfolioTerminal.jsx",
+};
+
+const settingsItem = {
+  type: "app",
+  id: SETTINGS_ID,
+  name: "Settings",
+  width: 780,
+  height: 640,
+  sourcePath: "src/components/playground/SettingsApp.jsx",
 };
 
 const finderItem = {
@@ -100,11 +113,23 @@ export default function PlaygroundDesktop() {
   const [contextMenu, setContextMenu] = useState(null);
   const [infoItem, setInfoItem] = useState(null);
   const [power, setPower] = useState(null);
+  const [appearance, setAppearance] = useState(readAppearance);
+  const [settingsSection, setSettingsSection] = useState("display");
+  const [desktopMenu, setDesktopMenu] = useState(null);
   const zRef = useRef(20);
+  const theme = getTheme(appearance.theme);
+
+  const patchAppearance = useCallback((patch) => {
+    setAppearance((current) => {
+      const next = { ...current, ...patch };
+      writeAppearance(next);
+      return next;
+    });
+  }, []);
 
   const startApps = useMemo(() => {
     const folders = playgroundRoot.children.filter((item) => item.type === "folder");
-    return [finderItem, terminalItem, ...folders, ...flattenPlaygroundItems(playgroundRoot)];
+    return [finderItem, settingsItem, terminalItem, ...folders, ...flattenPlaygroundItems(playgroundRoot)];
   }, []);
 
   const openItems = useMemo(() => {
@@ -131,6 +156,7 @@ export default function PlaygroundDesktop() {
 
   const openItem = useCallback((item, sourceEl) => {
     setStartOpen(false);
+    setDesktopMenu(null);
     setContextMenu(null);
     const id = `${item.type}:${item.id}`;
     setSelectedId(item.id);
@@ -235,6 +261,10 @@ export default function PlaygroundDesktop() {
         setInfoItem(null);
         return;
       }
+      if (desktopMenu) {
+        setDesktopMenu(null);
+        return;
+      }
       if (contextMenu) {
         setContextMenu(null);
         return;
@@ -247,39 +277,43 @@ export default function PlaygroundDesktop() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [closeWindow, contextMenu, focusedId, infoItem, startOpen]);
+  }, [closeWindow, contextMenu, desktopMenu, focusedId, infoItem, startOpen]);
+
+  const openSettings = useCallback((section = "display", sourceEl) => {
+    setSettingsSection(section);
+    openItem(settingsItem, sourceEl);
+  }, [openItem]);
+
+  const openDesktopMenu = useCallback((event) => {
+    const blocked = event.target.closest(
+      ".pg-window, .pg-shelf, .pg-status, .pg-start, .pg-menu, .pg-icon, .pg-display, .pg-display-scrim, .pg-info, .pg-player"
+    );
+    if (blocked) return;
+    event.preventDefault();
+    setStartOpen(false);
+    setContextMenu(null);
+    setDesktopMenu({ x: event.clientX, y: event.clientY });
+  }, []);
 
   const terminalOpen = openItems.some((win) => win.itemId === TERMINAL_ID);
+  const settingsOpen = openItems.some((win) => win.itemId === SETTINGS_ID);
   const fullscreen = windows.some((win) => win.maximized && !win.minimized);
 
-  return (
-    <div className="pg-chassis">
-      <div className="pg-bezel">
-        <div className="pg-screen" ref={screenRef}>
-          <VHS
-            className="pg-vhs"
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-            speed={0.1}
-            wave={1}
-            jitter={0.1}
-            crease={0.05}
-            switching={0.05}
-            switchingHeight={0.02}
-            bloom={0.4}
-            aberration={2}
-            acBeat={1}
-            grain={0.02}
-            scanlines={0.1}
-            vignette={0}
-            barrel={0}
-            saturation={1}
-            exposure={1}
-          >
+  const stage = (
+    <>
           <div className="pg-screen-wallpaper" aria-hidden="true">
-            <LetterGlitch backgroundColor="#090909" />
+            <Wallpaper
+              key={`${appearance.background}:${theme.id}`}
+              backgroundId={appearance.background}
+              theme={theme}
+            />
           </div>
 
-          <div className="pg-desktop" data-fullscreen={fullscreen || undefined}>
+          <div
+            className="pg-desktop"
+            data-fullscreen={fullscreen || undefined}
+            onContextMenu={openDesktopMenu}
+          >
             <div
               className="pg-desktop-icons"
               onPointerDown={(event) => {
@@ -322,7 +356,9 @@ export default function PlaygroundDesktop() {
                     onMove={(x, y) => moveWindow(win.id, x, y)}
                     onResize={(width, height) => resizeWindow(win.id, width, height)}
                   >
-                    {win.itemId === TERMINAL_ID ? (
+                    {win.itemId === SETTINGS_ID ? (
+                      <SettingsApp />
+                    ) : win.itemId === TERMINAL_ID ? (
                       <PortfolioTerminal
                         embedded
                         title="sakutaos / terminal"
@@ -377,6 +413,7 @@ export default function PlaygroundDesktop() {
                 aria-expanded={startOpen}
                 onClick={() => {
                   setContextMenu(null);
+                  setDesktopMenu(null);
                   setStartOpen((value) => !value);
                 }}
               >
@@ -385,6 +422,21 @@ export default function PlaygroundDesktop() {
                 </span>
               </button>
               <span className="pg-dock-separator" aria-hidden="true" />
+              <button
+                type="button"
+                className="pg-dock-item"
+                aria-label="Open Settings"
+                onClick={(event) => openSettings("display", event.currentTarget)}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  openContext(settingsItem, { x: event.clientX, y: event.clientY });
+                }}
+              >
+                <span className="pg-dock-glyph pg-dock-display">
+                  <Settings size={18} strokeWidth={1.8} />
+                </span>
+                {settingsOpen && <span className="pg-dock-dot" />}
+              </button>
               <button
                 type="button"
                 className="pg-dock-item"
@@ -416,7 +468,7 @@ export default function PlaygroundDesktop() {
                 {terminalOpen && <span className="pg-dock-dot" />}
               </button>
               {openItems
-                .filter((win) => win.itemId !== playgroundRoot.id && win.itemId !== TERMINAL_ID)
+                .filter((win) => win.itemId !== playgroundRoot.id && win.itemId !== TERMINAL_ID && win.itemId !== SETTINGS_ID)
                 .map((win) => (
                   <button
                     key={win.id}
@@ -445,12 +497,69 @@ export default function PlaygroundDesktop() {
             </nav>
             </div>
             <StatusCluster />
+            <DesktopMenu
+              menu={desktopMenu}
+              screenRef={screenRef}
+              onClose={() => setDesktopMenu(null)}
+              onCycle={() => {
+                patchAppearance({ background: nextBackground(appearance.background) });
+                setDesktopMenu(null);
+              }}
+              onOpenSettings={() => {
+                setDesktopMenu(null);
+                openSettings("display");
+              }}
+            />
+            <div
+              className="pg-dimmer"
+              style={{ opacity: (100 - appearance.brightness) / 115 }}
+              aria-hidden="true"
+            />
           </div>
 
           <GatoJumpscare />
           {booting && <SakutaBoot onDone={() => setBooting(false)} />}
           {power && <PowerOverlay mode={power} />}
-          </VHS>
+    </>
+  );
+
+  const desktopApi = {
+    settings: appearance,
+    patchSettings: patchAppearance,
+    section: settingsSection,
+    setSection: setSettingsSection,
+  };
+
+  return (
+    <DesktopContext.Provider value={desktopApi}>
+    <div className="pg-chassis" data-theme={theme.id} data-tone={theme.tone} style={themeStyle(theme)}>
+      <div className="pg-bezel">
+        <div className="pg-screen" ref={screenRef}>
+          {appearance.vhs ? (
+            <VHS
+              className="pg-vhs"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+              speed={0.1}
+              wave={1}
+              jitter={0.1}
+              crease={0.05}
+              switching={0.05}
+              switchingHeight={0.02}
+              bloom={0.4}
+              aberration={2}
+              acBeat={1}
+              grain={0.02}
+              scanlines={0.1}
+              vignette={0}
+              barrel={0}
+              saturation={1}
+              exposure={1}
+            >
+              {stage}
+            </VHS>
+          ) : (
+            stage
+          )}
         </div>
       </div>
       <div className="pg-chin">
@@ -458,5 +567,6 @@ export default function PlaygroundDesktop() {
         <span>SakutaOS</span>
       </div>
     </div>
+    </DesktopContext.Provider>
   );
 }

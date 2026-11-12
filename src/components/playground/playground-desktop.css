@@ -45,6 +45,12 @@
   z-index: 0;
 }
 
+.pg-screen-wallpaper > div,
+.pg-screen-wallpaper canvas {
+  width: 100%;
+  height: 100%;
+}
+
 .pg-chin {
   display: flex;
   flex: none;
@@ -493,14 +499,30 @@
   content: "";
 }
 
+.pg-shelf {
+  pointer-events: none;
+  position: absolute;
+  z-index: 50;
+  right: 0.9rem;
+  bottom: 0.85rem;
+  left: 0.9rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  transition: translate 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pg-desktop[data-fullscreen] .pg-shelf {
+  pointer-events: none;
+  translate: 0 calc(100% + 1.75rem);
+}
+
 .pg-dock {
   pointer-events: none;
   position: absolute;
-  bottom: 0.85rem;
+  bottom: 0;
   left: 50%;
-  z-index: 50;
   display: flex;
-  transform: translateX(-50%);
   align-items: flex-end;
   gap: 0.4rem;
   padding: 0.45rem 0.55rem 0.5rem;
@@ -510,12 +532,7 @@
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(22px) saturate(160%);
   -webkit-backdrop-filter: blur(22px) saturate(160%);
-  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.pg-desktop[data-fullscreen] .pg-dock {
-  pointer-events: none;
-  transform: translate(-50%, calc(100% + 1.75rem));
+  transform: translateX(-50%);
 }
 
 .pg-desktop[data-fullscreen] .pg-dock,
@@ -527,6 +544,379 @@
 .pg-desktop[data-fullscreen] .pg-start-scrim,
 .pg-desktop[data-fullscreen] .pg-hint {
   display: none;
+}
+
+.pg-player {
+  --pg-disc: #ff5b3e;
+  position: relative;
+  z-index: 1;
+  flex: none;
+  pointer-events: auto;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(30, 30, 30, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 18px 40px rgba(0, 0, 0, 0.35);
+  color: #f4f4f4;
+  font-family: var(--pg-chrome);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  translate: 0 0;
+  transition: translate 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pg-desktop[data-fullscreen] .pg-player {
+  pointer-events: none;
+}
+
+.pg-player-sheet {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.pg-player-controls {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 124px;
+  padding: 14px 14px 2px;
+}
+
+.pg-player-compact {
+  display: flex;
+  height: 64px;
+  flex: none;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0 14px 0 11px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pg-player-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12.5px;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pg-disc {
+  position: relative;
+  display: block;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.28), transparent 26%),
+    repeating-radial-gradient(circle at 50% 50%, #1a1a1a 0 1px, #3a3a3a 1.5px, #111 2.4px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 6px 14px rgba(0, 0, 0, 0.28);
+  animation: pg-spin 2.2s linear infinite;
+  animation-play-state: paused;
+}
+
+.pg-player[data-playing] .pg-disc {
+  animation-play-state: running;
+}
+
+.pg-disc::before,
+.pg-disc::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.pg-disc::before {
+  width: 34%;
+  height: 34%;
+  background:
+    radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.5), transparent 42%),
+    var(--pg-disc);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.45);
+}
+
+.pg-disc::after {
+  width: 14%;
+  height: 14%;
+  background: rgba(20, 20, 20, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+@keyframes pg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pg-player-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.pg-player-transport button,
+.pg-player-volume > button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  cursor: pointer;
+}
+
+.pg-player-transport .pg-player-play {
+  width: 38px;
+  height: 38px;
+  background: #fff;
+  color: #111;
+}
+
+.pg-player-transport button:hover,
+.pg-player-volume > button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.pg-player-transport .pg-player-play:hover {
+  background: #f3f3f3;
+}
+
+.pg-player-seek,
+.pg-player-volume {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pg-player-seek input,
+.pg-player-volume input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--pg-disc);
+  cursor: pointer;
+}
+
+.pg-player audio {
+  display: none;
+}
+
+.pg-desktop[data-fullscreen] .pg-status {
+  pointer-events: none;
+  translate: 0 calc(100% + 1.75rem);
+}
+
+.pg-status {
+  pointer-events: auto;
+  position: absolute;
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(30, 30, 30, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 18px 40px rgba(0, 0, 0, 0.35);
+  color: #f4f4f4;
+  font-family: var(--pg-chrome);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+}
+
+.pg-status-panel {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.15rem 1rem 0.4rem;
+  opacity: 0;
+}
+
+.pg-status[data-open] .pg-status-panel {
+  opacity: 1;
+  transition: opacity 220ms ease 120ms;
+}
+
+.pg-status-label {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.pg-status-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+}
+
+.pg-status-close {
+  display: none;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+}
+
+.pg-status[data-open] .pg-status-close {
+  display: grid;
+}
+
+.pg-status-panel ul {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+.pg-status-panel li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pg-status-panel span {
+  display: grid;
+  min-width: 0;
+  gap: 0.16rem;
+}
+
+.pg-status-panel strong {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pg-status-panel span span,
+.pg-status-panel li > span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+  font-weight: 450;
+}
+
+.pg-status-panel time {
+  flex: none;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 11px;
+}
+
+.pg-status-bar {
+  display: flex;
+  height: 64px;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0 12px 0 16px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.pg-status-clock {
+  display: grid;
+  min-width: 0;
+  text-align: left;
+}
+
+.pg-status-time {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.pg-status-date {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+}
+
+.pg-status-bell {
+  position: relative;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pg-status-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: #ff5b3e;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 15px;
+}
+
+@media (max-width: 767px) {
+  .pg-player-compact {
+    width: 58px;
+    height: 58px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .pg-player[data-open] .pg-player-compact {
+    width: 100%;
+    height: 64px;
+    justify-content: flex-start;
+    padding: 0 14px 0 11px;
+  }
+
+  .pg-player:not([data-open]) .pg-player-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
 }
 
 .pg-dock-item {
@@ -966,10 +1356,79 @@
     flex-wrap: wrap;
   }
 
-  .pg-dock {
+  .pg-shelf {
+    right: 0.55rem;
     bottom: 0.55rem;
-    max-width: calc(100% - 1rem);
-    overflow-x: auto;
+    left: 0.55rem;
+  }
+
+  .pg-status-clock {
+    display: none;
+  }
+
+  .pg-status-bar {
+    height: 58px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .pg-status[data-open] .pg-status-bar {
+    justify-content: flex-end;
+    padding: 0 0.85rem;
+  }
+
+  .pg-status-bell {
+    width: 34px;
+    height: 34px;
+    background: transparent;
+  }
+
+  .pg-status[data-open] .pg-status-panel {
+    padding: 1.35rem 1.15rem 0.6rem;
+  }
+
+  .pg-status-head {
+    margin-bottom: 1.1rem;
+  }
+
+  .pg-status-label {
+    font-size: 22px;
+  }
+
+  .pg-status-close {
+    width: 36px;
+    height: 36px;
+  }
+
+  .pg-status-panel ul {
+    gap: 0.75rem;
+  }
+
+  .pg-status-panel strong {
+    font-size: 16px;
+  }
+
+  .pg-status-panel span span,
+  .pg-status-panel li > span {
+    font-size: 14px;
+  }
+
+  .pg-status-panel time {
+    font-size: 12px;
+  }
+
+  .pg-dock {
+    max-width: none;
+  }
+
+  .pg-dock-item {
+    width: 2.65rem;
+    height: 2.65rem;
+  }
+
+  .pg-dock-glyph {
+    width: 2.15rem;
+    height: 2.15rem;
   }
 
   .pg-start-wrap {
@@ -979,11 +1438,17 @@
   .pg-start-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pg-icon-mark,
-  .pg-dock-item {
+  .pg-dock-item,
+  .pg-player {
     transition: none;
+  }
+
+  .pg-disc {
+    animation: none;
   }
 }

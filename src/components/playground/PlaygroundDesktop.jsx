@@ -4,13 +4,16 @@ import { Terminal } from "lucide-react";
 import { flattenPlaygroundItems, playgroundRoot } from "@/pages/playground/registry";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import logo from "@/assets/images/logo.png";
-import GradientWaves from "@/components/GradientWaves";
+import LetterGlitch from "@/components/LetterGlitch";
+import { VHS } from "@/components/canvasui/VHS";
 import GatoJumpscare from "@/components/GatoJumpscare";
 import PortfolioTerminal from "@/components/PortfolioTerminal";
 import MacWindow, { AppGlyph, DesktopIcon, FinderBody, FolderGlyph } from "./MacWindow";
 import SakutaBoot from "./SakutaBoot";
 import StartMenu from "./StartMenu";
 import ContextMenu, { InfoCard, PowerOverlay } from "./ContextMenu";
+import MusicPlayer from "./MusicPlayer";
+import StatusCluster from "./StatusCluster";
 import "./playground-desktop.css";
 
 const TERMINAL_ID = "__sakuta-terminal";
@@ -253,33 +256,27 @@ export default function PlaygroundDesktop() {
     <div className="pg-chassis">
       <div className="pg-bezel">
         <div className="pg-screen" ref={screenRef}>
+          <VHS
+            className="pg-vhs"
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+            speed={0.1}
+            wave={1}
+            jitter={0.1}
+            crease={0.05}
+            switching={0.05}
+            switchingHeight={0.02}
+            bloom={0.4}
+            aberration={2}
+            acBeat={1}
+            grain={0.02}
+            scanlines={0.1}
+            vignette={0}
+            barrel={0}
+            saturation={1}
+            exposure={1}
+          >
           <div className="pg-screen-wallpaper" aria-hidden="true">
-            <GradientWaves
-              speed={0.5}
-              amplitude={1.15}
-              relief={1}
-              lightAngle={150}
-              mouseInteraction={false}
-              swellOnClick={false}
-              lightMode
-              waveScale={0.68}
-              waveRatio={0.9}
-              swell={25}
-              turbulence={23.5}
-              tilt={64}
-              zoom={1}
-              height={2.3}
-              fogDepth={13.5}
-              sheen={0}
-              brightness={0.68}
-              opacity={1}
-              grain={0.2}
-              quality="low"
-              intro
-              parallaxStrength={0.5}
-              mouseStrength={0.6}
-              paused={false}
-            />
+            <LetterGlitch backgroundColor="#090909" />
           </div>
 
           <div className="pg-desktop" data-fullscreen={fullscreen || undefined}>
@@ -370,6 +367,8 @@ export default function PlaygroundDesktop() {
             />
             {infoItem && <InfoCard item={infoItem} onClose={() => setInfoItem(null)} />}
 
+            <div className="pg-shelf">
+            <MusicPlayer />
             <nav className="pg-dock" aria-label="SakutaOS dock">
               <button
                 type="button"
@@ -444,11 +443,14 @@ export default function PlaygroundDesktop() {
                   </button>
                 ))}
             </nav>
+            </div>
+            <StatusCluster />
           </div>
 
           <GatoJumpscare />
           {booting && <SakutaBoot onDone={() => setBooting(false)} />}
           {power && <PowerOverlay mode={power} />}
+          </VHS>
         </div>
       </div>
       <div className="pg-chin">

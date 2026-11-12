@@ -37,14 +37,30 @@ export default function StartMenu({
 }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
+  const allowSearchFocus = useRef(false);
 
   useEffect(() => {
     if (!open) {
       setQuery("");
-      return;
+      allowSearchFocus.current = false;
+      return undefined;
     }
-    const focus = window.setTimeout(() => inputRef.current?.focus(), 80);
-    return () => window.clearTimeout(focus);
+
+    const mobile = window.matchMedia("(max-width: 767px)").matches;
+    if (!mobile) {
+      const focus = window.setTimeout(() => inputRef.current?.focus(), 80);
+      return () => window.clearTimeout(focus);
+    }
+
+    allowSearchFocus.current = false;
+    const blurIfStolen = () => {
+      if (!allowSearchFocus.current && document.activeElement === inputRef.current) {
+        inputRef.current.blur();
+      }
+    };
+    blurIfStolen();
+    const timers = [0, 60, 180, 400].map((delay) => window.setTimeout(blurIfStolen, delay));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
   }, [open]);
 
   const results = useMemo(() => {
@@ -83,6 +99,9 @@ export default function StartMenu({
                 ref={inputRef}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
+                onPointerDown={() => {
+                  allowSearchFocus.current = true;
+                }}
                 placeholder="Search apps"
                 aria-label="Search apps"
                 autoComplete="off"

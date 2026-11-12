@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence } from "motion/react";
-import { Settings, Terminal } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { Layers, Settings, Terminal, X } from "lucide-react";
 import { flattenPlaygroundItems, playgroundRoot } from "@/pages/playground/registry";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import logo from "@/assets/images/logo.png";
@@ -92,6 +92,85 @@ function nextBox(count, item, screenEl) {
   );
 }
 
+function useMobileDock() {
+  const query = "(max-width: 767px)";
+  const [mobile, setMobile] = useState(() => window.matchMedia(query).matches);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const onChange = () => setMobile(media.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
+  return mobile;
+}
+
+function RunningGlyph({ win, size = 43 }) {
+  if (win.type === "folder") {
+    return (
+      <span
+        className="pg-icon-app"
+        style={{
+          width: size,
+          height: size,
+          background: "linear-gradient(180deg, #7ad7ff, #32ade6)",
+        }}
+      />
+    );
+  }
+  return <AppGlyph name={win.title} size={size} />;
+}
+
+function RecentApps({ apps, onDismiss, onActivate, onCloseApp }) {
+  return (
+    <motion.div
+      className="pg-recents-layer"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+    >
+      <button type="button" className="pg-recents-scrim" aria-label="Close open apps" onClick={onDismiss} />
+      <motion.section
+        className="pg-recents"
+        role="dialog"
+        aria-label="Open apps"
+        initial={{ y: 28 }}
+        animate={{ y: 0 }}
+        exit={{ y: 24 }}
+        transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
+      >
+        <p className="pg-recents-label">Open apps</p>
+        <div className="pg-recents-track">
+          {apps.map((win) => (
+            <article key={win.id} className="pg-recent-card" data-minimized={win.minimized || undefined}>
+              <header>
+                <RunningGlyph win={win} size={22} />
+                <span>{win.title}</span>
+                <button type="button" aria-label={`Close ${win.title}`} onClick={() => onCloseApp(win.id)}>
+                  <X size={14} strokeWidth={2} />
+                </button>
+              </header>
+              <button
+                type="button"
+                className="pg-recent-open"
+                aria-label={win.minimized ? `Restore ${win.title}` : `Show ${win.title}`}
+                onClick={() => onActivate(win.item)}
+              >
+                <span className="pg-recent-stage">
+                  <RunningGlyph win={win} size={68} />
+                  {win.minimized && <em>Minimized</em>}
+                </span>
+              </button>
+            </article>
+          ))}
+        </div>
+      </motion.section>
+    </motion.div>
+  );
+}
+
 function maximizedBox(screenEl) {
   const { width, height } = screenBox(screenEl);
   return {
@@ -110,6 +189,8 @@ export default function PlaygroundDesktop() {
   const [focusedId, setFocusedId] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [startOpen, setStartOpen] = useState(false);
+  const [recentsOpen, setRecentsOpen] = useState(false);
+  const mobile = useMobileDock();
   const [contextMenu, setContextMenu] = useState(null);
   const [infoItem, setInfoItem] = useState(null);
   const [power, setPower] = useState(null);
@@ -151,11 +232,13 @@ export default function PlaygroundDesktop() {
 
   const openContext = useCallback((item, point) => {
     setStartOpen(false);
+    setRecentsOpen(false);
     setContextMenu({ item, x: point.x, y: point.y });
   }, []);
 
   const openItem = useCallback((item, sourceEl) => {
     setStartOpen(false);
+    setRecentsOpen(false);
     setDesktopMenu(null);
     setContextMenu(null);
     const id = `${item.type}:${item.id}`;
@@ -202,6 +285,23 @@ export default function PlaygroundDesktop() {
     );
     setFocusedId((current) => (current === id ? null : current));
   }, []);
+
+  const pressDockItem = useCallback((item, sourceEl) => {
+    setStartOpen(false);
+    setRecentsOpen(false);
+    setDesktopMenu(null);
+    setContextMenu(null);
+    const existing = windows.find((win) => win.itemId === item.id);
+    if (!existing) {
+      openItem(item, sourceEl);
+      return;
+    }
+    if (!existing.minimized && focusedId === existing.id) {
+      minimizeWindow(existing.id);
+      return;
+    }
+    bringToFront(existing.id);
+  }, [bringToFront, focusedId, minimizeWindow, openItem, windows]);
 
   const toggleMaximize = useCallback((id) => {
     setStartOpen(false);
@@ -269,6 +369,10 @@ export default function PlaygroundDesktop() {
         setContextMenu(null);
         return;
       }
+      if (recentsOpen) {
+        setRecentsOpen(false);
+        return;
+      }
       if (startOpen) {
         setStartOpen(false);
         return;
@@ -277,7 +381,7 @@ export default function PlaygroundDesktop() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [closeWindow, contextMenu, desktopMenu, focusedId, infoItem, startOpen]);
+  }, [closeWindow, contextMenu, desktopMenu, focusedId, infoItem, recentsOpen, startOpen]);
 
   const openSettings = useCallback((section = "display", sourceEl) => {
     setSettingsSection(section);
@@ -286,17 +390,28 @@ export default function PlaygroundDesktop() {
 
   const openDesktopMenu = useCallback((event) => {
     const blocked = event.target.closest(
-      ".pg-window, .pg-shelf, .pg-status, .pg-start, .pg-menu, .pg-icon, .pg-display, .pg-display-scrim, .pg-info, .pg-player"
+      ".pg-window, .pg-shelf, .pg-status, .pg-start, .pg-menu, .pg-icon, .pg-display, .pg-display-scrim, .pg-info, .pg-player, .pg-recents"
     );
     if (blocked) return;
     event.preventDefault();
     setStartOpen(false);
+    setRecentsOpen(false);
     setContextMenu(null);
     setDesktopMenu({ x: event.clientX, y: event.clientY });
   }, []);
 
   const terminalOpen = openItems.some((win) => win.itemId === TERMINAL_ID);
   const settingsOpen = openItems.some((win) => win.itemId === SETTINGS_ID);
+  const runningApps = useMemo(
+    () => openItems.filter((win) => win.itemId !== playgroundRoot.id && win.itemId !== TERMINAL_ID && win.itemId !== SETTINGS_ID),
+    [openItems]
+  );
+  const dockAppCount = 3 + runningApps.length;
+  const stackRunning = mobile && dockAppCount > 3;
+
+  useEffect(() => {
+    if (!stackRunning) setRecentsOpen(false);
+  }, [stackRunning]);
   const fullscreen = windows.some((win) => win.maximized && !win.minimized);
 
   const stage = (
@@ -403,6 +518,18 @@ export default function PlaygroundDesktop() {
             />
             {infoItem && <InfoCard item={infoItem} onClose={() => setInfoItem(null)} />}
 
+            <AnimatePresence>
+              {stackRunning && recentsOpen && (
+                <RecentApps
+                  key="recents"
+                  apps={runningApps}
+                  onDismiss={() => setRecentsOpen(false)}
+                  onActivate={pressDockItem}
+                  onCloseApp={closeWindow}
+                />
+              )}
+            </AnimatePresence>
+
             <div className="pg-shelf">
             <MusicPlayer />
             <nav className="pg-dock" aria-label="SakutaOS dock">
@@ -414,6 +541,7 @@ export default function PlaygroundDesktop() {
                 onClick={() => {
                   setContextMenu(null);
                   setDesktopMenu(null);
+                  setRecentsOpen(false);
                   setStartOpen((value) => !value);
                 }}
               >
@@ -426,7 +554,10 @@ export default function PlaygroundDesktop() {
                 type="button"
                 className="pg-dock-item"
                 aria-label="Open Settings"
-                onClick={(event) => openSettings("display", event.currentTarget)}
+                onClick={(event) => {
+                  setSettingsSection("display");
+                  pressDockItem(settingsItem, event.currentTarget);
+                }}
                 onContextMenu={(event) => {
                   event.preventDefault();
                   openContext(settingsItem, { x: event.clientX, y: event.clientY });
@@ -435,13 +566,18 @@ export default function PlaygroundDesktop() {
                 <span className="pg-dock-glyph pg-dock-display">
                   <Settings size={18} strokeWidth={1.8} />
                 </span>
-                {settingsOpen && <span className="pg-dock-dot" />}
+                {settingsOpen && (
+                  <span
+                    className="pg-dock-dot"
+                    data-minimized={openItems.find((win) => win.itemId === SETTINGS_ID)?.minimized || undefined}
+                  />
+                )}
               </button>
               <button
                 type="button"
                 className="pg-dock-item"
                 aria-label="Open Finder"
-                onClick={(event) => openItem(finderItem, event.currentTarget)}
+                onClick={(event) => pressDockItem(finderItem, event.currentTarget)}
                 onContextMenu={(event) => {
                   event.preventDefault();
                   openContext(finderItem, { x: event.clientX, y: event.clientY });
@@ -450,13 +586,18 @@ export default function PlaygroundDesktop() {
                 <span className="pg-dock-glyph" style={{ background: "transparent", boxShadow: "none" }}>
                   <FolderGlyph size={44} />
                 </span>
-                {openItems.some((win) => win.itemId === playgroundRoot.id) && <span className="pg-dock-dot" />}
+                {openItems.some((win) => win.itemId === playgroundRoot.id) && (
+                  <span
+                    className="pg-dock-dot"
+                    data-minimized={openItems.find((win) => win.itemId === playgroundRoot.id)?.minimized || undefined}
+                  />
+                )}
               </button>
               <button
                 type="button"
                 className="pg-dock-item"
                 aria-label="Open Terminal"
-                onClick={(event) => openItem(terminalItem, event.currentTarget)}
+                onClick={(event) => pressDockItem(terminalItem, event.currentTarget)}
                 onContextMenu={(event) => {
                   event.preventDefault();
                   openContext(terminalItem, { x: event.clientX, y: event.clientY });
@@ -465,35 +606,51 @@ export default function PlaygroundDesktop() {
                 <span className="pg-dock-glyph pg-dock-terminal">
                   <Terminal size={18} strokeWidth={1.8} />
                 </span>
-                {terminalOpen && <span className="pg-dock-dot" />}
+                {terminalOpen && (
+                  <span
+                    className="pg-dock-dot"
+                    data-minimized={openItems.find((win) => win.itemId === TERMINAL_ID)?.minimized || undefined}
+                  />
+                )}
               </button>
-              {openItems
-                .filter((win) => win.itemId !== playgroundRoot.id && win.itemId !== TERMINAL_ID && win.itemId !== SETTINGS_ID)
-                .map((win) => (
+              {stackRunning ? (
+                <button
+                  type="button"
+                  className="pg-dock-item"
+                  aria-label={`Open apps, ${runningApps.length} open`}
+                  aria-expanded={recentsOpen}
+                  onClick={() => {
+                    setStartOpen(false);
+                    setContextMenu(null);
+                    setDesktopMenu(null);
+                    setRecentsOpen((value) => !value);
+                  }}
+                >
+                  <span className="pg-dock-glyph pg-dock-stack">
+                    <Layers size={18} strokeWidth={1.8} />
+                  </span>
+                  <span className="pg-dock-count">{runningApps.length}</span>
+                </button>
+              ) : (
+                runningApps.map((win) => (
                   <button
                     key={win.id}
                     type="button"
                     className="pg-dock-item"
-                    aria-label={win.title}
-                    onClick={() => bringToFront(win.id)}
+                    aria-label={win.minimized ? `Restore ${win.title}` : win.title}
+                    onClick={(event) => pressDockItem(win.item, event.currentTarget)}
                     onContextMenu={(event) => {
                       event.preventDefault();
                       openContext(win.item, { x: event.clientX, y: event.clientY });
                     }}
                   >
                     <span className="pg-dock-glyph">
-                      {win.type === "folder" ? (
-                        <span
-                          className="pg-icon-app"
-                          style={{ width: "100%", height: "100%", background: "linear-gradient(180deg, #7ad7ff, #32ade6)" }}
-                        />
-                      ) : (
-                        <AppGlyph name={win.title} size={43} />
-                      )}
+                      <RunningGlyph win={win} size={43} />
                     </span>
-                    <span className="pg-dock-dot" />
+                    <span className="pg-dock-dot" data-minimized={win.minimized || undefined} />
                   </button>
-                ))}
+                ))
+              )}
             </nav>
             </div>
             <StatusCluster />

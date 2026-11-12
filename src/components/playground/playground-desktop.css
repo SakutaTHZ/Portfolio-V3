@@ -548,6 +548,8 @@
 
 .pg-desktop[data-fullscreen] .pg-start-wrap,
 .pg-desktop[data-fullscreen] .pg-start-scrim,
+.pg-desktop[data-fullscreen] .pg-recents,
+.pg-desktop[data-fullscreen] .pg-recents-scrim,
 .pg-desktop[data-fullscreen] .pg-hint {
   display: none;
 }
@@ -1359,6 +1361,167 @@
   transform: translateX(-50%);
 }
 
+.pg-dock-dot[data-minimized] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.78);
+}
+
+.pg-dock-stack {
+  background: linear-gradient(180deg, #3a3a3a, #171717);
+  color: #fff;
+}
+
+.pg-dock-count {
+  position: absolute;
+  top: 0.02rem;
+  right: 0.02rem;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.22rem;
+  border-radius: 999px;
+  background: var(--pg-accent, #ff5b3e);
+  color: #fff;
+  font-family: var(--pg-chrome);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+}
+
+.pg-recents-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+}
+
+.pg-recents-scrim {
+  position: absolute;
+  inset: 0 0 5.1rem;
+  border: 0;
+  background: rgba(0, 0, 0, 0.34);
+  pointer-events: auto;
+  cursor: default;
+}
+
+.pg-recents {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 5.35rem;
+  left: 0.7rem;
+  pointer-events: auto;
+  color: #f4f4f4;
+  font-family: var(--pg-chrome);
+}
+
+.pg-recents-label {
+  margin: 0 0.35rem 0.55rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pg-recents-track {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: safe center;
+  overflow-x: auto;
+  padding: 0.15rem 0.15rem 0.7rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.pg-recents-track::-webkit-scrollbar {
+  display: none;
+}
+
+.pg-recent-card {
+  display: flex;
+  flex: 0 0 min(72%, 15.5rem);
+  flex-direction: column;
+  height: min(17.5rem, 48vh);
+  scroll-snap-align: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 1.45rem;
+  background: var(--pg-glass-strong, rgba(22, 22, 22, 0.72));
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+}
+
+.pg-recent-card[data-minimized] {
+  opacity: 0.72;
+}
+
+.pg-recent-card header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.65rem 0.45rem 0.8rem;
+}
+
+.pg-recent-card header span:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 640;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pg-recent-card header button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  cursor: pointer;
+}
+
+.pg-recent-open {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  margin: 0;
+  padding: 0 0.55rem 0.55rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.pg-recent-stage {
+  position: relative;
+  display: grid;
+  flex: 1;
+  place-items: center;
+  border-radius: 1.05rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 28%),
+    rgba(0, 0, 0, 0.28);
+}
+
+.pg-recent-stage em {
+  position: absolute;
+  bottom: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 620;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .pg-hint {
   pointer-events: none;
   position: absolute;
@@ -1480,7 +1643,21 @@
   }
 
   .pg-dock {
-    max-width: none;
+    max-width: calc(100% - 7.6rem);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .pg-dock::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pg-recents {
+    bottom: 4.9rem;
+  }
+
+  .pg-recents-scrim {
+    inset: 0 0 4.7rem;
   }
 
   .pg-dock-item {
@@ -1899,6 +2076,9 @@
 .pg-chassis[data-tone="light"] .pg-start,
 .pg-chassis[data-tone="light"] .pg-start-app,
 .pg-chassis[data-tone="light"] .pg-start-search input,
+.pg-chassis[data-tone="light"] .pg-recents,
+.pg-chassis[data-tone="light"] .pg-recent-card,
+.pg-chassis[data-tone="light"] .pg-recent-open,
 .pg-chassis[data-tone="light"] .pg-menu,
 .pg-chassis[data-tone="light"] .pg-menu button,
 .pg-chassis[data-tone="light"] .pg-menu a,
@@ -1919,6 +2099,8 @@
 .pg-chassis[data-tone="light"] .pg-status-date,
 .pg-chassis[data-tone="light"] .pg-start-user span,
 .pg-chassis[data-tone="light"] .pg-start-label,
+.pg-chassis[data-tone="light"] .pg-recents-label,
+.pg-chassis[data-tone="light"] .pg-recent-stage em,
 .pg-chassis[data-tone="light"] .pg-player-seek,
 .pg-chassis[data-tone="light"] .pg-window:not([data-focused="true"]) .pg-traffic {
   color: var(--pg-muted);
@@ -1928,7 +2110,8 @@
 .pg-chassis[data-tone="light"] .pg-start-power button,
 .pg-chassis[data-tone="light"] .pg-info header button,
 .pg-chassis[data-tone="light"] .pg-status-bell,
-.pg-chassis[data-tone="light"] .pg-start-search {
+.pg-chassis[data-tone="light"] .pg-start-search,
+.pg-chassis[data-tone="light"] .pg-recent-card header button {
   background: rgba(28, 25, 23, 0.06);
   color: var(--pg-ink);
 }

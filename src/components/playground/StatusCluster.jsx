@@ -127,7 +127,10 @@ export default function StatusCluster({ onOpenTimer }) {
   useEffect(() => {
     if (!pinned) return undefined;
     const onPointerDown = (event) => {
-      if (!rootRef.current?.contains(event.target)) setPinned(false);
+      const target = event.target;
+      if (rootRef.current?.contains(target)) return;
+      if (target instanceof Element && target.closest(".pg-player")) return;
+      setPinned(false);
     };
     window.addEventListener("pointerdown", onPointerDown);
     return () => window.removeEventListener("pointerdown", onPointerDown);

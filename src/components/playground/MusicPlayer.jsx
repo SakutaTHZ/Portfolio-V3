@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { Pause, Play, SkipBack, SkipForward, Volume1, Volume2 } from "lucide-react";
 import ElasticSlider from "@/components/ElasticSlider";
@@ -73,6 +73,38 @@ function useMobilePlayer() {
   return mobile;
 }
 
+function useScreenFrame() {
+  const [frame, setFrame] = useState({ width: 0, pull: 0, drop: 0 });
+
+  useLayoutEffect(() => {
+    const desktop = document.querySelector(".pg-desktop");
+    const shelf = document.querySelector(".pg-shelf");
+    if (!desktop || !shelf) return undefined;
+
+    const measure = () => {
+      const screen = desktop.getBoundingClientRect();
+      const bar = shelf.getBoundingClientRect();
+      setFrame({
+        width: screen.width,
+        pull: screen.left - bar.left,
+        drop: bar.bottom - screen.bottom,
+      });
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(desktop);
+    observer.observe(shelf);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  return frame;
+}
+
 export default function MusicPlayer() {
   const audioRef = useRef(null);
   const rootRef = useRef(null);
@@ -81,6 +113,7 @@ export default function MusicPlayer() {
   const holding = useRef(false);
   const closeTimer = useRef(0);
   const mobile = useMobilePlayer();
+  const frame = useScreenFrame();
   const [index, setIndex] = useState(session.index);
   const [playing, setPlaying] = useState(session.playing);
   const [time, setTime] = useState(session.time);
@@ -95,8 +128,16 @@ export default function MusicPlayer() {
 
   const track = TRACKS[index];
   const open = hover || pinned;
-  const shape = { ...SHAPES[mobile ? "mobile" : "desktop"][open ? "open" : "closed"] };
-  if (mobile && open) shape.width = Math.min(shape.width, window.innerWidth - 86);
+  const shape = {
+    ...SHAPES[mobile ? "mobile" : "desktop"][open ? "open" : "closed"],
+    marginLeft: 0,
+    marginBottom: 0,
+  };
+  if (mobile && open && frame.width) {
+    shape.width = frame.width;
+    shape.marginLeft = frame.pull;
+    shape.marginBottom = frame.drop;
+  }
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -161,11 +202,14 @@ export default function MusicPlayer() {
   useEffect(() => {
     if (!pinned) return undefined;
     const onPointerDown = (event) => {
-      if (!rootRef.current?.contains(event.target)) setPinned(false);
+      const target = event.target;
+      if (rootRef.current?.contains(target)) return;
+      if (mobile && target instanceof Element && target.closest(".pg-status")) return;
+      setPinned(false);
     };
     window.addEventListener("pointerdown", onPointerDown);
     return () => window.removeEventListener("pointerdown", onPointerDown);
-  }, [pinned]);
+  }, [pinned, mobile]);
 
   useEffect(() => {
     if (mobile) setHover(false);

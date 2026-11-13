@@ -1697,6 +1697,7 @@
   }
 
   .pg-shelf {
+    z-index: 56;
     right: 0.55rem;
     bottom: 0.55rem;
     left: 0.55rem;

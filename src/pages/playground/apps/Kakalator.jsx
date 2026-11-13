@@ -20,7 +20,7 @@ import {
 import "./css/kakalator.css";
 
 export const playgroundMeta = {
-  title: "kakalator",
+  title: "tikalator",
   width: 420,
   height: 760,
 };
@@ -230,7 +230,7 @@ export default function Kakalator() {
   return (
     <div className="kaka" data-ttt={ticTacToe || undefined} onKeyDown={onType} tabIndex={0}>
       <header className="kaka-bar">
-        <p className="kaka-name">kakalator</p>
+        <p className="kaka-name">tikalator</p>
         <div className="kaka-modes">
           <button
             type="button"

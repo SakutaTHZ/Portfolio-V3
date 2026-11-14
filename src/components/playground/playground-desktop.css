@@ -464,7 +464,8 @@
 .pg-window-body:has(.pg-settings),
 .pg-window-body:has(.tscode),
 .pg-window-body:has(.kaka),
-.pg-window-body:has(.timer-app) {
+.pg-window-body:has(.timer-app),
+.pg-window-body:has(.bsw-app) {
   display: flex;
   overflow: hidden;
 }
@@ -474,7 +475,8 @@
 .pg-window-body:has(.pg-settings) > .pg-window-content,
 .pg-window-body:has(.tscode) > .pg-window-content,
 .pg-window-body:has(.kaka) > .pg-window-content,
-.pg-window-body:has(.timer-app) > .pg-window-content {
+.pg-window-body:has(.timer-app) > .pg-window-content,
+.pg-window-body:has(.bsw-app) > .pg-window-content {
   display: flex;
   min-height: 0;
   flex: 1;

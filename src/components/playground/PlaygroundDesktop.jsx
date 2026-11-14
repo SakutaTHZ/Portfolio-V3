@@ -107,18 +107,7 @@ function useMobileDock() {
 }
 
 function RunningGlyph({ win, size = 43 }) {
-  if (win.type === "folder") {
-    return (
-      <span
-        className="pg-icon-app"
-        style={{
-          width: size,
-          height: size,
-          background: "linear-gradient(180deg, #7ad7ff, #32ade6)",
-        }}
-      />
-    );
-  }
+  if (win.type === "folder") return <FolderGlyph size={size} />;
   return <AppGlyph name={win.title} size={size} />;
 }
 
@@ -470,6 +459,7 @@ export default function PlaygroundDesktop() {
               </p>
             )}
 
+            <div className="pg-windows">
             <AnimatePresence>
               {windows.map((win) => {
                 const App = win.item.component;
@@ -521,6 +511,7 @@ export default function PlaygroundDesktop() {
                 );
               })}
             </AnimatePresence>
+            </div>
 
             <StartMenu
               open={startOpen}

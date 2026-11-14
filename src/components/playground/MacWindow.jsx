@@ -81,10 +81,12 @@ export function AppGlyph({ name, size = 52 }) {
       style={{
         width: size,
         height: size,
-        background: `linear-gradient(180deg, hsl(${hue} 72% 64%), hsl(${hue} 64% 42%))`,
+        "--pg-icon-hue": hue,
       }}
     >
-      <span className="pg-icon-letter">{name.slice(0, 1)}</span>
+      <span className="pg-icon-letter" style={{ fontSize: Math.max(11, Math.round(size * 0.34)) }}>
+        {name.slice(0, 1)}
+      </span>
     </span>
   );
 }

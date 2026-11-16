@@ -9,6 +9,7 @@ import {
 import { motion } from "motion/react";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import StarBorder from "@/components/StarBorder";
+import { baseAppIcon } from "./app-icons";
 import { getTheme } from "./appearance";
 import { useDesktop } from "./desktopContext";
 import { useItemGestures } from "./gestures";
@@ -88,6 +89,8 @@ export function FileGlyph({ size = 52 }) {
 }
 
 export function AppGlyph({ name, size = 52 }) {
+  const BaseIcon = baseAppIcon(name);
+  if (BaseIcon) return <BaseIcon size={size} />;
   const { bg, ink } = iconSwatch(name);
   const letter = String(name || "?").trim().charAt(0).toUpperCase() || "?";
 

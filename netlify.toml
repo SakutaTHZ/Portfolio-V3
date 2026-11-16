@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+# Keep the in-window browser ahead of the SPA fallback.
+[[redirects]]
+  from = "/api/bleed"
+  to = "/.netlify/functions/bleed"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

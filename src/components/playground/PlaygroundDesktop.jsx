@@ -22,6 +22,7 @@ import "./playground-desktop.css";
 
 const TERMINAL_ID = "__sakuta-terminal";
 const SETTINGS_ID = "__sakuta-settings";
+const bleedItem = flattenPlaygroundItems().find((item) => item.name === "Bleed");
 
 const terminalItem = {
   type: "app",
@@ -417,12 +418,13 @@ export default function PlaygroundDesktop() {
   }, []);
 
   const terminalOpen = openItems.some((win) => win.itemId === TERMINAL_ID);
-  const runningApps = useMemo(
-    () => openItems.filter((win) => win.itemId !== playgroundRoot.id && win.itemId !== TERMINAL_ID),
-    [openItems]
-  );
-  const dockAppCount = 2 + runningApps.length;
-  const stackRunning = mobile && dockAppCount > 2;
+  const bleedOpen = openItems.some((win) => win.itemId === bleedItem?.id);
+  const runningApps = useMemo(() => {
+    const pinned = new Set([playgroundRoot.id, TERMINAL_ID, bleedItem?.id].filter(Boolean));
+    return openItems.filter((win) => !pinned.has(win.itemId));
+  }, [openItems]);
+  const dockAppCount = (bleedItem ? 3 : 2) + runningApps.length;
+  const stackRunning = mobile && dockAppCount > (bleedItem ? 3 : 2);
 
   useEffect(() => {
     if (!stackRunning) setRecentsOpen(false);
@@ -491,7 +493,7 @@ export default function PlaygroundDesktop() {
                       <SettingsApp />
                     ) : win.itemId === TERMINAL_ID ? (
                       <PlaygroundTerminal
-                        extras={[finderItem, settingsItem, terminalItem]}
+                        extras={[finderItem, settingsItem, terminalItem, bleedItem].filter(Boolean)}
                         onOpen={openItem}
                         onExit={() => closeWindow(win.id)}
                       />
@@ -621,6 +623,30 @@ export default function PlaygroundDesktop() {
                 )}
               </button>
               </DockTip>
+              {bleedItem && (
+                <DockTip label="Bleed">
+                <button
+                  type="button"
+                  className="pg-dock-item"
+                  aria-label="Open Bleed"
+                  onClick={(event) => pressDockItem(bleedItem, event.currentTarget)}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    openContext(bleedItem, { x: event.clientX, y: event.clientY });
+                  }}
+                >
+                  <span className="pg-dock-glyph">
+                    <AppGlyph name="Bleed" size={43} />
+                  </span>
+                  {bleedOpen && (
+                    <span
+                      className="pg-dock-dot"
+                      data-minimized={openItems.find((win) => win.itemId === bleedItem.id)?.minimized || undefined}
+                    />
+                  )}
+                </button>
+                </DockTip>
+              )}
               {stackRunning ? (
                 <button
                   type="button"

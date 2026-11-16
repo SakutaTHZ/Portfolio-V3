@@ -6,7 +6,7 @@ const work = [
   {
     year: "2026",
     title: "SakutaOS",
-    text: "This portfolio, booted like a desktop. Windows, a music player, a memo book, and a cat that should not be trusted.",
+    text: "This portfolio, booted like a desktop. Windows, a browser called Bleed, a music player, a memo book, and a cat that should not be trusted.",
     href: "/playground",
     label: "Open the desktop",
     tags: ["React", "GSAP", "WebGL"],

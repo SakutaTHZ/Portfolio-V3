@@ -4,11 +4,45 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { bleedErrorPage, fetchBleedDocument } from "./netlify/functions/_shared/bleed-proxy.js";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
+function bleedProxy() {
+  return {
+    name: "bleed-proxy",
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const requestUrl = new URL(req.url || "/", "http://127.0.0.1");
+        if (requestUrl.pathname !== "/api/bleed") return next();
+        if (req.method !== "GET" && req.method !== "HEAD") {
+          res.statusCode = 405;
+          res.end("Method not allowed");
+          return;
+        }
+        try {
+          const result = await fetchBleedDocument(requestUrl.searchParams.get("url"));
+          res.statusCode = result.status;
+          res.setHeader("Content-Type", result.contentType);
+          res.setHeader("Cache-Control", "no-store");
+          res.setHeader("Content-Security-Policy", "frame-ancestors 'self'");
+          res.setHeader("X-Content-Type-Options", "nosniff");
+          res.setHeader("Referrer-Policy", "no-referrer");
+          res.end(req.method === "HEAD" ? undefined : result.body);
+        } catch (error) {
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "text/html; charset=utf-8");
+          res.setHeader("Cache-Control", "no-store");
+          res.end(bleedErrorPage(error.message || "Bleed could not open that page."));
+        }
+      });
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
+    bleedProxy(),
     react(),
     tailwindcss(),
     VitePWA({
@@ -49,6 +83,7 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//],
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2,webmanifest}"],
         globIgnores: ["**/assets/**/*.png", "**/*.wasm"],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,

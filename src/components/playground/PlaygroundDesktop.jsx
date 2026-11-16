@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Layers, Settings, Terminal, X } from "lucide-react";
+import { Layers, X } from "lucide-react";
 import { flattenPlaygroundItems, playgroundRoot } from "@/pages/playground/registry";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import logo from "@/assets/images/logo.png";
@@ -17,6 +17,7 @@ import StartMenu from "./StartMenu";
 import ContextMenu, { InfoCard, PowerOverlay } from "./ContextMenu";
 import MusicPlayer from "./MusicPlayer";
 import StatusCluster from "./StatusCluster";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import "./playground-desktop.css";
 
 const TERMINAL_ID = "__sakuta-terminal";
@@ -42,9 +43,20 @@ const settingsItem = {
 
 const finderItem = {
   ...playgroundRoot,
-  name: "Finder",
+  name: "Folder",
   sourcePath: "src/pages/playground",
 };
+
+function DockTip({ label, children }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="top" sideOffset={12} className="z-[80]">
+        {label}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 function screenBox(screenEl) {
   const rect = screenEl?.getBoundingClientRect();
@@ -405,13 +417,12 @@ export default function PlaygroundDesktop() {
   }, []);
 
   const terminalOpen = openItems.some((win) => win.itemId === TERMINAL_ID);
-  const settingsOpen = openItems.some((win) => win.itemId === SETTINGS_ID);
   const runningApps = useMemo(
-    () => openItems.filter((win) => win.itemId !== playgroundRoot.id && win.itemId !== TERMINAL_ID && win.itemId !== SETTINGS_ID),
+    () => openItems.filter((win) => win.itemId !== playgroundRoot.id && win.itemId !== TERMINAL_ID),
     [openItems]
   );
-  const dockAppCount = 3 + runningApps.length;
-  const stackRunning = mobile && dockAppCount > 3;
+  const dockAppCount = 2 + runningApps.length;
+  const stackRunning = mobile && dockAppCount > 2;
 
   useEffect(() => {
     if (!stackRunning) setRecentsOpen(false);
@@ -547,6 +558,7 @@ export default function PlaygroundDesktop() {
 
             <div className="pg-shelf">
             <MusicPlayer />
+            <TooltipProvider delayDuration={280}>
             <nav className="pg-dock" aria-label="SakutaOS dock">
               <button
                 type="button"
@@ -565,33 +577,11 @@ export default function PlaygroundDesktop() {
                 </span>
               </button>
               <span className="pg-dock-separator" aria-hidden="true" />
+              <DockTip label="Folder">
               <button
                 type="button"
                 className="pg-dock-item"
-                aria-label="Open Settings"
-                onClick={(event) => {
-                  setSettingsSection("display");
-                  pressDockItem(settingsItem, event.currentTarget);
-                }}
-                onContextMenu={(event) => {
-                  event.preventDefault();
-                  openContext(settingsItem, { x: event.clientX, y: event.clientY });
-                }}
-              >
-                <span className="pg-dock-glyph pg-dock-display">
-                  <Settings size={18} strokeWidth={1.8} />
-                </span>
-                {settingsOpen && (
-                  <span
-                    className="pg-dock-dot"
-                    data-minimized={openItems.find((win) => win.itemId === SETTINGS_ID)?.minimized || undefined}
-                  />
-                )}
-              </button>
-              <button
-                type="button"
-                className="pg-dock-item"
-                aria-label="Open Finder"
+                aria-label="Open Folder"
                 onClick={(event) => pressDockItem(finderItem, event.currentTarget)}
                 onContextMenu={(event) => {
                   event.preventDefault();
@@ -608,6 +598,8 @@ export default function PlaygroundDesktop() {
                   />
                 )}
               </button>
+              </DockTip>
+              <DockTip label="Terminal">
               <button
                 type="button"
                 className="pg-dock-item"
@@ -618,8 +610,8 @@ export default function PlaygroundDesktop() {
                   openContext(terminalItem, { x: event.clientX, y: event.clientY });
                 }}
               >
-                <span className="pg-dock-glyph pg-dock-terminal">
-                  <Terminal size={18} strokeWidth={1.8} />
+                <span className="pg-dock-glyph">
+                  <AppGlyph name="Terminal" size={43} />
                 </span>
                 {terminalOpen && (
                   <span
@@ -628,6 +620,7 @@ export default function PlaygroundDesktop() {
                   />
                 )}
               </button>
+              </DockTip>
               {stackRunning ? (
                 <button
                   type="button"
@@ -648,8 +641,8 @@ export default function PlaygroundDesktop() {
                 </button>
               ) : (
                 runningApps.map((win) => (
+                  <DockTip key={win.id} label={win.title}>
                   <button
-                    key={win.id}
                     type="button"
                     className="pg-dock-item"
                     aria-label={win.minimized ? `Restore ${win.title}` : win.title}
@@ -664,25 +657,28 @@ export default function PlaygroundDesktop() {
                     </span>
                     <span className="pg-dock-dot" data-minimized={win.minimized || undefined} />
                   </button>
+                  </DockTip>
                 ))
               )}
               {!mobile && windows.length > 0 && (
                 <>
                   <span className="pg-dock-separator" aria-hidden="true" />
+                  <DockTip label="Close all">
                   <button
                     type="button"
                     className="pg-dock-item"
                     aria-label="Close all windows"
-                    title="Close all"
                     onClick={closeAllWindows}
                   >
                     <span className="pg-dock-glyph pg-dock-close-all">
                       <X size={16} strokeWidth={2.2} />
                     </span>
                   </button>
+                  </DockTip>
                 </>
               )}
             </nav>
+            </TooltipProvider>
             </div>
             <StatusCluster
               onOpenTimer={(sourceEl) => {

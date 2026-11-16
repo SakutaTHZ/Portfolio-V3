@@ -37,21 +37,38 @@ class WindowErrorBoundary extends Component {
   }
 }
 
+const ICON_SWATCHES = [
+  ["#ff5b3e", "#2a0d08"],
+  ["#ffd84d", "#2a2108"],
+  ["#ff8a3d", "#2a1408"],
+  ["#7ad7ff", "#06202c"],
+  ["#c084fc", "#1c0a2c"],
+  ["#3dff8a", "#062814"],
+  ["#fb7185", "#2a0a12"],
+  ["#f4c095", "#2a160c"],
+  ["#60a5fa", "#071428"],
+  ["#f97316", "#2a1004"],
+  ["#e7f4ff", "#102028"],
+  ["#c4f04d", "#1a2406"],
+];
+
+function iconSwatch(name) {
+  const letter = String(name || "?").trim().charAt(0).toUpperCase();
+  const index = letter >= "A" && letter <= "Z" ? letter.charCodeAt(0) - 65 : 0;
+  const [bg, ink] = ICON_SWATCHES[index % ICON_SWATCHES.length];
+  return { bg, ink };
+}
+
 export function FolderGlyph({ size = 58 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" className="pg-folder-glyph">
       <path
         d="M6 18c0-3.3 2.7-6 6-6h14.2c1.4 0 2.7.6 3.6 1.7l2.4 2.8c.9 1.1 2.2 1.7 3.6 1.7H52c3.3 0 6 2.7 6 6v24c0 3.3-2.7 6-6 6H12c-3.3 0-6-2.7-6-6V18z"
-        fill="#5ac8ff"
+        className="pg-folder-tab"
       />
       <path
         d="M6 26h52v24c0 3.3-2.7 6-6 6H12c-3.3 0-6-2.7-6-6V26z"
-        fill="#32ade6"
-      />
-      <path
-        d="M6 26h52v4.5H6V26z"
-        fill="#7ad7ff"
-        opacity="0.55"
+        className="pg-folder-body"
       />
     </svg>
   );
@@ -59,21 +76,20 @@ export function FolderGlyph({ size = 58 }) {
 
 export function FileGlyph({ size = 52 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" className="pg-file-glyph">
       <path
         d="M14 8h22l14 14v32a6 6 0 0 1-6 6H14a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z"
-        fill="#d7d7dc"
+        className="pg-file-page"
       />
-      <path d="M36 8v12a2 2 0 0 0 2 2h12" fill="#f4f4f6" />
-      <path d="M18 36h28M18 44h20" stroke="#8e8e93" strokeWidth="3" strokeLinecap="round" />
+      <path d="M36 8v12a2 2 0 0 0 2 2h12" className="pg-file-fold" />
+      <path d="M18 36h28M18 44h20" className="pg-file-lines" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }
 
 export function AppGlyph({ name, size = 52 }) {
-  let hash = 0;
-  for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
-  const hue = hash % 360;
+  const { bg, ink } = iconSwatch(name);
+  const letter = String(name || "?").trim().charAt(0).toUpperCase() || "?";
 
   return (
     <span
@@ -81,11 +97,12 @@ export function AppGlyph({ name, size = 52 }) {
       style={{
         width: size,
         height: size,
-        "--pg-icon-hue": hue,
+        "--pg-icon-color": bg,
+        "--pg-icon-ink": ink,
       }}
     >
-      <span className="pg-icon-letter" style={{ fontSize: Math.max(11, Math.round(size * 0.34)) }}>
-        {name.slice(0, 1)}
+      <span className="pg-icon-letter" style={{ fontSize: Math.max(11, Math.round(size * 0.42)) }}>
+        {letter}
       </span>
     </span>
   );

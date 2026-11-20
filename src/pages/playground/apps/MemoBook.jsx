@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import "./css/memo-book.css";
 import { MEMO_STORAGE_KEY as STORAGE_KEY, MEMOS_CLEARED_EVENT } from "@/components/playground/appearance";
+import { useNotify } from "@/components/playground/desktopContext";
 
 export const playgroundMeta = {
   title: "memoBook",
@@ -116,6 +117,7 @@ function when(stamp) {
 }
 
 export default function MemoBook() {
+  const notify = useNotify();
   const editorRef = useRef(null);
   const skipHydrate = useRef(false);
   const [state, setState] = useState(loadState);
@@ -197,7 +199,8 @@ export default function MemoBook() {
   const createMemo = useCallback(() => {
     const memo = blankMemo();
     setState((current) => ({ memos: [memo, ...current.memos], activeId: memo.id }));
-  }, []);
+    notify({ title: "memoBook", app: "memoBook", body: "Created a new page." });
+  }, [notify]);
 
   const removeMemo = useCallback(() => {
     setState((current) => {
@@ -218,10 +221,12 @@ export default function MemoBook() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${active.title.replace(/[^\w\d]+/g, "-").replace(/^-|-$/g, "") || "memo"}.txt`;
+    const filename = `${active.title.replace(/[^\w\d]+/g, "-").replace(/^-|-$/g, "") || "memo"}.txt`;
+    link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
-  }, [active]);
+    notify({ title: "memoBook", app: "memoBook", body: `Downloaded ${filename}.` });
+  }, [active, notify]);
 
   return (
     <div className="memo-book">

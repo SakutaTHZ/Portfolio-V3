@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { Minus, Pause, Play, Plus, Square } from "lucide-react";
 import CountUp from "@/components/CountUp";
 import { prefersReducedMotion } from "@/hooks/hooks";
-import { useWindowFrame } from "@/components/playground/desktopContext";
+import { useNotify, useWindowFrame } from "@/components/playground/desktopContext";
 import "./css/timer.css";
 
 export const playgroundMeta = {
@@ -200,6 +200,7 @@ function playChime(ctx) {
 
 export default function Timer() {
   const frame = useWindowFrame();
+  const notify = useNotify();
   const audioRef = useRef(null);
   const [host, setHost] = useState(null);
   const [now, setNow] = useState(() => new Date());
@@ -261,8 +262,9 @@ export default function Timer() {
     setBaseMs(0);
     setPending({ seconds: configured, shown: 0, mode, at: Date.now() });
     setStatus("naming");
+    notify({ title: "Timer", app: "Timer", body: "Countdown finished." });
     if (frame?.minimized) frame.restore();
-  }, [anchor, baseMs, configured, frame, mode, now, status]);
+  }, [anchor, baseMs, configured, frame, mode, notify, now, status]);
 
   const zones = useMemo(() => {
     const seen = new Set([localZone]);
@@ -320,6 +322,11 @@ export default function Timer() {
       at: entry.at,
     };
     setLogs((current) => [next, ...current].slice(0, 40));
+    notify({
+      title: "Timer",
+      app: "Timer",
+      body: `Saved ${name} · ${formatSpent(entry.seconds)} ${entry.mode === "up" ? "count up" : "count down"}.`,
+    });
     setTitle("");
     setPending(null);
     setStatus("idle");

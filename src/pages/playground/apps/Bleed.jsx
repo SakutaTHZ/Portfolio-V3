@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNotify } from "@/components/playground/desktopContext";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Plus, RotateCw, X } from "lucide-react";
 import "./css/bleed.css";
 
@@ -280,6 +281,7 @@ function outsideHref(tab) {
 }
 
 export default function Bleed() {
+  const notify = useNotify();
   const [tabs, setTabs] = useState(() => [makeTab({ kind: "web", url: "/", title: "Portfolio" })]);
   const [activeId, setActiveId] = useState(() => tabs[0].id);
   const [notice, setNotice] = useState("");
@@ -352,6 +354,15 @@ export default function Bleed() {
 
   function navigate(entry, { push = true, reload = false } = {}) {
     setNotice("");
+    const current = active.history[active.index];
+    const same = current && current.kind === entry.kind && current.url === entry.url;
+    if (push && !same && entry.kind === "web" && entry.url) {
+      notify({
+        title: "Bleed",
+        app: "Bleed",
+        body: `Opened ${entry.title || labelFor(entry.url)}.`,
+      });
+    }
     patch(active.id, (tab) => {
       const current = tab.history[tab.index];
       const same = current && current.kind === entry.kind && current.url === entry.url;

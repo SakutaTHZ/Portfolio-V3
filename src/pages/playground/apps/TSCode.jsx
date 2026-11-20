@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNotify } from "@/components/playground/desktopContext";
 import { css } from "@codemirror/lang-css";
 import { html } from "@codemirror/lang-html";
 import { javascript } from "@codemirror/lang-javascript";
@@ -343,6 +344,7 @@ async function editClipboard(view, action) {
 }
 
 function PythonOutput({ runToken, codeRef }) {
+  const notify = useNotify();
   const frameRef = useRef(null);
   const pendingRef = useRef(null);
   const [lines, setLines] = useState([{ kind: "status", text: "Press Run to execute main.py." }]);
@@ -360,6 +362,12 @@ function PythonOutput({ runToken, codeRef }) {
         if (pendingRef.current != null) postRun(pendingRef.current);
         return;
       }
+      if (data.type === "status" && data.text === "Done") {
+        notify({ title: "TSCode", app: "TSCode", body: "Python finished running." });
+      }
+      if (data.type === "status" && data.text === "Failed") {
+        notify({ title: "TSCode", app: "TSCode", body: "Python run failed." });
+      }
       setLines((current) => {
         if (data.type === "status" && data.text === "Running…") return [{ kind: "status", text: data.text }];
         return [...current, { kind: data.type === "stderr" ? "err" : data.type === "stdout" ? "out" : "status", text: data.text }];
@@ -367,7 +375,7 @@ function PythonOutput({ runToken, codeRef }) {
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, []);
+  }, [notify]);
 
   useEffect(() => {
     if (!runToken) return;
@@ -390,6 +398,7 @@ function PythonOutput({ runToken, codeRef }) {
 }
 
 export default function TSCode() {
+  const notify = useNotify();
   const draft = useRef(loadDraft());
   const [files, setFiles] = useState(() => draft.current?.files || STARTER);
   const [mode, setMode] = useState(() => draft.current?.mode || "web");
@@ -454,13 +463,16 @@ export default function TSCode() {
     const meta = FILES[fileId];
     download(meta.name, files[fileId]);
     setNote(`Saved ${meta.name}`);
+    notify({ title: "TSCode", app: "TSCode", body: `Downloaded ${meta.name}.` });
   }
 
   function exportPreview() {
     if (mode === "python") return;
     const html = mode === "react" ? reactDocument(files.react) : webDocument(files);
-    download(mode === "react" ? "app.html" : "index.html", html, "text/html");
+    const filename = mode === "react" ? "app.html" : "index.html";
+    download(filename, html, "text/html");
     setNote("Exported preview");
+    notify({ title: "TSCode", app: "TSCode", body: `Exported ${filename}.` });
   }
 
   function run() {
@@ -513,6 +525,7 @@ export default function TSCode() {
         replaceFiles({ html: text });
       }
       setNote(`Opened ${file.name}`);
+      notify({ title: "TSCode", app: "TSCode", body: `Opened ${file.name}.` });
     };
     reader.readAsText(file);
   }

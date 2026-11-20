@@ -9,6 +9,7 @@ import { getTheme, nextBackground, readAppearance, themeStyle, writeAppearance }
 import Wallpaper from "./Wallpaper";
 import SettingsApp, { DesktopMenu } from "./SettingsApp";
 import { DesktopContext, WindowFrameContext } from "./desktopContext";
+import { createNotification, loadNotifications, saveNotifications } from "./notifications";
 import GatoJumpscare from "@/components/GatoJumpscare";
 import PlaygroundTerminal from "./PlaygroundTerminal";
 import MacWindow, { AppGlyph, DesktopIcon, FinderBody, FolderGlyph } from "./MacWindow";
@@ -119,8 +120,8 @@ function useMobileDock() {
   return mobile;
 }
 
-function RunningGlyph({ win, size = 43 }) {
-  if (win.type === "folder") return <FolderGlyph size={size} />;
+function RunningGlyph({ win, size }) {
+  if (win.type === "folder") return size ? <FolderGlyph size={size} /> : <FolderGlyph />;
   return <AppGlyph name={win.title} size={size} />;
 }
 
@@ -205,6 +206,7 @@ export default function PlaygroundDesktop() {
   const [appearance, setAppearance] = useState(readAppearance);
   const [settingsSection, setSettingsSection] = useState("display");
   const [desktopMenu, setDesktopMenu] = useState(null);
+  const [notes, setNotes] = useState(loadNotifications);
   const zRef = useRef(20);
   const theme = getTheme(appearance.theme);
 
@@ -215,6 +217,19 @@ export default function PlaygroundDesktop() {
       return next;
     });
   }, []);
+
+  const notify = useCallback((input) => {
+    const note = createNotification(input);
+    setNotes((current) => [note, ...current].slice(0, 80));
+  }, []);
+
+  const clearNotes = useCallback(() => {
+    setNotes([]);
+  }, []);
+
+  useEffect(() => {
+    saveNotifications(notes);
+  }, [notes]);
 
   const startApps = useMemo(() => {
     const folders = playgroundRoot.children.filter((item) => item.type === "folder");
@@ -590,8 +605,8 @@ export default function PlaygroundDesktop() {
                   openContext(finderItem, { x: event.clientX, y: event.clientY });
                 }}
               >
-                <span className="pg-dock-glyph" style={{ background: "transparent", boxShadow: "none" }}>
-                  <FolderGlyph size={44} />
+                <span className="pg-dock-glyph">
+                  <FolderGlyph />
                 </span>
                 {openItems.some((win) => win.itemId === playgroundRoot.id) && (
                   <span
@@ -613,7 +628,7 @@ export default function PlaygroundDesktop() {
                 }}
               >
                 <span className="pg-dock-glyph">
-                  <AppGlyph name="Terminal" size={43} />
+                  <AppGlyph name="Terminal" />
                 </span>
                 {terminalOpen && (
                   <span
@@ -636,7 +651,7 @@ export default function PlaygroundDesktop() {
                   }}
                 >
                   <span className="pg-dock-glyph">
-                    <AppGlyph name="Bleed" size={43} />
+                    <AppGlyph name="Bleed" />
                   </span>
                   {bleedOpen && (
                     <span
@@ -679,7 +694,7 @@ export default function PlaygroundDesktop() {
                     }}
                   >
                     <span className="pg-dock-glyph">
-                      <RunningGlyph win={win} size={43} />
+                      <RunningGlyph win={win} />
                     </span>
                     <span className="pg-dock-dot" data-minimized={win.minimized || undefined} />
                   </button>
@@ -707,6 +722,16 @@ export default function PlaygroundDesktop() {
             </TooltipProvider>
             </div>
             <StatusCluster
+              notes={notes}
+              onClear={clearNotes}
+              onOpenNote={(note, sourceEl) => {
+                if (note.app === "Settings") {
+                  openSettings("display", sourceEl);
+                  return;
+                }
+                const item = flattenPlaygroundItems().find((entry) => entry.name === note.app);
+                if (item) openItem(item, sourceEl);
+              }}
               onOpenTimer={(sourceEl) => {
                 const timer = flattenPlaygroundItems().find((item) => item.name === "Timer");
                 if (timer) openItem(timer, sourceEl);
@@ -743,6 +768,7 @@ export default function PlaygroundDesktop() {
     patchSettings: patchAppearance,
     section: settingsSection,
     setSection: setSettingsSection,
+    notify,
   };
 
   return (

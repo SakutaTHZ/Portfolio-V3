@@ -1,12 +1,13 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { Bell, X } from "lucide-react";
 import { prefersReducedMotion } from "@/hooks/hooks";
-
-const NOTES = [
-  { id: "ready", title: "SakutaOS", body: "Desktop is ready.", ago: "Now" },
-  { id: "memo", title: "memoBook", body: "A page is waiting on the desktop.", ago: "1m" },
-];
+import {
+  NOTIFICATION_RANGES,
+  emptyNotificationCopy,
+  formatAgo,
+  inNotificationRange,
+} from "./notifications";
 
 const CLOSED = {
   desktop: { width: 228, height: 64, radius: 32 },
@@ -100,16 +101,22 @@ function cornerRadii(open, mobile, radius) {
   };
 }
 
-export default function StatusCluster({ onOpenTimer }) {
+export default function StatusCluster({ notes = [], onClear, onOpenNote, onOpenTimer }) {
   const rootRef = useRef(null);
   const closeTimer = useRef(0);
   const [now, setNow] = useState(() => new Date());
   const [hover, setHover] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const [range, setRange] = useState("all");
   const mobile = useMobileStatus();
   const box = useScreenBox();
   const open = mobile ? pinned : hover || pinned;
   const clock = formatClock(now);
+  const visible = useMemo(
+    () => notes.filter((note) => inNotificationRange(note.at, range, now.getTime())),
+    [notes, now, range]
+  );
+  const countLabel = notes.length > 99 ? "99+" : String(notes.length);
   const closed = CLOSED[mobile ? "mobile" : "desktop"];
   const shape = {
     width: open && box.width ? (mobile ? box.width : Math.round(box.width * 0.3)) : closed.width,
@@ -166,6 +173,12 @@ export default function StatusCluster({ onOpenTimer }) {
     onOpenTimer?.(event.currentTarget);
   }
 
+  function openNote(note, event) {
+    const source = event.currentTarget;
+    close();
+    onOpenNote?.(note, source);
+  }
+
   return (
     <motion.aside
       ref={rootRef}
@@ -185,19 +198,44 @@ export default function StatusCluster({ onOpenTimer }) {
             <X size={16} />
           </button>
         </div>
-        <ul>
-          {NOTES.map((note) => (
-            <li key={note.id}>
-              <span>
-                <strong>{note.title}</strong>
-                <span>{note.body}</span>
-              </span>
-              <button type="button" className="pg-status-note-time" onClick={openTimer}>
-                <time>{note.ago}</time>
+        <div className="pg-status-tools">
+          <div className="pg-status-filters" role="group" aria-label="Filter notifications">
+            {NOTIFICATION_RANGES.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={range === item.id}
+                onClick={() => setRange(item.id)}
+              >
+                {item.label}
               </button>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+          <button type="button" className="pg-status-clear" onClick={onClear} disabled={!notes.length}>
+            Clear all
+          </button>
+        </div>
+        {visible.length ? (
+          <ul>
+            {visible.map((note) => (
+              <li key={note.id}>
+                <button
+                  type="button"
+                  className="pg-status-note"
+                  onClick={(event) => openNote(note, event)}
+                >
+                  <span>
+                    <strong>{note.title}</strong>
+                    <span>{note.body}</span>
+                  </span>
+                  <time dateTime={new Date(note.at).toISOString()}>{formatAgo(note.at, now.getTime())}</time>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="pg-status-empty">{emptyNotificationCopy(range)}</p>
+        )}
       </div>
       <div className="pg-status-bar">
         <button
@@ -216,11 +254,11 @@ export default function StatusCluster({ onOpenTimer }) {
           type="button"
           className="pg-status-bell"
           aria-expanded={open}
-          aria-label={`${NOTES.length} notifications`}
+          aria-label={`${notes.length} notifications`}
           onClick={() => setPinned((value) => !value)}
         >
           <Bell size={16} />
-          <span className="pg-status-count">{NOTES.length}</span>
+          {notes.length > 0 && <span className="pg-status-count">{countLabel}</span>}
         </button>
       </div>
     </motion.aside>

@@ -9,7 +9,7 @@ import {
 import { motion } from "motion/react";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import StarBorder from "@/components/StarBorder";
-import { baseAppIcon } from "./app-icons";
+import AppIcon from "./AppIcon";
 import { getTheme } from "./appearance";
 import { useDesktop } from "./desktopContext";
 import { useItemGestures } from "./gestures";
@@ -36,28 +36,6 @@ class WindowErrorBoundary extends Component {
 
     return <div className="pg-window-content">{this.props.children}</div>;
   }
-}
-
-const ICON_SWATCHES = [
-  ["#ff5b3e", "#2a0d08"],
-  ["#ffd84d", "#2a2108"],
-  ["#ff8a3d", "#2a1408"],
-  ["#7ad7ff", "#06202c"],
-  ["#c084fc", "#1c0a2c"],
-  ["#3dff8a", "#062814"],
-  ["#fb7185", "#2a0a12"],
-  ["#f4c095", "#2a160c"],
-  ["#60a5fa", "#071428"],
-  ["#f97316", "#2a1004"],
-  ["#e7f4ff", "#102028"],
-  ["#c4f04d", "#1a2406"],
-];
-
-function iconSwatch(name) {
-  const letter = String(name || "?").trim().charAt(0).toUpperCase();
-  const index = letter >= "A" && letter <= "Z" ? letter.charCodeAt(0) - 65 : 0;
-  const [bg, ink] = ICON_SWATCHES[index % ICON_SWATCHES.length];
-  return { bg, ink };
 }
 
 export function FolderGlyph({ size = 58 }) {
@@ -88,27 +66,8 @@ export function FileGlyph({ size = 52 }) {
   );
 }
 
-export function AppGlyph({ name, size = 52 }) {
-  const BaseIcon = baseAppIcon(name);
-  if (BaseIcon) return <BaseIcon size={size} />;
-  const { bg, ink } = iconSwatch(name);
-  const letter = String(name || "?").trim().charAt(0).toUpperCase() || "?";
-
-  return (
-    <span
-      className="pg-icon-app"
-      style={{
-        width: size,
-        height: size,
-        "--pg-icon-color": bg,
-        "--pg-icon-ink": ink,
-      }}
-    >
-      <span className="pg-icon-letter" style={{ fontSize: Math.max(11, Math.round(size * 0.42)) }}>
-        {letter}
-      </span>
-    </span>
-  );
+export function AppGlyph({ name, size }) {
+  return <AppIcon name={name} size={size} />;
 }
 
 export function DesktopIcon({ item, selected, onSelect, onOpen, onContext }) {

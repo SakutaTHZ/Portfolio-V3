@@ -120,6 +120,13 @@ export const THEMES = [
   },
 ];
 
+export const ICON_STYLES = [
+  { id: "keycap", name: "Keycap" },
+  { id: "glass", name: "Glass" },
+  { id: "blur", name: "Blur" },
+  { id: "brutal", name: "Brutal" },
+];
+
 export const BACKGROUNDS = [
   { id: "glitch", name: "Letter Glitch", hint: "Glyph field" },
   { id: "crt", name: "CRT Warp", hint: "Curved scanlines" },
@@ -133,6 +140,7 @@ export const BACKGROUNDS = [
 const DEFAULTS = {
   theme: "night",
   background: "glitch",
+  icons: "keycap",
   vhs: true,
   brightness: 100,
   volume: 0.85,
@@ -143,9 +151,14 @@ export function displayDefaults() {
   return {
     theme: DEFAULTS.theme,
     background: DEFAULTS.background,
+    icons: DEFAULTS.icons,
     vhs: DEFAULTS.vhs,
     brightness: DEFAULTS.brightness,
   };
+}
+
+export function getIconStyle(id) {
+  return ICON_STYLES.find((item) => item.id === id) ?? ICON_STYLES[0];
 }
 
 export function getTheme(id) {
@@ -162,6 +175,7 @@ export function readAppearance() {
     return {
       theme: getTheme(raw.theme).id,
       background: getBackground(raw.background).id,
+      icons: getIconStyle(raw.icons).id,
       vhs: typeof raw.vhs === "boolean" ? raw.vhs : DEFAULTS.vhs,
       brightness: clamp(raw.brightness, 35, 100, DEFAULTS.brightness),
       volume: clamp(raw.volume, 0, 1, DEFAULTS.volume),

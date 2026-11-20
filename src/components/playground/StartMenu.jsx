@@ -6,6 +6,28 @@ import logo from "@/assets/images/logo.png";
 import { AppGlyph, FileGlyph, FolderGlyph } from "./MacWindow";
 import { useItemGestures } from "./gestures";
 
+const SORTS = [
+  { id: "normal", label: "Normal" },
+  { id: "letter", label: "A–Z" },
+  { id: "type", label: "Type" },
+];
+
+const TYPE_RANK = { folder: 0, app: 1, file: 2 };
+
+function sortApps(items, sort) {
+  if (sort === "letter") {
+    return [...items].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+  }
+  if (sort === "type") {
+    return [...items].sort((a, b) => {
+      const rank = (TYPE_RANK[a.type] ?? 3) - (TYPE_RANK[b.type] ?? 3);
+      if (rank) return rank;
+      return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+    });
+  }
+  return items;
+}
+
 function StartAppButton({ item, onOpen, onContext, onClose }) {
   const gestures = useItemGestures({
     item,
@@ -42,6 +64,7 @@ export default function StartMenu({
   onRestart,
 }) {
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("normal");
   const inputRef = useRef(null);
   const allowSearchFocus = useRef(false);
 
@@ -71,9 +94,9 @@ export default function StartMenu({
 
   const results = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return apps;
-    return apps.filter((item) => item.name.toLowerCase().includes(needle));
-  }, [apps, query]);
+    const matched = needle ? apps.filter((item) => item.name.toLowerCase().includes(needle)) : apps;
+    return sortApps(matched, sort);
+  }, [apps, query, sort]);
 
   return (
     <AnimatePresence>
@@ -115,7 +138,22 @@ export default function StartMenu({
               />
             </form>
 
-            <p className="pg-start-label">{query ? "Results" : "Apps"}</p>
+            <div className="pg-start-head">
+              <p className="pg-start-label">{query ? "Results" : "Apps"}</p>
+              <div className="pg-start-sort" role="radiogroup" aria-label="Sort apps">
+                {SORTS.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={sort === option.id}
+                    onClick={() => setSort(option.id)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="pg-start-grid">
               {results.length ? (
                 results.map((item) => (

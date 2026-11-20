@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNotify } from "@/components/playground/desktopContext";
 import {
   appendConstant,
   appendDigit,
@@ -75,6 +76,8 @@ function emptyBoard() {
 }
 
 export default function Kakalator() {
+  const notify = useNotify();
+  const matchNoted = useRef(false);
   const [expr, setExpr] = useState("");
   const [fresh, setFresh] = useState(false);
   const [error, setError] = useState(false);
@@ -86,6 +89,20 @@ export default function Kakalator() {
 
   const outcome = useMemo(() => winnerOf(board), [board]);
   const boardFull = board.every(Boolean);
+
+  useEffect(() => {
+    if (!ticTacToe || (!outcome && !boardFull)) {
+      matchNoted.current = false;
+      return;
+    }
+    if (matchNoted.current) return;
+    matchNoted.current = true;
+    notify({
+      title: "tikalator",
+      app: "tikalator",
+      body: outcome ? `${outcome.mark} won the match.` : "The match ended in a draw.",
+    });
+  }, [boardFull, notify, outcome, ticTacToe]);
   const turn = board.filter(Boolean).length % 2 === 0 ? "X" : "O";
   const live = useMemo(() => liveValue(expr, degrees), [expr, degrees]);
   const readout = error ? "Error" : live === "Error" ? "Error" : live ?? "0";

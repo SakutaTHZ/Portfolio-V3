@@ -9,6 +9,13 @@ export function useDesktop() {
   return value;
 }
 
+function noopNotify() {}
+
+export function useNotify() {
+  const desktop = useContext(DesktopContext);
+  return desktop?.notify || noopNotify;
+}
+
 export function useWindowFrame() {
   return useContext(WindowFrameContext);
 }

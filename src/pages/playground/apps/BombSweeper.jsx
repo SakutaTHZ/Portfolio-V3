@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { AnimatePresence, motion } from "motion/react";
 import { Bomb, ChevronLeft, Flag, Grid3x3, MousePointer2, Play, RotateCcw, Timer, Trophy, X } from "lucide-react";
 import { prefersReducedMotion } from "@/hooks/hooks";
+import { useNotify } from "@/components/playground/desktopContext";
 import {
   DIFFICULTIES,
   chordReveal,
@@ -454,6 +455,7 @@ function LeaderboardDrawer({ open, reduced, leaderboard, onClose }) {
 
 export default function BombSweeper() {
   const reduced = prefersReducedMotion();
+  const notify = useNotify();
   const shellRef = useRef(null);
   const playRef = useRef(null);
   const [screen, setScreen] = useState("menu");
@@ -603,6 +605,15 @@ export default function BombSweeper() {
     };
     setScores((current) => [entry, ...current].slice(0, 80));
     setSavedWin(true);
+    const label = DIFFICULTIES[entry.difficulty]?.label || entry.difficulty;
+    const record = recordBeat?.difficulty === entry.difficulty && recordBeat.current === entry.timeMs;
+    notify({
+      title: "BombSweeper",
+      app: "BombSweeper",
+      body: record
+        ? `${name} set a ${label} best at ${formatMs(entry.timeMs)}.`
+        : `${name} saved ${formatMs(entry.timeMs)} on ${label}.`,
+    });
   }
 
   const pad = Math.min(10, Math.max(4, cellPx * 0.16));

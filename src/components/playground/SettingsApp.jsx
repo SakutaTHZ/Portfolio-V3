@@ -4,11 +4,13 @@ import { HardDrive, Monitor, Volume2 } from "lucide-react";
 import {
   BACKGROUNDS,
   displayDefaults,
+  ICON_STYLES,
   MEMO_STORAGE_KEY,
   MEMOS_CLEARED_EVENT,
   THEMES,
 } from "./appearance";
-import { useDesktop } from "./desktopContext";
+import AppIcon from "./AppIcon";
+import { useDesktop, useNotify } from "./desktopContext";
 
 const PANES = [
   { id: "display", name: "Display", icon: Monitor },
@@ -120,6 +122,23 @@ function DisplayPane({ settings, patchSettings, theme }) {
         ))}
       </div>
 
+      <p className="pg-display-label">Icon style</p>
+      <div className="pg-icon-style-row" role="listbox" aria-label="Icon style">
+        {ICON_STYLES.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="option"
+            aria-selected={settings.icons === item.id}
+            className="pg-icon-style"
+            onClick={() => patchSettings({ icons: item.id })}
+          >
+            <AppIcon name="Apps" size={36} style={item.id} />
+            {item.name}
+          </button>
+        ))}
+      </div>
+
       <p className="pg-display-label">Background</p>
       <div className="pg-wall-grid" role="listbox" aria-label="Background">
         {BACKGROUNDS.map((item) => (
@@ -216,6 +235,7 @@ function SoundPane({ settings, patchSettings }) {
 }
 
 function StoragePane({ patchSettings }) {
+  const notify = useNotify();
   const [revision, setRevision] = useState(0);
   const [caches, setCaches] = useState([]);
   const [note, setNote] = useState("");
@@ -256,7 +276,7 @@ function StoragePane({ patchSettings }) {
         <li>
           <span>
             <strong>Display & sound</strong>
-            <em>{formatBytes(displayBytes)} · theme, wallpaper, brightness, volume</em>
+            <em>{formatBytes(displayBytes)} · theme, icons, wallpaper, brightness, volume</em>
           </span>
           <button
             type="button"
@@ -264,6 +284,7 @@ function StoragePane({ patchSettings }) {
               patchSettings(displayDefaults());
               setRevision((value) => value + 1);
               flash("Display settings reset.");
+              notify({ title: "Settings", app: "Settings", body: "Display settings reset." });
             }}
           >
             Reset
@@ -281,6 +302,7 @@ function StoragePane({ patchSettings }) {
               window.dispatchEvent(new Event(MEMOS_CLEARED_EVENT));
               setRevision((value) => value + 1);
               flash("Memos cleared.");
+              notify({ title: "Settings", app: "Settings", body: "memoBook pages cleared." });
             }}
           >
             Clear
@@ -305,6 +327,7 @@ function StoragePane({ patchSettings }) {
               await Promise.all(keys.map((key) => window.caches.delete(key)));
               setRevision((value) => value + 1);
               flash("Cached files cleared.");
+              notify({ title: "Settings", app: "Settings", body: "Cached files cleared." });
             }}
           >
             Clear

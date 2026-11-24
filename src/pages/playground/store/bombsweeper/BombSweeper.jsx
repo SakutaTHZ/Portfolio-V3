@@ -13,7 +13,7 @@ import {
   startBoard,
   toggleFlag,
 } from "./bombsweeper-logic";
-import "./css/bombsweeper.css";
+import "./bombsweeper.css";
 
 export const playgroundMeta = {
   title: "BombSweeper",

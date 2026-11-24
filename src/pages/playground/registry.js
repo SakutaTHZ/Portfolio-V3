@@ -7,6 +7,9 @@
  *   export const playgroundMeta = { title: "My Lab", width: 720, height: 520 }
  *
  * Stylesheets beside a component show up as files you can cat from the shell.
+ *
+ * ZanStore catalog lives in ./store/<appId>/. Each app folder has its component,
+ * stylesheet, and listing.json. Those apps stay off the desktop until installed.
  */
 const modules = import.meta.glob("./**/*.{jsx,tsx}", { eager: true });
 const rawFiles = import.meta.glob("./**/*.{jsx,tsx,css}", {
@@ -14,6 +17,20 @@ const rawFiles = import.meta.glob("./**/*.{jsx,tsx,css}", {
   import: "default",
   eager: true,
 });
+const storeModules = import.meta.glob("./store/**/*.{jsx,tsx}", { eager: true });
+const storeSources = import.meta.glob("./store/**/*.{jsx,tsx,css}", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+const storeListings = import.meta.glob("./store/**/listing.json", {
+  eager: true,
+  import: "default",
+});
+
+function isStorePath(path) {
+  return path.replace(/^\.\//, "").startsWith("store/");
+}
 
 function toTitle(filename) {
   return filename
@@ -47,6 +64,7 @@ function buildTree() {
   const paths = new Set([...Object.keys(modules), ...Object.keys(rawFiles)]);
 
   for (const path of paths) {
+    if (isStorePath(path)) continue;
     const mod = modules[path];
     const source = typeof rawFiles[path] === "string" ? rawFiles[path] : "";
     const parts = path.replace(/^\.\//, "").split("/");
@@ -87,7 +105,71 @@ function buildTree() {
   return root;
 }
 
+function buildStoreApps() {
+  const apps = [];
+
+  for (const [path, listing] of Object.entries(storeListings)) {
+    if (!listing || typeof listing !== "object" || typeof listing.id !== "string") continue;
+    const dir = path.replace(/\/listing\.json$/, "");
+    const componentPath = Object.keys(storeModules).find((file) => {
+      if (!file.startsWith(`${dir}/`)) return false;
+      return Boolean(storeModules[file]?.default);
+    });
+    if (!componentPath) continue;
+
+    const mod = storeModules[componentPath];
+    const fileName = componentPath.split("/").pop();
+    apps.push({
+      id: listing.id,
+      listing,
+      component: mod.default,
+      meta: mod.playgroundMeta ?? {},
+      fileName,
+      sourcePath: `src/pages/playground/${componentPath.replace(/^\.\//, "")}`,
+      source: typeof storeSources[componentPath] === "string" ? storeSources[componentPath] : "",
+    });
+  }
+
+  apps.sort((a, b) => (a.listing.title || a.id).localeCompare(b.listing.title || b.id));
+  return apps;
+}
+
 export const playgroundRoot = buildTree();
+export const storeApps = buildStoreApps();
+
+export function storeItem(app) {
+  const meta = app.meta ?? {};
+  return {
+    type: "app",
+    id: `./store/${app.id}`,
+    storeId: app.id,
+    name: meta.title || app.listing.title || app.id,
+    fileName: app.fileName,
+    component: app.component,
+    width: meta.width || 720,
+    height: meta.height || 520,
+    sourcePath: app.sourcePath,
+    source: app.source,
+  };
+}
+
+export function desktopWithInstalled(installedIds) {
+  const installed = new Set(installedIds);
+  const children = storeApps.filter((app) => installed.has(app.id)).map(storeItem);
+  const folder = {
+    type: "folder",
+    id: "./installed",
+    name: "Installed",
+    fileName: "installed",
+    children,
+  };
+  const root = {
+    ...playgroundRoot,
+    children: [...playgroundRoot.children, folder],
+  };
+  root.children.sort(sortItems);
+  return root;
+}
 
 export function findPlaygroundItem(id, node = playgroundRoot) {
   if (node.id === id) return node;

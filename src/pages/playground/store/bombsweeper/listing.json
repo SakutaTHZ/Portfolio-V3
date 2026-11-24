@@ -1,0 +1,54 @@
+{
+  "id": "bombsweeper",
+  "title": "BombSweeper",
+  "developer": "Sakuta",
+  "category": "Puzzle",
+  "summary": "Clear every safe tile. The mines are listening.",
+  "description": "BombSweeper is a fast minesweeper for the SakutaOS desktop. Pick a difficulty, flag the tiles you don't trust, and chord open the rest. Personal bests stay on this machine, and a win lands in the notification shade.\n\nThe board is built for a trackpad or a finger: left click reveals, right click or a long press plants a flag, and the arcade HUD keeps the clock and the remaining mines in view.",
+  "whatsNew": "Smoother board entrance and a tighter personal-best board.",
+  "rating": 4.8,
+  "ratingsCount": "2.4K",
+  "installs": "10K+",
+  "size": "1.4 MB",
+  "version": "1.4.2",
+  "updated": "Nov 12, 2026",
+  "age": "Everyone",
+  "reviews": [
+    {
+      "name": "Htet Lin",
+      "rating": 5,
+      "date": "Nov 18, 2026",
+      "body": "The chord reveal is the whole game. I stopped counting and started listening for the empty-tile cascade."
+    },
+    {
+      "name": "Maya Chen",
+      "rating": 5,
+      "date": "Nov 9, 2026",
+      "body": "Expert is cruel in the best way. Personal bests surviving a refresh is what made me keep it installed."
+    },
+    {
+      "name": "Jonah Abe",
+      "rating": 4,
+      "date": "Oct 28, 2026",
+      "body": "Looks like a toy, plays like a timer. I only wish the flag button were a little larger on my phone."
+    },
+    {
+      "name": "Soe Nandar",
+      "rating": 5,
+      "date": "Oct 14, 2026",
+      "body": "Long-press to flag actually works. Most browser minesweepers fumble that."
+    },
+    {
+      "name": "Priya Raman",
+      "rating": 3,
+      "date": "Sep 30, 2026",
+      "body": "Beginner is over before I settle in. Intermediate is the one I leave open."
+    },
+    {
+      "name": "Leo Park",
+      "rating": 5,
+      "date": "Sep 12, 2026",
+      "body": "The win screen is loud enough to feel like an arcade cabinet. Lost three evenings to it."
+    }
+  ]
+}

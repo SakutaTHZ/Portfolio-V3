@@ -96,7 +96,11 @@ export function DesktopIcon({ item, selected, onSelect, onOpen, onContext }) {
 
 export function FinderBody({ folder, selectedId, onSelect, onOpen, onContext }) {
   if (!folder.children.length) {
-    return <p className="pg-finder-empty">This folder is empty</p>;
+    const copy =
+      folder.id === "./installed"
+        ? "Nothing installed yet. Open ZanStore to add an app."
+        : "This folder is empty";
+    return <p className="pg-finder-empty">{copy}</p>;
   }
 
   return (

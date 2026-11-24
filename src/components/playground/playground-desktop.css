@@ -622,6 +622,7 @@
 .pg-window-body:has(.kaka),
 .pg-window-body:has(.timer-app),
 .pg-window-body:has(.bsw-app),
+.pg-window-body:has(.zan-store),
 .pg-window-body:has(.bleed) {
   display: flex;
   overflow: hidden;
@@ -634,6 +635,7 @@
 .pg-window-body:has(.kaka) > .pg-window-content,
 .pg-window-body:has(.timer-app) > .pg-window-content,
 .pg-window-body:has(.bsw-app) > .pg-window-content,
+.pg-window-body:has(.zan-store) > .pg-window-content,
 .pg-window-body:has(.bleed) > .pg-window-content {
   display: flex;
   min-height: 0;
@@ -1564,6 +1566,15 @@
 .pg-menu a:focus-visible {
   background: rgba(255, 255, 255, 0.12);
   outline: none;
+}
+
+.pg-menu-danger {
+  color: #ffb4ab;
+}
+
+.pg-menu-danger:hover,
+.pg-menu-danger:focus-visible {
+  background: rgba(179, 38, 30, 0.28);
 }
 
 .pg-info-scrim,
@@ -2556,6 +2567,10 @@
 .pg-chassis[data-tone="light"] .pg-info {
   background: var(--pg-glass-strong);
   border-color: var(--pg-line);
+}
+
+.pg-chassis[data-tone="light"] .pg-menu-danger {
+  color: #b3261e;
 }
 
 .pg-chassis[data-tone="light"] .pg-status-panel span span,

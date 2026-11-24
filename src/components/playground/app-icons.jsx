@@ -7,6 +7,7 @@ const KNOWN = {
   tikalator: ["#3dff8a", "#062814"],
   settings: ["#d7dde6", "#1c2128"],
   terminal: ["#7dffb3", "#062814"],
+  zanstore: ["#3ddc84", "#062814"],
 };
 
 const SWATCHES = [
@@ -109,6 +110,14 @@ const GLYPHS = {
       <Glyph ink={ink}>
         <circle cx="16" cy="16" r="3.2" />
         <path d="M16 6.2v2.4M16 23.4v2.4M6.2 16h2.4M23.4 16h2.4M9.1 9.1l1.7 1.7M21.2 21.2l1.7 1.7M22.9 9.1l-1.7 1.7M10.8 21.2 9.1 22.9" />
+      </Glyph>
+    );
+  },
+  zanstore({ ink }) {
+    return (
+      <Glyph ink={ink}>
+        <path d="M9 11h14l-1.4 13.2a2 2 0 0 1-2 1.8h-7.2a2 2 0 0 1-2-1.8L9 11z" />
+        <path d="M12.5 11V9.2a3.5 3.5 0 0 1 7 0V11" />
       </Glyph>
     );
   },

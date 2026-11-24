@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Layers, X } from "lucide-react";
-import { flattenPlaygroundItems, playgroundRoot } from "@/pages/playground/registry";
+import { desktopWithInstalled, findPlaygroundItem, flattenPlaygroundItems, playgroundRoot, storeApps, storeItem } from "@/pages/playground/registry";
 import { prefersReducedMotion } from "@/hooks/hooks";
 import logo from "@/assets/images/logo.png";
 import { VHS } from "@/components/canvasui/VHS";
@@ -9,6 +9,7 @@ import { getTheme, nextBackground, readAppearance, themeStyle, writeAppearance }
 import Wallpaper from "./Wallpaper";
 import SettingsApp, { DesktopMenu } from "./SettingsApp";
 import { DesktopContext, WindowFrameContext } from "./desktopContext";
+import { loadInstalledIds, saveInstalledIds } from "./installed";
 import { createNotification, loadNotifications, saveNotifications } from "./notifications";
 import GatoJumpscare from "@/components/GatoJumpscare";
 import PlaygroundTerminal from "./PlaygroundTerminal";
@@ -41,12 +42,6 @@ const settingsItem = {
   width: 780,
   height: 640,
   sourcePath: "src/components/playground/SettingsApp.jsx",
-};
-
-const finderItem = {
-  ...playgroundRoot,
-  name: "Folder",
-  sourcePath: "src/pages/playground",
 };
 
 function DockTip({ label, children }) {
@@ -207,6 +202,7 @@ export default function PlaygroundDesktop() {
   const [settingsSection, setSettingsSection] = useState("display");
   const [desktopMenu, setDesktopMenu] = useState(null);
   const [notes, setNotes] = useState(loadNotifications);
+  const [installedIds, setInstalledIds] = useState(() => loadInstalledIds(storeApps.map((app) => app.id)));
   const zRef = useRef(20);
   const theme = getTheme(appearance.theme);
 
@@ -231,10 +227,24 @@ export default function PlaygroundDesktop() {
     saveNotifications(notes);
   }, [notes]);
 
+  useEffect(() => {
+    saveInstalledIds(installedIds);
+  }, [installedIds]);
+
+  const desktopRoot = useMemo(() => desktopWithInstalled(installedIds), [installedIds]);
+  const finderItem = useMemo(
+    () => ({
+      ...desktopRoot,
+      name: "Folder",
+      sourcePath: "src/pages/playground",
+    }),
+    [desktopRoot]
+  );
+
   const startApps = useMemo(() => {
-    const folders = playgroundRoot.children.filter((item) => item.type === "folder");
-    return [finderItem, settingsItem, terminalItem, ...folders, ...flattenPlaygroundItems(playgroundRoot)];
-  }, []);
+    const folders = desktopRoot.children.filter((item) => item.type === "folder");
+    return [finderItem, settingsItem, terminalItem, ...folders, ...flattenPlaygroundItems(desktopRoot)];
+  }, [desktopRoot, finderItem]);
 
   const openItems = useMemo(() => {
     const seen = new Map();
@@ -301,6 +311,32 @@ export default function PlaygroundDesktop() {
     setWindows((current) => current.filter((win) => win.id !== id));
     setFocusedId((current) => (current === id ? null : current));
   }, []);
+
+  const installApp = useCallback((storeId) => {
+    if (!storeApps.some((app) => app.id === storeId)) return;
+    setInstalledIds((current) => (current.includes(storeId) ? current : [...current, storeId]));
+  }, []);
+
+  const uninstallApp = useCallback((storeId) => {
+    if (!storeId) return;
+    setInstalledIds((current) => current.filter((id) => id !== storeId));
+    setWindows((current) => {
+      const closing = current.filter((win) => win.item?.storeId === storeId).map((win) => win.id);
+      if (closing.length) {
+        setFocusedId((focused) => (closing.includes(focused) ? null : focused));
+      }
+      return current.filter((win) => win.item?.storeId !== storeId);
+    });
+  }, []);
+
+  const openStoreApp = useCallback(
+    (storeId) => {
+      if (!installedIds.includes(storeId)) return;
+      const app = storeApps.find((entry) => entry.id === storeId);
+      if (app) openItem(storeItem(app));
+    },
+    [installedIds, openItem]
+  );
 
   const closeAllWindows = useCallback(() => {
     setWindows([]);
@@ -467,7 +503,7 @@ export default function PlaygroundDesktop() {
                 if (event.target === event.currentTarget) setSelectedId(null);
               }}
             >
-              {playgroundRoot.children.map((item) => (
+              {desktopRoot.children.map((item) => (
                 <DesktopIcon
                   key={item.id}
                   item={item}
@@ -516,7 +552,7 @@ export default function PlaygroundDesktop() {
                       <pre className="pg-file-view">{win.item.source}</pre>
                     ) : win.type === "folder" ? (
                       <FinderBody
-                        folder={win.item}
+                        folder={findPlaygroundItem(win.item.id, desktopRoot) || win.item}
                         selectedId={selectedId}
                         onSelect={setSelectedId}
                         onOpen={openItem}
@@ -557,6 +593,7 @@ export default function PlaygroundDesktop() {
               onOpen={openItem}
               onClose={() => setContextMenu(null)}
               onInfo={setInfoItem}
+              onUninstall={(item) => uninstallApp(item.storeId)}
             />
             {infoItem && <InfoCard item={infoItem} onClose={() => setInfoItem(null)} />}
 
@@ -769,6 +806,10 @@ export default function PlaygroundDesktop() {
     section: settingsSection,
     setSection: setSettingsSection,
     notify,
+    installedIds,
+    installApp,
+    uninstallApp,
+    openStoreApp,
   };
 
   return (

@@ -7,7 +7,7 @@ export function sourceUrl(item) {
   return `https://github.com/SakutaTHZ/Portfolio-V3/${isFile ? "blob" : "tree"}/main/${item.sourcePath}`;
 }
 
-export default function ContextMenu({ menu, screenRef, onOpen, onClose, onInfo }) {
+export default function ContextMenu({ menu, screenRef, onOpen, onClose, onInfo, onUninstall }) {
   const nodeRef = useRef(null);
   const [pos, setPos] = useState({ x: 0, y: 0 });
 
@@ -56,6 +56,19 @@ export default function ContextMenu({ menu, screenRef, onOpen, onClose, onInfo }
           <button type="button" role="menuitem" onClick={() => { onOpen(menu.item); onClose(); }}>
             Open
           </button>
+          {menu.item.storeId && onUninstall && (
+            <button
+              type="button"
+              role="menuitem"
+              className="pg-menu-danger"
+              onClick={() => {
+                onUninstall(menu.item);
+                onClose();
+              }}
+            >
+              Uninstall
+            </button>
+          )}
           {href && (
             <a role="menuitem" href={href} target="_blank" rel="noreferrer" onClick={onClose}>
               Open source code

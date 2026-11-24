@@ -93,7 +93,7 @@ export default defineConfig({
   server: {
     host: "127.0.0.1",
     watch: {
-      ignored: ["**/src/assets/musics/**"],
+      ignored: ["**/src/assets/musics/**", "**/store/**/*.{mp3,wav,ogg}"],
     },
   },
   resolve: {

@@ -77,6 +77,7 @@ export function DesktopIcon({ item, selected, onSelect, onOpen, onContext }) {
     <button
       type="button"
       className="pg-icon"
+      data-store-id={item.storeId || undefined}
       data-selected={selected || undefined}
       {...gestures}
       onKeyDown={(event) => {

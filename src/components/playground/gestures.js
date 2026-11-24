@@ -20,10 +20,10 @@ export function useItemGestures({ item, onOpen, onSelect, onContext }) {
     window.clearTimeout(pressTimer.current);
   }
 
-  function showContext(point) {
+  function showContext(point, source) {
     skipClick.current = true;
     window.clearTimeout(openTimer.current);
-    onContext?.(item, point);
+    onContext?.(item, point, source);
   }
 
   return {
@@ -40,7 +40,7 @@ export function useItemGestures({ item, onOpen, onSelect, onContext }) {
         if (now - lastTap.current < 420) {
           window.clearTimeout(openTimer.current);
           lastTap.current = 0;
-          showContext(pointFrom(event));
+          showContext(pointFrom(event), event.currentTarget);
           return;
         }
         lastTap.current = now;
@@ -56,14 +56,15 @@ export function useItemGestures({ item, onOpen, onSelect, onContext }) {
     },
     onContextMenu(event) {
       event.preventDefault();
-      showContext(pointFrom(event));
+      showContext(pointFrom(event), event.currentTarget);
     },
     onPointerDown(event) {
       if (event.pointerType === "mouse" && event.button !== 0) return;
       origin.current = pointFrom(event);
       clearPress();
       const point = pointFrom(event);
-      pressTimer.current = window.setTimeout(() => showContext(point), 500);
+      const source = event.currentTarget;
+      pressTimer.current = window.setTimeout(() => showContext(point, source), 500);
     },
     onPointerMove(event) {
       const dx = event.clientX - origin.current.x;

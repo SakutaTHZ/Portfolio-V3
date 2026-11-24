@@ -8,6 +8,7 @@ const KNOWN = {
   settings: ["#d7dde6", "#1c2128"],
   terminal: ["#7dffb3", "#062814"],
   zanstore: ["#3ddc84", "#062814"],
+  felt: ["#e7c56a", "#1a0c0c"],
 };
 
 const SWATCHES = [
@@ -118,6 +119,15 @@ const GLYPHS = {
       <Glyph ink={ink}>
         <path d="M9 11h14l-1.4 13.2a2 2 0 0 1-2 1.8h-7.2a2 2 0 0 1-2-1.8L9 11z" />
         <path d="M12.5 11V9.2a3.5 3.5 0 0 1 7 0V11" />
+      </Glyph>
+    );
+  },
+  felt({ ink }) {
+    return (
+      <Glyph ink={ink}>
+        <circle cx="16" cy="16" r="9" />
+        <circle cx="16" cy="16" r="5.5" />
+        <path d="M16 9.5v13M9.5 16h13" />
       </Glyph>
     );
   },

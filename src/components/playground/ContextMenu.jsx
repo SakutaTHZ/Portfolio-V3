@@ -62,7 +62,7 @@ export default function ContextMenu({ menu, screenRef, onOpen, onClose, onInfo, 
               role="menuitem"
               className="pg-menu-danger"
               onClick={() => {
-                onUninstall(menu.item);
+                onUninstall(menu.item, menu.source);
                 onClose();
               }}
             >

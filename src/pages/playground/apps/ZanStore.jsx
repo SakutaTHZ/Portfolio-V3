@@ -1,10 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, Download, Library, Moon, PanelLeft, Search, Star, Sun, UserRound } from "lucide-react";
+import { ArrowLeft, Download, LayoutGrid, Library, PanelLeft, Search, Star, UserRound } from "lucide-react";
 import AppIcon from "@/components/playground/AppIcon";
 import { useDesktop, useNotify, useWindowFrame } from "@/components/playground/desktopContext";
 import { storeApps } from "@/pages/playground/registry";
+import { readUsage, subscribeUsage } from "@/components/playground/usage";
 import "./css/zanstore.css";
 
 export const playgroundMeta = {
@@ -15,7 +16,6 @@ export const playgroundMeta = {
 
 const INSTALL_MIN_MS = 5000;
 const INSTALL_MAX_MS = 10000;
-const TONE_KEY = "zanstore-tone";
 const SIDE_KEY = "zanstore-side";
 
 function installDuration() {
@@ -91,9 +91,9 @@ function GradientButton({ label, progress, busy, onClick }) {
   );
 }
 
-function AppMark({ name, size }) {
+function AppMark({ name, size, hidden }) {
   return (
-    <span className="zan-mark">
+    <span className="zan-mark" data-shredding={hidden || undefined}>
       <AppIcon name={name} size={size} />
     </span>
   );
@@ -129,9 +129,10 @@ export default function ZanStore() {
   const [now, setNow] = useState(() => performance.now());
   const [host, setHost] = useState(null);
   const [toast, setToast] = useState(null);
-  const [tone, setTone] = useState(() => (readStored(TONE_KEY, "light") === "dark" ? "dark" : "light"));
   const [collapsed, setCollapsed] = useState(() => readStored(SIDE_KEY, "open") === "closed");
   const [view, setView] = useState("library");
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [usage, setUsage] = useState(readUsage);
   const completing = useRef(new Set());
 
   useLayoutEffect(() => {
@@ -139,12 +140,8 @@ export default function ZanStore() {
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(TONE_KEY, tone);
-    } catch {
-      /* storage can be blocked */
-    }
-  }, [tone]);
+    return subscribeUsage(setUsage);
+  }, []);
 
   useEffect(() => {
     try {
@@ -186,7 +183,7 @@ export default function ZanStore() {
       const title = app?.listing.title || "App";
       desktop.installApp(job.id);
       notify({ title: "ZanStore", app: "ZanStore", body: `${title} was installed.` });
-      setToast({ title, name: app?.meta?.title || title });
+      setToast({ title, name: app?.meta?.title || title, body: "was installed" });
       setJobs((current) => current.filter((entry) => entry.id !== job.id));
     });
   }, [desktop, jobs, notify, now]);
@@ -260,7 +257,7 @@ export default function ZanStore() {
                 key={job.id}
                 type="button"
                 className="zan-notch"
-                data-tone={tone}
+                data-tone="light"
                 style={{ "--zan-p": `${pct}%` }}
                 initial={reduce ? false : { opacity: 0, y: -18, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -290,15 +287,17 @@ export default function ZanStore() {
           <div className="zan-toast-anchor">
             <motion.div
               className="zan-toast"
-              data-tone={tone}
               role="status"
-              initial={reduce ? false : { opacity: 0, y: -18, scale: 0.92 }}
+              initial={reduce ? false : { opacity: 0, y: -16, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={springOf(reduce, 460)}
             >
-              <AppIcon name={toast.name} size={28} />
-              <span>
-                <strong>{toast.title}</strong> was installed
+              <AppIcon name={toast.name} size={36} />
+              <span className="zan-toast-copy">
+                <strong>ZanStore</strong>
+                <span>
+                  {toast.title} {toast.body}
+                </span>
               </span>
             </motion.div>
           </div>,
@@ -307,9 +306,10 @@ export default function ZanStore() {
       : null;
 
   return (
-    <div className="zan-store" data-tone={tone} data-collapsed={collapsed || undefined}>
+    <div className="zan-store" data-collapsed={collapsed || undefined}>
       {notch}
       {toastNode}
+      <div className="zan-frame">
       <aside className="zan-side">
         <div className="zan-side-top">
           <button
@@ -339,23 +339,15 @@ export default function ZanStore() {
             active={view === "installed" && !selected}
             onClick={() => openView("installed")}
           />
-          {categories.length > 0 && <p className="zan-nav-label">Kinds</p>}
-          {categories.map((category) => (
-            <button
-              key={category}
-              type="button"
-              className="zan-nav"
-              data-active={(view === `cat:${category}` && !selected) || undefined}
-              aria-label={category}
-              title={category}
-              onClick={() => openView(`cat:${category}`)}
-            >
-              <span className="zan-nav-mark" aria-hidden="true">
-                {category.charAt(0)}
-              </span>
-              <span>{category}</span>
-            </button>
-          ))}
+          <SideButton
+            icon={LayoutGrid}
+            label={view.startsWith("cat:") ? view.slice(4) : "Categories"}
+            active={view.startsWith("cat:") && !selected}
+            onClick={() => {
+              setSelectedId(null);
+              setCategoryOpen(true);
+            }}
+          />
         </nav>
 
         <div className="zan-side-foot">
@@ -368,16 +360,6 @@ export default function ZanStore() {
           >
             <UserRound size={16} strokeWidth={2.4} />
             <span>Profile</span>
-          </button>
-          <button
-            type="button"
-            className="zan-tone"
-            aria-label={tone === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            title={tone === "dark" ? "Light mode" : "Dark mode"}
-            onClick={() => setTone((current) => (current === "dark" ? "light" : "dark"))}
-          >
-            {tone === "dark" ? <Sun size={16} strokeWidth={2.4} /> : <Moon size={16} strokeWidth={2.4} />}
-            <span>{tone === "dark" ? "Light" : "Dark"}</span>
           </button>
         </div>
       </aside>
@@ -401,6 +383,58 @@ export default function ZanStore() {
           )}
         </header>
 
+        {categoryOpen && (
+          <div className="zan-pop-scrim" onClick={() => setCategoryOpen(false)}>
+            <div
+              className="zan-pop"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Categories"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="zan-pop-head">
+                <h2>Categories</h2>
+                <button type="button" onClick={() => setCategoryOpen(false)}>
+                  Close
+                </button>
+              </div>
+              <ul className="zan-cat-grid">
+                <li>
+                  <button
+                    type="button"
+                    data-active={view === "library" || undefined}
+                    onClick={() => {
+                      openView("library");
+                      setCategoryOpen(false);
+                    }}
+                  >
+                    <strong>All</strong>
+                    <span>{storeApps.length}</span>
+                  </button>
+                </li>
+                {categories.map((category) => {
+                  const count = storeApps.filter((app) => app.listing.category === category).length;
+                  return (
+                    <li key={category}>
+                      <button
+                        type="button"
+                        data-active={view === `cat:${category}` || undefined}
+                        onClick={() => {
+                          openView(`cat:${category}`);
+                          setCategoryOpen(false);
+                        }}
+                      >
+                        <strong>{category}</strong>
+                        <span>{count}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        )}
+
         <div className="zan-scroll">
           <AnimatePresence mode="wait" initial={false}>
             {selected ? (
@@ -419,7 +453,15 @@ export default function ZanStore() {
                   reduce={reduce}
                   onBack={() => setSelectedId(null)}
                   onInstall={() => onInstallClick(selected.id)}
-                  onUninstall={() => desktop.uninstallApp(selected.id)}
+                  shredding={desktop.shredStoreId === selected.id}
+                  onUninstall={(icon) => {
+                    desktop.uninstallApp(selected.id, icon);
+                    setToast({
+                      title: selected.listing.title,
+                      name: selected.meta?.title || selected.listing.title,
+                      body: "was removed",
+                    });
+                  }}
                 />
               </motion.article>
             ) : view === "profile" ? (
@@ -431,12 +473,7 @@ export default function ZanStore() {
                 exit={reduce ? undefined : { opacity: 0, y: 12 }}
                 transition={springOf(reduce, 480)}
               >
-                <ProfileCard
-                  installedCount={installed.length}
-                  libraryCount={storeApps.length}
-                  tone={tone}
-                  onTone={() => setTone((current) => (current === "dark" ? "light" : "dark"))}
-                />
+                <ProfileCard installedCount={installed.length} libraryCount={storeApps.length} usage={usage} />
               </motion.section>
             ) : (
               <motion.section
@@ -499,11 +536,53 @@ export default function ZanStore() {
           </AnimatePresence>
         </div>
       </div>
+      </div>
     </div>
   );
 }
 
-function ProfileCard({ installedCount, libraryCount, tone, onTone }) {
+function formatPlay(ms) {
+  const total = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  if (hours) return `${hours}h ${minutes}m`;
+  if (minutes) return `${minutes}m`;
+  if (total) return `${total}s`;
+  return "0m";
+}
+
+function achievementBoard(usage, installedCount) {
+  const entries = Object.entries(usage.apps || {});
+  const opens = entries.reduce((sum, [, entry]) => sum + (entry.opens || 0), 0);
+  const ms = entries.reduce((sum, [, entry]) => sum + (entry.ms || 0), 0);
+  const best = entries.reduce((max, [, entry]) => Math.max(max, entry.ms || 0), 0);
+  const kinds = new Set(
+    entries
+      .filter(([, entry]) => (entry.opens || 0) > 0 || (entry.ms || 0) > 0)
+      .map(([id]) => storeApps.find((app) => app.id === id)?.listing.category)
+      .filter(Boolean)
+  ).size;
+  const checks = [
+    ["On the shelf", "Install an app.", installedCount >= 1],
+    ["Whole catalog", "Install every app on the shelf.", installedCount >= storeApps.length && storeApps.length > 0],
+    ["First launch", "Open an installed app.", opens >= 1],
+    ["Regular", "Open apps eight times.", opens >= 8],
+    ["Ten minutes", "Spend 10 minutes in store apps.", ms >= 10 * 60 * 1000],
+    ["Long session", "Spend an hour in one app.", best >= 60 * 60 * 1000],
+    ["Wide taste", "Play three different categories.", kinds >= 3],
+  ];
+  return { opens, ms, best, kinds, checks };
+}
+
+function ProfileCard({ installedCount, libraryCount, usage }) {
+  const board = achievementBoard(usage, installedCount);
+  const rows = storeApps.map((app) => ({
+    id: app.id,
+    title: app.listing.title,
+    name: app.meta.title || app.listing.title,
+    ...(usage.apps[app.id] || { ms: 0, opens: 0 }),
+  }));
+
   return (
     <>
       <div className="zan-id">
@@ -513,7 +592,7 @@ function ProfileCard({ installedCount, libraryCount, tone, onTone }) {
         <div>
           <p className="zan-kicker">Operator</p>
           <h2>Sakuta</h2>
-          <p>This desktop. Apps install locally and stay in the Installed folder.</p>
+          <p>Playtime counts while a store app is the focused window.</p>
         </div>
       </div>
       <dl className="zan-stats">
@@ -526,19 +605,46 @@ function ProfileCard({ installedCount, libraryCount, tone, onTone }) {
           <dd>In library</dd>
         </div>
         <div>
-          <dt>{tone === "dark" ? "Dark" : "Light"}</dt>
-          <dd>Mode</dd>
+          <dt>{formatPlay(board.ms)}</dt>
+          <dd>Playtime</dd>
+        </div>
+        <div>
+          <dt>{board.opens}</dt>
+          <dd>Sessions</dd>
         </div>
       </dl>
-      <button type="button" className="zan-tone zan-tone-wide" onClick={onTone}>
-        {tone === "dark" ? <Sun size={16} strokeWidth={2.4} /> : <Moon size={16} strokeWidth={2.4} />}
-        <span>{tone === "dark" ? "Switch to light" : "Switch to dark"}</span>
-      </button>
+      <section className="zan-section">
+        <h3>Usage</h3>
+        <ul className="zan-usage">
+          {rows.map((row) => (
+            <li key={row.id}>
+              <AppMark name={row.name} size={36} />
+              <span>
+                <strong>{row.title}</strong>
+                <em>
+                  {formatPlay(row.ms)} · {row.opens} {row.opens === 1 ? "open" : "opens"}
+                </em>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="zan-section">
+        <h3>Achievements</h3>
+        <ul className="zan-achievements">
+          {board.checks.map(([title, detail, done]) => (
+            <li key={title} data-done={done || undefined}>
+              <strong>{title}</strong>
+              <span>{detail}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </>
   );
 }
 
-function Detail({ app, installed, progress, reduce, onBack, onInstall, onUninstall }) {
+function Detail({ app, installed, progress, reduce, shredding, onBack, onInstall, onUninstall }) {
   const listing = app.listing;
   const reviews = reviewsOf(listing);
   const bars = ratingBars(reviews);
@@ -565,7 +671,7 @@ function Detail({ app, installed, progress, reduce, onBack, onInstall, onUninsta
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ ...pop, delay: reduce ? 0 : 0.04 }}
       >
-        <AppMark name={name} size={78} />
+        <AppMark name={name} size={78} hidden={shredding} />
         <div className="zan-hero-copy">
           <h2>{listing.title}</h2>
           <p>{listing.developer}</p>
@@ -579,7 +685,14 @@ function Detail({ app, installed, progress, reduce, onBack, onInstall, onUninsta
             onClick={onInstall}
           />
           {installed && (
-            <button type="button" className="zan-uninstall" onClick={onUninstall}>
+            <button
+              type="button"
+              className="zan-uninstall"
+              onClick={(event) => {
+                const icon = event.currentTarget.closest(".zan-hero")?.querySelector(".pg-icon-app");
+                onUninstall(icon);
+              }}
+            >
               Uninstall
             </button>
           )}

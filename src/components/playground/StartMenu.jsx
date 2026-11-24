@@ -39,7 +39,7 @@ function StartAppButton({ item, onOpen, onContext, onClose }) {
   });
 
   return (
-    <button type="button" className="pg-start-app" {...gestures}>
+    <button type="button" className="pg-start-app" data-store-id={item.storeId || undefined} {...gestures}>
       <span className="pg-start-app-icon">
         {item.type === "folder" ? (
           <FolderGlyph size={42} />

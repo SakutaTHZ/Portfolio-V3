@@ -10,6 +10,7 @@ import Wallpaper from "./Wallpaper";
 import SettingsApp, { DesktopMenu } from "./SettingsApp";
 import { DesktopContext, WindowFrameContext } from "./desktopContext";
 import { loadInstalledIds, saveInstalledIds } from "./installed";
+import { addPlayMs, noteOpen } from "./usage";
 import { createNotification, loadNotifications, saveNotifications } from "./notifications";
 import GatoJumpscare from "@/components/GatoJumpscare";
 import PlaygroundTerminal from "./PlaygroundTerminal";
@@ -19,6 +20,7 @@ import StartMenu from "./StartMenu";
 import ContextMenu, { InfoCard, PowerOverlay } from "./ContextMenu";
 import MusicPlayer from "./MusicPlayer";
 import StatusCluster from "./StatusCluster";
+import IconShred from "./IconShred";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import "./playground-desktop.css";
 
@@ -203,6 +205,7 @@ export default function PlaygroundDesktop() {
   const [desktopMenu, setDesktopMenu] = useState(null);
   const [notes, setNotes] = useState(loadNotifications);
   const [installedIds, setInstalledIds] = useState(() => loadInstalledIds(storeApps.map((app) => app.id)));
+  const [shred, setShred] = useState(null);
   const zRef = useRef(20);
   const theme = getTheme(appearance.theme);
 
@@ -230,6 +233,21 @@ export default function PlaygroundDesktop() {
   useEffect(() => {
     saveInstalledIds(installedIds);
   }, [installedIds]);
+
+  const windowsRef = useRef(windows);
+  const focusedRef = useRef(focusedId);
+  windowsRef.current = windows;
+  focusedRef.current = focusedId;
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const win = windowsRef.current.find(
+        (entry) => entry.id === focusedRef.current && !entry.minimized && entry.item?.storeId
+      );
+      if (win) addPlayMs(win.item.storeId, 5000);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const desktopRoot = useMemo(() => desktopWithInstalled(installedIds), [installedIds]);
   const finderItem = useMemo(
@@ -263,10 +281,10 @@ export default function PlaygroundDesktop() {
     );
   }, []);
 
-  const openContext = useCallback((item, point) => {
+  const openContext = useCallback((item, point, source) => {
     setStartOpen(false);
     setRecentsOpen(false);
-    setContextMenu({ item, x: point.x, y: point.y });
+    setContextMenu({ item, x: point.x, y: point.y, source: source || null });
   }, []);
 
   const openItem = useCallback((item, sourceEl) => {
@@ -276,6 +294,7 @@ export default function PlaygroundDesktop() {
     setContextMenu(null);
     const id = `${item.type}:${item.id}`;
     setSelectedId(item.id);
+    if (item.storeId) noteOpen(item.storeId);
     zRef.current += 1;
     const nextZ = zRef.current;
     setFocusedId(id);
@@ -317,8 +336,28 @@ export default function PlaygroundDesktop() {
     setInstalledIds((current) => (current.includes(storeId) ? current : [...current, storeId]));
   }, []);
 
-  const uninstallApp = useCallback((storeId) => {
+  const uninstallApp = useCallback((storeId, anchor) => {
     if (!storeId) return;
+    const app = storeApps.find((entry) => entry.id === storeId);
+    const title = app?.listing?.title || app?.meta?.title || "App";
+    const name = app?.meta?.title || title;
+    const icon =
+      (anchor?.classList?.contains("pg-icon-app") ? anchor : null) ||
+      anchor?.querySelector?.(".pg-icon-app") ||
+      document.querySelector(`[data-store-id="${CSS.escape(storeId)}"] .pg-icon-app`);
+    const rect = icon?.getBoundingClientRect?.();
+    const screen = screenRef.current?.getBoundingClientRect();
+    if (rect && rect.width > 2 && screen) {
+      setShred({
+        key: `${storeId}-${Date.now()}`,
+        storeId: icon.closest(".zan-hero") ? storeId : null,
+        name,
+        left: rect.left - screen.left,
+        top: rect.top - screen.top,
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+      });
+    }
     setInstalledIds((current) => current.filter((id) => id !== storeId));
     setWindows((current) => {
       const closing = current.filter((win) => win.item?.storeId === storeId).map((win) => win.id);
@@ -327,7 +366,8 @@ export default function PlaygroundDesktop() {
       }
       return current.filter((win) => win.item?.storeId !== storeId);
     });
-  }, []);
+    notify({ title: "ZanStore", app: "ZanStore", body: `${title} was removed.` });
+  }, [notify]);
 
   const openStoreApp = useCallback(
     (storeId) => {
@@ -593,7 +633,7 @@ export default function PlaygroundDesktop() {
               onOpen={openItem}
               onClose={() => setContextMenu(null)}
               onInfo={setInfoItem}
-              onUninstall={(item) => uninstallApp(item.storeId)}
+              onUninstall={(item, source) => uninstallApp(item.storeId, source)}
             />
             {infoItem && <InfoCard item={infoItem} onClose={() => setInfoItem(null)} />}
 
@@ -810,6 +850,7 @@ export default function PlaygroundDesktop() {
     installApp,
     uninstallApp,
     openStoreApp,
+    shredStoreId: shred?.storeId || null,
   };
 
   return (
@@ -841,6 +882,17 @@ export default function PlaygroundDesktop() {
             </VHS>
           ) : (
             stage
+          )}
+          {shred && (
+            <div className="pg-shred-layer" style={{ left: shred.left, top: shred.top, width: shred.width }}>
+              <IconShred
+                key={shred.key}
+                name={shred.name}
+                width={shred.width}
+                height={shred.height}
+                onDone={() => setShred((current) => (current?.key === shred.key ? null : current))}
+              />
+            </div>
           )}
         </div>
       </div>

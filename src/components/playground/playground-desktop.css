@@ -622,6 +622,7 @@
 .pg-window-body:has(.kaka),
 .pg-window-body:has(.timer-app),
 .pg-window-body:has(.bsw-app),
+.pg-window-body:has(.felt-app),
 .pg-window-body:has(.zan-store),
 .pg-window-body:has(.bleed) {
   display: flex;
@@ -635,6 +636,7 @@
 .pg-window-body:has(.kaka) > .pg-window-content,
 .pg-window-body:has(.timer-app) > .pg-window-content,
 .pg-window-body:has(.bsw-app) > .pg-window-content,
+.pg-window-body:has(.felt-app) > .pg-window-content,
 .pg-window-body:has(.zan-store) > .pg-window-content,
 .pg-window-body:has(.bleed) > .pg-window-content {
   display: flex;
@@ -987,6 +989,66 @@
 .pg-desktop[data-fullscreen] .pg-status {
   pointer-events: none;
   translate: 0 calc(100% + 1.75rem);
+}
+
+.pg-shred-layer {
+  position: absolute;
+  z-index: 90;
+  pointer-events: none;
+}
+
+.pg-shredder {
+  position: relative;
+  width: min(var(--sh-w), 100%);
+  height: var(--sh-h);
+  color: transparent;
+}
+
+.pg-shredder > ul {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  left: 0;
+  bottom: calc(var(--sh-fall) + var(--sh-slit-h));
+  margin: 0;
+  padding: 0 var(--sh-inset);
+  list-style: none;
+  clip-path: inset(-9999px -9999px 0 -9999px);
+}
+
+.pg-shredder > ul > li {
+  position: relative;
+  margin: 0 0 var(--sh-gap);
+}
+
+.pg-shred-slit {
+  position: absolute;
+  z-index: 3;
+  right: var(--sh-slit-inset);
+  bottom: var(--sh-fall);
+  left: var(--sh-slit-inset);
+  height: var(--sh-slit-h);
+  border-radius: 999px;
+  background: var(--sh-slit);
+}
+
+.pg-shred-fall {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--sh-fall);
+  pointer-events: none;
+}
+
+.pg-shred-canvas {
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--sh-over));
+  display: block;
+  width: calc(100% + var(--sh-over) * 2);
+  height: 100%;
 }
 
 .pg-status {
